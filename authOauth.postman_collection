@@ -1,0 +1,55 @@
+{
+	"id": "c45b71cc-e2b5-c63e-51fa-aba97dd8d56c",
+	"name": "authOauth",
+	"description": "",
+	"order": [
+		"b3470948-6f63-1d33-32e9-e4699feeb49e",
+		"72441ee6-545a-a6fe-c824-cc8c74527e3e"
+	],
+	"folders": [],
+	"timestamp": 1484904492888,
+	"owner": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "72441ee6-545a-a6fe-c824-cc8c74527e3e",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/oauth/v2/token?client_id=1_22pb5893ejr4sc0og4g0scggogckks8oc0k8scookoowoswwcw&client_secret=l080spsyzbkckckokw84csw000oskck4c80kk88co4owsgg4o&grant_type=password&username=aUser&password=test1test1",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "c45b71cc-e2b5-c63e-51fa-aba97dd8d56c",
+			"data": null,
+			"dataMode": "params",
+			"name": "getToken",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1484906396531,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "b3470948-6f63-1d33-32e9-e4699feeb49e",
+			"headers": "Authorization: Bearer ZGQwMzY4NDVkMDhiOGZhNzFhYzdjYjQzNzgwMzA5NzEyNzVhYWZlNWI2YTc1MzFiY2ZhZGVlNDg2NDIxOGViMA\n",
+			"url": "http://127.0.0.1:8000/users",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "c45b71cc-e2b5-c63e-51fa-aba97dd8d56c",
+			"data": null,
+			"dataMode": "params",
+			"name": "getUsers",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1484904492888,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		}
+	]
+}
