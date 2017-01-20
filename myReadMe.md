@@ -36,4 +36,4 @@ e="password" --grant-type="refresh_token" --grant-type="token" --grant-type="cli
         * GET request
         * Routed to `authOauth/src/ApiBundle/Controller/UsersController.php`
 
-> you may want to see method name, cgetAction, EntityManager vs CreateQueryBuilder, and how to use logs; see config.yml for monolog
+> you may want to see `authOauth/src/ApiBundle/Controller/UsersController.php` for method name, cgetAction, EntityManager vs CreateQueryBuilder, and how to use logs; see config.yml for monolog
