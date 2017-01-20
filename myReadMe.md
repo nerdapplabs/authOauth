@@ -22,8 +22,8 @@ e="password" --grant-type="refresh_token" --grant-type="token" --grant-type="cli
 
 > On success, you will see:
 
-    `Added a new client with public id 1_22pb5893ejr4sc0og4g0scggogckks8oc0k8scookoowoswwcw, secret l080spsyzbkckckokw84csw000oskck4c80kk88
-co4owsgg4o`
+    `Added a new client with public id 1_22pb5893ejr4sc0og4g0scggogckks8oc0k8scookoowoswwcw, secret l080spsyzbkckckokw84csw000oskck4c80kk88co4owsgg4o`
+
 
 * Now use postman collection authOauth/authOauth.postman_collection 
 
