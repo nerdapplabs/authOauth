@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
     <div id="wrapper">
         <div id="container">
@@ -37,7 +36,10 @@
 
                     Read the documentation to learn
                     <a href="http://symfony.com/doc/{{ constant('Symfony\\Component\\HttpKernel\\Kernel::VERSION')[:3] }}/page_creation.html">
-                        How to create your first page in Symfony
+                                      {% for js in jsFiles %}
+                  <script src="/{{ theme }}/js/{{ js }}"></script>
+                {% endfor %}
+  How to create your first page in Symfony
                     </a>
                 </p>
             </div>
@@ -47,8 +49,9 @@
 {% endblock %}
 
 {% block stylesheets %}
+  {{ parent() }}
 <style>
-    body { background: #F5F5F5; font: 18px/1.5 sans-serif; }
+    body { background: #F5F5F5; font: 14px/1.5 sans-serif; }
     h1, h2 { line-height: 1.2; margin: 0 0 .5em; }
     h1 { font-size: 36px; }
     h2 { font-size: 21px; margin-bottom: 1em; }
