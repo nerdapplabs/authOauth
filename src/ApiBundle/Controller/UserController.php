@@ -151,7 +151,7 @@ class UserController extends FOSRestController implements ClassResourceInterface
         return new JsonResponse(array(
                 'username' => $username,
                 'msg' => $msg,
-                'access_token' => $oAuthRtn,
+                'oauth' => $oAuthRtn,
                 'code' => 201
         ));
     }
