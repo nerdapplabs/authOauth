@@ -1,96 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-
-      <meta name="description" content="">
-      <meta name="author" content="">
-      <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-      <title>{% block title %}Dashboard Template for Bootstrap{% endblock %}</title>
-
-      {% block stylesheets %}
-      {% endblock %}
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <nav>
-          <div>
-            <div>
-              <button type="button">
-                <span>Toggle navigation</span>
-                <span></span>
-                <span></span>
-                <span></span>
-              </button>
-              <a href="/">Nerd Project</a>
-            </div>
-            <div id="navbar">
-              <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-              </ul>
-              <ul>
-                {% if is_granted("ROLE_ADMIN") %}
-                    <li>
-                      <a href="#">Admin <span class="caret"></span></a>
-                      <ul>
-                        <li><a href="{{ path('fos_user_profile_show') }}">Role Management</a></li>
-                        <li></li>
-                        <li><a href="{{ path('fos_user_profile_edit') }}">User Management</a></li>
-                        <li></li>
-                        <li><a href="{{ path('fos_user_profile_edit') }}">Client Management</a></li>
-                      </ul>
-                    </li>
-                {% endif %}
-                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <li><a href="{{ path('fos_user_security_logout') }}">{{ 'Logged in as'}} {{ app.user.username }} | Sign Out</a></li>
-                {% else %}
-                    <li><a href="{{ path('fos_user_security_login') }}">{{ 'Sign In'|trans({}, 'FOSUserBundle') }}</a></li>
-                {% endif %}
-                <li><a href="/register">Sign Up</a></li>
-                <li>
-                  <a href="#">Settings <span class="caret"></span></a>
-                  <ul>
-                    <li><a href="{{ path('fos_user_resetting_request') }}">Reset Password</a></li>
-                    <li></li>
-                    <li><a href="{{ path('fos_user_change_password') }}">Change Password</a></li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Profile <span class="caret"></span></a>
-                  <ul>
-                    <li><a href="{{ path('fos_user_profile_show') }}">Show Profile</a></li>
-                    <li></li>
-                    <li><a href="{{ path('fos_user_profile_edit') }}">Edit Profile</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-
-        <div>
-          {% if app.request.hasPreviousSession %}
-              {% for type, messages in app.session.flashbag.all() %}
-                  {% for message in messages %}
-                      <div class="flash-{{ type }}">
-                          {{ message }}
-                      </div>
-                  {% endfor %}
-              {% endfor %}
-          {% endif %}
-          <div>
-            {% block fos_user_content %}
-            {% endblock fos_user_content %}
-          </div>
-          <div>
-            {% block body %}
-            {% endblock %}
-          </div>
-        </div>
-        {% block javascripts %}
-        {% endblock %}
+        {% include "nav.html.twig" %}   
+        {% block body %}{% endblock %}        
+        {% block javascripts %}{% endblock %}
     </body>
 </html>
+
+
+
+    
+
+    
