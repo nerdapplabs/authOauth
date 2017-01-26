@@ -5,6 +5,10 @@ security:
     encoders:
         FOS\UserBundle\Model\UserInterface: sha512
 
+    role_hierarchy:
+        ROLE_ADMIN:       [ROLE_USER, ROLE_API, ROLE_EDITOR]
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         fos_userbundle:
@@ -13,24 +17,56 @@ security:
         oauth_token:                                   # Everyone can access the access token URL.
             pattern: ^/oauth/v2/token
             security: false
+        api_doc:
+            pattern: ^/api/doc
+            anonymous: true
+            stateless: true
+        new_client:
+            pattern: ^/api/user/new/client
+            anonymous: true
+            stateless: true
+        access_token:
+            pattern: ^/api/user/access/token
+            anonymous: true
+            stateless: true
+        request_password_email:
+            pattern: ^/api/user/resetting/request/email
+            anonymous: true
+            stateless: true
+        check_email:
+            pattern: ^/api/user/resetting/check/email
+            anonymous: true
+            stateless: true
+        register:
+            pattern: ^/api/user/register
+            anonymous: true
+            stateless: true
+
         api:
-            pattern: ^/                                # All URLs are protected
+            pattern: ^/api                             # All api URLs are protected
             fos_oauth: true                            # OAuth2 protected resource
             stateless: true                            # Do no set session cookies
             anonymous: false                           # Anonymous access is not allowed
 
-    firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
         main:
-            anonymous: ~
-            # activate different ways to authenticate
-
-            # http_basic: ~
-            # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: ~
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+                # default_target_path: dashboard_index
+                # if you are using Symfony < 2.8, use the following config instead:
+                # csrf_provider: form.csrf_provider
+            logout:       true
+            anonymous:    true
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/users/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/users/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }

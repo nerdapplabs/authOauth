@@ -27,6 +27,26 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="firstname", type="string", nullable=true)
+     */
+    protected $firstname;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="lastname", type="string", nullable=true)
+     */
+    protected $lastname;
+
+    /**
+     * @var datetime
+     *
+     * @ORM\Column(name="dob", type="datetime", nullable=true)
+     */
+    protected $dob;
 
     /**
      * Get id
@@ -36,5 +56,41 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname()
+    {
+      return $this->lastname;
+    }
+
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getDob()
+    {
+        return $this->dob;
+    }
+
+    public function setDob($dob)
+    {
+        $this->dob = new \DateTime($dob);
+
+        return $this;
     }
 }

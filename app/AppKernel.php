@@ -5,6 +5,13 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
 {
+    public function __construct($environment, $debug)
+    {
+        date_default_timezone_set( 'Asia/Kolkata' );
+        parent::__construct($environment, $debug);
+    }
+
+
     public function registerBundles()
     {
         $bundles = array(
@@ -23,7 +30,7 @@ class AppKernel extends Kernel
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             // ...
             new AppBundle\AppBundle(),
-            new ApiBundle\ApiBundle(),
+            new ApiBundle\ApiBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

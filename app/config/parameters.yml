@@ -1,12 +1,31 @@
 # This file is auto-generated during the composer install
 parameters:
     database_host: 127.0.0.1
-    database_port: 8889
+    database_port: 3306
     database_name: authOauth
     database_user: root
     database_password: root
-    mailer_transport: smtp
+    mailer_transport: gmail
     mailer_host: 127.0.0.1
     mailer_user: null
     mailer_password: null
     secret: 67bba702e49b21b1f3884de0d61ae7b09039a50f
+    oauth2_client_id: 2_3gxxgr0gs7wgkk08gs8ss8c0ww444k00okkwosskogg8cg4scw
+    oauth2_client_secret: 42y1qygfyim84kc0scsg0w8o48k8g4484ss4s400c80kwkcssc
+    oauth2_redirect_url: 'http://auth.dev'
+    oauth2_auth_endpoint: 'http://auth.dev/oauth/v2/auth'
+    oauth2_token_endpoint: 'http://auth.dev/oauth/v2/token'
+    frontend_theme: bootstrap
+
+    # Added a new client with public id 1_5iid2igbxtwksw0ooog0c04k8go4sckww0w0gg4so04404ocgs, secret 1rvrk0l06n0g0k8sc4c88ogok8ck4c44g0sk888c4c8gocg0o8
+    # php app/console aoa:oauth-server:client:create --redirect-uri="http://auth.dev" --grant-type="authorization_code" --grant-type="password" --grant-type="refresh-token" --grant-type="token" --grant-type="client_credentials"
+
+    # Added a new client with public id 1_w5ze2da64lwo0sw4oc080owcc0ck084g0wosog88gs40cccko, secret 1fmna72zruckwssok8kk08k08sc000sococ04g4sko0g4k8cg8
+
+    # http://auth.dev/api/user/register?client_id=2_3gxxgr0gs7wgkk08gs8ss8c0ww444k00okkwosskogg8cg4scw&client_secret=42y1qygfyim84kc0scsg0w8o48k8g4484ss4s400c80kwkcssc&username=a7&password=a7&email=a8@a8.com&email_confirmation=0&firstname=a8&lastname=a8&dob=12/15/1976
+
+    # http://auth.dev/oauth/v2/token?client_id=1_w5ze2da64lwo0sw4oc080owcc0ck084g0wosog88gs40cccko&client_secret=1fmna72zruckwssok8kk08k08sc000sococ04g4sko0g4k8cg8&grant_type=password&username=aUser&password=test1test1
+    # http://auth.dev/api/user/access/token?client_id=2_2n62ui0ouu4g04ssg0cw0skwogo8o4g0w8ok4g8k8sc40gwgwk&client_secret=1fmna72zruckwssok8kk08k08sc000sococ04g4sko0g4k8cg8&grant_type=password&username=aUser&password=test1test1
+    # http://auth.dev/api/user/register?client_id=1_5iid2igbxtwksw0ooog0c04k8go4sckww0w0gg4so04404ocgs&client_secret=1rvrk0l06n0g0k8sc4c88ogok8ck4c44g0sk888c4c8gocg0o8&username=a7&password=a7&email=a7@a7.com&email_confirmation=0&firstname=a7&lastname=a7&dob=12/15/1976
+    # http://auth.dev/api/user/resetting/request/email?access_token=MzM1MWI0YWVjZDliN2Y3OTIxNWRhYjYxYzllOTU2YTM3OTYzZTE1MjgxMzM0N2IyNmY1NDVhMDRiNWYwYmMxMg
+    # http://auth.dev/api/user/profile/show?access_token=YWVhMmZhYjkxMTg2YWNlZTg2YWEzMDE3MzRlZTc5OTc2ZDk0MGYxM2FjM2YzNTVmYmVlOWExYWU3ZmQxNGU4ZA
