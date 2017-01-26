@@ -83,7 +83,6 @@ class UserController extends FOSRestController implements ClassResourceInterface
       *  parameters={
       *      {"name"="username", "dataType"="string", "required"=true, "description"="Admin username"},
       *      {"name"="password", "dataType"="string", "required"=true, "description"="password"},
-      *      {"name"="redirect_url", "dataType"="url", "required"=true, "description"="redirect url"},
       *  },
       * )
       */
