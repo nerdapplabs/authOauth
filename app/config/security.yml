@@ -21,6 +21,10 @@ security:
             pattern: ^/api/doc
             anonymous: true
             stateless: true
+        new_client:
+            pattern: ^/api/user/new/client
+            anonymous: true
+            stateless: true
         access_token:
             pattern: ^/api/user/access/token
             anonymous: true

@@ -75,6 +75,89 @@ class UserController extends FOSRestController implements ClassResourceInterface
     }
 
     /**
+      * Create a new Client for the given URL. Only to be created by Admin.
+      *
+      * @ApiDoc(
+      *  resource=true,
+      *  description="Create a new Client",
+      *  parameters={
+      *      {"name"="username", "dataType"="string", "required"=true, "description"="Admin username"},
+      *      {"name"="password", "dataType"="string", "required"=true, "description"="password"},
+      *      {"name"="redirect_url", "dataType"="url", "required"=true, "description"="redirect url"},
+      *  },
+      * )
+      */
+    public function getNewClientAction()
+    {
+        $userManager = $this->get('fos_user.user_manager');
+        $entityManager = $this->get('doctrine')->getManager();
+        $request = $this->container->get('request');
+
+        $method = $this->get('request')->getMethod();
+        if ('GET' === $method) {
+          $data = $request->query->all();
+        } else {
+          $data = $request->request->all();
+        }
+        $username = $data['username'];
+        $password = $data['password'];
+
+        $em = $this->get('doctrine')->getEntityManager();
+        $query = $em->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
+        $query->setParameter('username', $username);
+        $user = $query->getOneOrNullResult();
+
+        $ifErred = false;
+
+        if ($user) {
+          // Get the encoder for the users password
+          $encoder_service = $this->get('security.encoder_factory');
+          $encoder = $encoder_service->getEncoder($user);
+
+          if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
+            // Not an Admin
+            if (!in_array('ROLE_ADMIN', $user->getRoles())) {
+              $ifErred = true;
+              return new JsonResponse(array('Error' => 'Invalid role username',
+                                            'username' => $username
+                                      ));
+            }
+          } else {
+              // Password bad
+              $ifErred = true;
+              return new JsonResponse(array('Error' => 'Invalid password',
+                                            'username' => $username
+                                      ));
+          }
+        } else {
+          // Username bad
+          $ifErred = true;
+          return new JsonResponse(array('Error' => 'Invalid username',
+                                        'username' => $username
+                                  ));
+        }
+
+        $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
+
+        $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
+        $client = $clientManager->createClient();
+        $client->setRedirectUris(array($redirectUrl));
+        $client->setAllowedGrantTypes(array("authorization_code",
+                                            "password",
+                                            "refresh_token",
+                                            "token",
+                                            "client_credentials"
+                                      ));
+
+        $clientManager->updateClient($client);
+
+        return new JsonResponse(array(
+          'client_id' => $client->getPublicId(),
+          'client_secret' => $client->getSecret()
+        ));
+    }
+
+    /**
       * Register a new user. Will return a JsonResponse(username, msg, oAuthRtn, code) upon success, else
       * will throw ErrorException in html.
       *
@@ -106,6 +189,25 @@ class UserController extends FOSRestController implements ClassResourceInterface
         } else {
           $data = $request->request->all();
         }
+
+        $clientId = $data['client_id'];
+        $clientSecret = $data['client_secret'];
+
+        // First check for valid Client Credentials
+        $pos = strpos($clientId, '_');
+        $id = substr($clientId, 0, $pos);
+        $randomId = substr($clientId, $pos + 1);
+
+        $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
+        $client = $clientManager->findClientBy(array(
+            'id'       => $id,
+            'randomId' => $randomId,
+            'secret'   => $clientSecret
+        ));
+        if (null == $client) {
+            return new JsonResponse(array('invalid_client_credentials' => $clientId));
+        }
+
         $username = $data['username'];
         $password = $data['password'];
         $email = $data['email'];
@@ -143,15 +245,13 @@ class UserController extends FOSRestController implements ClassResourceInterface
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
-            $clientId = $data['client_id'];
-            $clientSecret = $data['client_secret'];
             $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret, $username, $password);
         }
 
         return new JsonResponse(array(
                 'username' => $username,
                 'msg' => $msg,
-                'oauth' => $oAuthRtn,
+                'access_token' => $oAuthRtn,
                 'code' => 201
         ));
     }
