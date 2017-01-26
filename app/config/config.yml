@@ -89,6 +89,8 @@ fos_oauth_server:
     auth_code_class:     ApiBundle\Entity\AuthCode
     service:
         user_provider: fos_user.user_manager             # This property will be used when valid credentials are given to load the user upon access token creation
+        options:
+            supported_scopes: USER
 monolog:
     handlers:
         main:
