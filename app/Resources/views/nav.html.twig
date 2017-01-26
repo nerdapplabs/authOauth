@@ -6,18 +6,6 @@
             </div>
             <div id="navbar">
               <ul>
-                {% if is_granted("ROLE_ADMIN") %}
-                    <li>
-                      <a href="#">Admin <span class="caret"></span></a>
-                      <ul>
-                        <li><a href="{{ path('fos_user_profile_show') }}">Role Management</a></li>
-                        <li></li>
-                        <li><a href="{{ path('fos_user_profile_edit') }}">User Management</a></li>
-                        <li></li>
-                        <li><a href="#">Client Management</a></li>
-                      </ul>
-                    </li>
-                {% endif %}
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                     <li><a href="{{ path('fos_user_security_logout') }}">{{ 'Logged in as'}} {{ app.user.username }} | Sign Out</a></li>
                     <li>
@@ -39,7 +27,16 @@
                     <li><a href="{{ path('fos_user_security_login') }}">{{ 'Sign In'|trans({}, 'FOSUserBundle') }}</a></li>
                     <li><a href="/register">Sign Up</a></li>
                 {% endif %}
-                
+                {% if is_granted("ROLE_ADMIN") %}
+                    <li>
+                      <a href="#">Admin <span class="caret"></span></a>
+                      <ul>
+                        <li><a href="#">Role Management</a></li>            
+                        <li><a href="#">User Management</a></li>  
+                        <li><a href="#">Client Management</a></li>
+                      </ul>
+                    </li>
+                {% endif %}
                 
               </ul>
             </div>
