@@ -22,27 +22,27 @@ security:
             anonymous: true
             stateless: true
         new_client:
-            pattern: ^/api/user/new/client
+            pattern: ^/api/v[0-99].[0-99]*/user/new/client
             anonymous: true
             stateless: true
         access_token:
-            pattern: ^/api/user/access/token
+            pattern: ^/api/v[0-99].[0-99]*/user/access/token
             anonymous: true
             stateless: true
         refresh_token:
-            pattern: ^/api/user/refresh/token
+            pattern: ^/api/v[0-99].[0-99]*/user/refresh/token
             anonymous: true
             stateless: true
         request_password_email:
-            pattern: ^/api/user/resetting/request/email
+            pattern: ^/api/v[0-99].[0-99]*/user/resetting/request/email
             anonymous: true
             stateless: true
         check_email:
-            pattern: ^/api/user/resetting/check/email
+            pattern: ^/api/v[0-99].[0-99]*/user/resetting/check/email
             anonymous: true
             stateless: true
         register:
-            pattern: ^/api/user/register
+            pattern: ^/api/v[0-99].[0-99]*/user/register
             anonymous: true
             stateless: true
 
