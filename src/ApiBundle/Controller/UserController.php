@@ -9,23 +9,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException as SecurityCoreExceptionAccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Exception\AccountStatusException;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\UserBundle\Model\UserInterface;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\Security\Core\SecurityContext;
-use Symfony\Component\HttpFoundation\JsonResponse;
+
 use OAuth2;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use FOS\RestBundle\Controller\Annotations\Version;
+use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
+/**
+ * Version({"v1", "v2"}) - Remove this line or Put @ before Version, after a versioning strategy is finalized
+ * @NamePrefix("api_")
+ */
 class UserController extends FOSRestController implements ClassResourceInterface
 {
     const SESSION_EMAIL = 'fos_user_send_resetting_email/email';
@@ -108,6 +117,15 @@ class UserController extends FOSRestController implements ClassResourceInterface
 
         $ifErred = false;
 
+        // First check if we have a valid redirectUrl
+        $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
+        // Check if this URL actually exists
+        $headers = @get_headers($redirectUrl);
+        if (strpos($headers[0],'200')=== false) {
+          throw new HttpException(400, 'Invalid redirectURL: ' . $redirectUrl);
+        }
+
+        // Check for the valid Admin user
         if ($user) {
           // Get the encoder for the users password
           $encoder_service = $this->get('security.encoder_factory');
@@ -117,27 +135,20 @@ class UserController extends FOSRestController implements ClassResourceInterface
             // Not an Admin
             if (!in_array('ROLE_ADMIN', $user->getRoles())) {
               $ifErred = true;
-              return new JsonResponse(array('Error' => 'Invalid role username',
-                                            'username' => $username
-                                      ));
+              throw new HttpException(400, 'User is not an Admin: ' . $username);
             }
           } else {
               // Password bad
               $ifErred = true;
-              return new JsonResponse(array('Error' => 'Invalid password',
-                                            'username' => $username
-                                      ));
+              throw new HttpException(400, 'Invalid password: '. $username);
           }
         } else {
           // Username bad
           $ifErred = true;
-          return new JsonResponse(array('Error' => 'Invalid username',
-                                        'username' => $username
-                                  ));
+          throw new HttpException(400, 'Invalid username: ' . $username);
         }
 
-        $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
-
+        // Everything ok, now proceed to create the client
         $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
         $client = $clientManager->createClient();
         $client->setRedirectUris(array($redirectUrl));
@@ -172,12 +183,21 @@ class UserController extends FOSRestController implements ClassResourceInterface
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
-      *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"}
+      *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"},
+      *      {"name"="scope", "dataType"="string", "required"=true, "description"="Fixed value - API"}
       *  },
       * )
       */
     public function getRegisterAction()
     {
+        // First check if we have a valid redirectUrl
+        $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
+        // Check if this URL actually exists
+        $headers = @get_headers($redirectUrl);
+        if (strpos($headers[0],'200')=== false) {
+          throw new HttpException(400, 'Invalid redirectURL: ' . $redirectUrl);
+        }
+
         $userManager = $this->get('fos_user.user_manager');
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
@@ -203,8 +223,9 @@ class UserController extends FOSRestController implements ClassResourceInterface
             'randomId' => $randomId,
             'secret'   => $clientSecret
         ));
+
         if (null == $client) {
-            return new JsonResponse(array('invalid_client_credentials' => $clientId));
+            throw new HttpException(400, 'Invalid Client Credentials: ' . $clientId);
         }
 
         $username = $data['username'];
@@ -215,13 +236,44 @@ class UserController extends FOSRestController implements ClassResourceInterface
         $firstname = $data['firstname'];
         $lastname = $data['lastname'];
         $dob = $data['dob'];
+        $scope = $data['scope'];
 
         // Do a check for existing user with userManager->findByUsername
         /** @var $user UserInterface */
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
-
         if (null != $user) {
-            return new JsonResponse(array('invalid_username' => $username));
+          throw new HttpException(400, 'User already exists. Username: ' . $user->getUsername());
+        }
+
+        // Check if password is empty
+        if (null == $password) {
+            throw new HttpException(400, 'Invalid empty password');
+        }
+
+        // Check if email is valid
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+          throw new HttpException(400, 'Invalid email: ' . $email);
+        }
+
+        $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
+        if (null != $user) {
+          throw new HttpException(400, 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername());
+        }
+
+        // Check if dob is valid
+        list($mm,$dd,$yyyy) = explode('/',$dob);
+        if (!checkdate($mm,$dd,$yyyy)) {
+            throw new HttpException(400, 'Invalid mm/dd/yyyy DOB: ' . $dob);
+        }
+
+        // Check if scope is set to API
+        if ('API' != $scope) {
+            throw new HttpException(400, 'Invalid scope: ' . $scope);
+        }
+
+        // Check if firstname is empty. At least firstname is required.
+        if (null == $firstname) {
+            throw new HttpException(400, 'Invalid empty firstname');
         }
 
         $user = $userManager->createUser();
@@ -232,26 +284,28 @@ class UserController extends FOSRestController implements ClassResourceInterface
         $user->setFirstname($firstname);
         $user->setLastname($lastname);
         $user->setDob($dob);
-        $user->setRoles(array('ROLE_USER', 'ROLE_API'));
+        $user->setRoles(array('ROLE_'.$scope));
         $user->setEnabled(true);
 
         $userManager->updateUser($user);
 
-        $accessToken = 'Pending';
+        $oAuthRtn = 'Pending';
         $msg = 'N.A.';
+        $grantType = 'password';
 
         if ('1' == $confirmationEnabled) {
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
-            $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret, $username, $password);
+            $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret,
+                                                $grantType, null, $username, $password, $scope);
         }
 
         return new JsonResponse(array(
+                'code' => 201,
+                'message' => $msg,
                 'username' => $username,
-                'msg' => $msg,
-                'access_token' => $oAuthRtn,
-                'code' => 201
+                'oauth' => $oAuthRtn
         ));
     }
 
@@ -273,7 +327,7 @@ class UserController extends FOSRestController implements ClassResourceInterface
     {
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
-            throw new AccessDeniedException('invalid User or this user does not have access to this section.');
+            throw new HttpException(400, 'invalid User or this user does not have access to this section.');
         }
 
         $userManager = $this->get('fos_user.user_manager');
@@ -316,14 +370,14 @@ class UserController extends FOSRestController implements ClassResourceInterface
     {
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
-            throw new AccessDeniedException('This user does not have access to this section.');
+            throw new HttpException(400, 'This user does not have access to this section.');
         }
 
         return new JsonResponse(array(
           'username' => $user->getUsername(),
           'firstname' => $user->getFirstname(),
           'lastname' => $user->getLastname(),
-          'dob' => $user->getDob(),
+          'dob' => $user->dobString(),
           'email' => $user->getEmail()
         ));
     }
@@ -346,7 +400,7 @@ class UserController extends FOSRestController implements ClassResourceInterface
     {
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
-            throw new AccessDeniedException('This user does not have access to this section.');
+            throw new HttpException(400, 'This user does not have access to this section.');
         }
 
         $userManager = $this->get('fos_user.user_manager');
@@ -360,26 +414,20 @@ class UserController extends FOSRestController implements ClassResourceInterface
           $data = $request->request->all();
         }
 
-        $username = $data['username'];
-        $firstname = $data['firstname'];
-        $lastname = $data['lastname'];
-        $email = $data['email'];
-        $dob = $data['dob'];
-
-        if ($username) {
-          $user->setUsername($username);
+        if ($data['username']) {
+          $user->setUsername($data['username']);
         }
-        if ($firstname) {
-          $user->setFirstname($firstname);
+        if ($data['firstname']) {
+          $user->setFirstname($data['firstname']);
         }
-        if ($lastname) {
-          $user->setLastname($lastname);
+        if ($data['lastname']) {
+          $user->setLastname($data['lastname']);
         }
-        if ($dob) {
-          $user->setDob($dob);
+        if ($data['email']) {
+          $user->setEmail($data['email']);
         }
-        if ($email) {
-          $user->setEmail($email);
+        if ($data['dob']) {
+          $user->setDob($data['dob']);
         }
 
         $userManager->updateUser($user);
@@ -413,11 +461,11 @@ class UserController extends FOSRestController implements ClassResourceInterface
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
 
         if (null === $user) {
-            throw new AccessDeniedException('This user does not have access to this section.');
+            throw new HttpException(400, 'This user does not have access to this section.');
         }
 
         if ($user->isPasswordRequestNonExpired($this->container->getParameter('fos_user.resetting.token_ttl'))) {
-            return new JsonResponse(array('msg' => 'Password reset request already received'));
+            throw new HttpException(400, 'Password reset request already received');
         }
 
         if (null === $user->getConfirmationToken()) {
@@ -490,6 +538,7 @@ class UserController extends FOSRestController implements ClassResourceInterface
       *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
       *      {"name"="username", "dataType"="string", "required"=true, "description"="username"},
       *      {"name"="password", "dataType"="string", "required"=true, "description"="password"},
+      *      {"name"="scope", "dataType"="string", "required"=true, "description"="Fixed value - API"}
       *  },
       * )
       */
@@ -508,33 +557,84 @@ class UserController extends FOSRestController implements ClassResourceInterface
 
         $username = $data['username'];
         $password = $data['password'];
+        $scope = $data['scope'];
         $clientId = $data['client_id'];
         $clientSecret = $data['client_secret'];
+        $grantType = 'password';
 
         if (!$username || !$password || !$clientId || !$clientSecret) {
-            throw new AccessDeniedException('Unable to obtain Access Token for missing username/password/clientId/clientSecret.');
+            throw new HttpException(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.');
         }
 
-        return new JsonResponse($this->fetchAccessToken($clientId, $clientSecret, $username, $password));
+        return new JsonResponse($this->fetchAccessToken($clientId, $clientSecret, $grantType, null, $username, $password, $scope));
+    }
+
+    /**
+      * Get a new Access Token from a Refresh Token. Will return a JsonResponse from oAuth upon success, else
+      * will throw ErrorException in html.
+      *
+      * @ApiDoc(
+      *  resource=true,
+      *  description="Request an oAuth Access Token from a Refersh Token",
+      *  parameters={
+      *      {"name"="client_id", "dataType"="string", "required"=true, "description"="oAuth ClientId"},
+      *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
+      *      {"name"="refresh_token", "dataType"="string", "required"=true, "description"="Refresh Token"},
+      *  },
+      * )
+      */
+    public function getRefreshTokenAction()
+    {
+        $userManager = $this->get('fos_user.user_manager');
+        $entityManager = $this->get('doctrine')->getManager();
+        $request = $this->container->get('request');
+
+        $method = $this->get('request')->getMethod();
+        if ('GET' === $method) {
+          $data = $request->query->all();
+        } else {
+          $data = $request->request->all();
+        }
+
+        $clientId = $data['client_id'];
+        $clientSecret = $data['client_secret'];
+        $refreshToken = $data['refresh_token'];
+        $grantType = 'refresh_token';
+
+        if (!$refreshToken || !$clientId || !$clientSecret) {
+            throw new HttpException(400, 'Unable to obtain Access Token for missing refresh token/clientId/clientSecret.');
+        }
+
+        return new JsonResponse($this->fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken));
     }
 
     /**
       * Fetch oAuth Access Token from oAuth engine.
       *
       */
-    private function fetchAccessToken($clientId, $clientSecret, $username, $password)
+    private function fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken = null, $username = null, $password = null, $scope = null)
     {
         $client = new OAuth2\Client($clientId, $clientSecret);
-        $params = array('username' => $username,
-                        'password' => $password);
-
-        $response = $client->getAccessToken($this->container->getParameter('oauth2_token_endpoint'),
-                                            'password', $params);
+        if ('refresh_token' == $grantType) {
+          $params = array('refresh_token' => $refreshToken
+                        );
+        } else {
+          $params = array('username' => $username,
+                          'password' => $password,
+                          'scope' => $scope
+                        );
+        }
+        $response = $client->getAccessToken($this->container->getParameter('oauth2_token_endpoint'), $grantType, $params);
 
         $accessToken = 'Total Garbage';
-        if(isset($response['result']) && isset($response['result']['access_token'])) {
+
+        if (isset($response['result'])) {
+          if (isset($response['result']['access_token'])) {
             $accessToken = $response['result']['access_token'];
-            // $this->client->setAccessToken($accessToken);
+          } elseif (isset($response['result']['error'])) {
+            // If error occurred, then throw an exception, else return the result
+            throw new HttpException(400, $response['result']['error'].' - '.$response['result']['error_description']);
+          }
         }
 
         return $response['result'];

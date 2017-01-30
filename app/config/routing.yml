@@ -25,7 +25,11 @@ users:
     resource: "@ApiBundle/Resources/config/user_routes.yml"
     type:     rest
     prefix: /api
+    # prefix: /api/v{version}
+    # requirements:
+    #     version: '^[0-9][\.0-9]*$'
     methods: GET|POST
+    defaults: { _format: json }
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"

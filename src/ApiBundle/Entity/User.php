@@ -93,4 +93,14 @@ class User extends BaseUser
 
         return $this;
     }
+
+    public function dobString()
+    {
+      $result = $this->dob->format('m-d-Y');
+      if ($result) {
+          return $result;
+      } else { // format failed
+          return "Unknown Time";
+      }
+    }
 }

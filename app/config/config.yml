@@ -79,8 +79,26 @@ fos_rest:
     routing_loader:
         default_format: json                            # All responses should be JSON formated
         include_format: false                           # We do not include format in request, so that all responses
-                                                        # will eventually be JSON formated
-
+    exception:
+        enabled: true
+        exception_controller: 'ApiBundle\Controller\ApiExceptionController::showAction'                                                        # will eventually be JSON formated
+    # versioning:
+    #     enabled: true
+    #     default_version: ~
+    #     resolvers:
+    #         query:              # Query parameter: /users?version=v1
+    #             enabled: true
+    #             parameter_name: version
+    #         custom_header:      # X-Accept-Version header
+    #             enabled: true
+    #             header_name: X-Accept-Version
+    #         media_type:         # Accept header
+    #             enabled: true
+    #             regex: /(v|version)=(?P<version>[0-9\.]+)/
+    #     guessing_order:
+    #         - query
+    #         - custom_header
+    #         - media_type
 fos_user:
     db_driver: orm
     firewall_name: main                                 # Seems to be used when registering user/reseting password,
@@ -97,7 +115,7 @@ fos_oauth_server:
     service:
         user_provider: fos_user.user_manager             # This property will be used when valid credentials are given to load the user upon access token creation
         options:
-            supported_scopes: USER
+            supported_scopes: USER API
 monolog:
     handlers:
         main:
