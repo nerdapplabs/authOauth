@@ -36,7 +36,7 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
-        
+
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
@@ -84,7 +84,7 @@ fos_rest:
         exception_controller: 'ApiBundle\Controller\ApiExceptionController::showAction'                                                        # will eventually be JSON formated
     # versioning:
     #     enabled: true
-    #     default_version: ~
+    #     default_version: v1.0
     #     resolvers:
     #         query:              # Query parameter: /users?version=v1
     #             enabled: true

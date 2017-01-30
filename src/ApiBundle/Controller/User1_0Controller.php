@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException as SecurityCoreExceptionAccessDeniedException;
@@ -32,10 +31,12 @@ use FOS\RestBundle\Controller\Annotations\Version;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
 /**
- * Version({"v1", "v2"}) - Remove this line or Put @ before Version, after a versioning strategy is finalized
+ * Version({"v1.0."}) - TBD. Not functioning due to a bug in FOSRestBundle. 
+ *
  * @NamePrefix("api_")
+ * @RouteResource("User")
  */
-class UserController extends FOSRestController implements ClassResourceInterface
+class User1_0Controller extends FOSRestController implements ClassResourceInterface
 {
     const SESSION_EMAIL = 'fos_user_send_resetting_email/email';
 
@@ -46,6 +47,8 @@ class UserController extends FOSRestController implements ClassResourceInterface
       *  resource=true,
       *  description="Fetch All Users",
       * )
+      *
+      * Method = GET. Provide this info in user_routes1_0_0.yml.
       */
     public function cgetAction()
     {

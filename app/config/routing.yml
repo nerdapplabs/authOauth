@@ -21,15 +21,11 @@ fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /profile
 
-users:
-    resource: "@ApiBundle/Resources/config/user_routes.yml"
+users_1_0:
+    resource: "@ApiBundle/Resources/config/user_routes1_0.yml"
     type:     rest
-    prefix: /api
-    # prefix: /api/v{version}
-    # requirements:
-    #     version: '^[0-9][\.0-9]*$'
-    methods: GET|POST
     defaults: { _format: json }
+    # condition: "request.attributes.get('version') == 'v1.0'"
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
