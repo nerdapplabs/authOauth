@@ -9,18 +9,11 @@ users:
     resource: "@ApiBundle/Controller/User1_0Controller.php"
     type:     rest
     prefix: /api/v1.0
-    # prefix: /api/v{version}
-    # requirements:
-    #     version: '^[0-9][\.0-9]*$'
-    requirements:
-      _method: POST
-    defaults: { _format: json }
+    methods: POST
 
 # Now override specific routes with GET. Careful with the "path" and the "name" to be the same as above,
 # otherwise a new route will be created with GET instead of overriding the POST one.
 api_get_users:
-  path:  /api/v1.0/users
-  defaults:  { _controller: ApiBundle:User1_0:cget }
-  requirements:
-    _method:  GET
-  defaults: { _format: json }
+    path:  /api/v1.0/users
+    defaults:  { _controller: ApiBundle:User1_0:cget }
+    methods: GET

@@ -23,9 +23,7 @@ fos_user_change_password:
 
 users_1_0:
     resource: "@ApiBundle/Resources/config/user_routes1_0.yml"
-    type:     rest
     defaults: { _format: json }
-    # condition: "request.attributes.get('version') == 'v1.0'"
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"

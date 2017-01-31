@@ -7,7 +7,6 @@ use FOS\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-
 /**
  * User
  *
@@ -96,11 +95,16 @@ class User extends BaseUser
 
     public function dobString()
     {
+      if (!$this->dob) {
+        return "Null Date of Birth";
+      }
+
       $result = $this->dob->format('m-d-Y');
+
       if ($result) {
           return $result;
       } else { // format failed
-          return "Unknown Time";
+          return "Malformed date of birth";
       }
     }
 }

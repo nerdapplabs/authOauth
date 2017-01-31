@@ -31,7 +31,7 @@ use FOS\RestBundle\Controller\Annotations\Version;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
 /**
- * Version({"v1.0."}) - TBD. Not functioning due to a bug in FOSRestBundle. 
+ * Version({"v1.0."}) - TBD. Not functioning due to a bug in FOSRestBundle.
  *
  * @NamePrefix("api_")
  * @RouteResource("User")
@@ -48,42 +48,42 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *  description="Fetch All Users",
       * )
       *
-      * Method = GET. Provide this info in user_routes1_0_0.yml.
+      * Method = GET. Provide this info in user_routes1_0.yml.
       */
     public function cgetAction()
     {
-        //security.yml is configured to allow anonymous access to controllers
-        //checking for authorization in each controller allows more flexibility
-        //to change this remove anonymous: true in security.yml on firewall
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw $this->createAccessDeniedException();
-        }
+      //security.yml is configured to allow anonymous access to controllers
+      //checking for authorization in each controller allows more flexibility
+      //to change this remove anonymous: true in security.yml on firewall
+      if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+          throw $this->createAccessDeniedException();
+      }
 
-        /*$em = $this->getDoctrine()->getEntityManager();
-        $repository = $em->getRepository("ApiBundle:User");
-        $users = $repository->findAll();
-        */
+      /*$em = $this->getDoctrine()->getEntityManager();
+      $repository = $em->getRepository("ApiBundle:User");
+      $users = $repository->findAll();
+      */
 
-        $repository = $this->getDoctrine()->getRepository("ApiBundle:User");
+      $repository = $this->getDoctrine()->getRepository("ApiBundle:User");
 
-    // createQueryBuilder() automatically selects FROM ApiBundle:User
-    // and aliases it to "u"
-        $query = $repository->createQueryBuilder('u')->select('u.username', 'u.email')->getQuery();
+      // createQueryBuilder() automatically selects FROM ApiBundle:User
+      // and aliases it to "u"
+      $query = $repository->createQueryBuilder('u')->select('u.username', 'u.email')->getQuery();
 
-        $users = $query->getResult();
+      $users = $query->getResult();
 
-        $logger = $this->get('logger');
-       // $logger->info('I just got the logger');
-       // $logger->error('An error occurred');
+      $logger = $this->get('logger');
+      // $logger->info('I just got the logger');
+      // $logger->error('An error occurred');
 
-       $logger->critical('Users fetched', $users);
+      $logger->critical('Users fetched', $users);
 
-        $view = $this->view($users, 200)
-            ->setTemplate("default/users.html.twig")
-            ->setTemplateVar('users')
-        ;
+      $view = $this->view($users, 200)
+          ->setTemplate("default/users.html.twig")
+          ->setTemplateVar('users')
+      ;
 
-        return $this->handleView($view);
+      return $this->handleView($view);
     }
 
     /**
@@ -100,16 +100,13 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getNewClientAction()
     {
+        $logger = $this->get('logger');
+
         $userManager = $this->get('fos_user.user_manager');
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
-        $method = $this->get('request')->getMethod();
-        if ('GET' === $method) {
-          $data = $request->query->all();
-        } else {
-          $data = $request->request->all();
-        }
+        $data = $request->request->all();
         $username = $data['username'];
         $password = $data['password'];
 
@@ -125,6 +122,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         // Check if this URL actually exists
         $headers = @get_headers($redirectUrl);
         if (strpos($headers[0],'200')=== false) {
+          $logger->error('400 ' . 'Invalid redirectURL: ' . $redirectUrl);
           throw new HttpException(400, 'Invalid redirectURL: ' . $redirectUrl);
         }
 
@@ -138,16 +136,19 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
             // Not an Admin
             if (!in_array('ROLE_ADMIN', $user->getRoles())) {
               $ifErred = true;
+              $logger->error('400 ' . 'User is not an Admin: ' . $username);
               throw new HttpException(400, 'User is not an Admin: ' . $username);
             }
           } else {
               // Password bad
               $ifErred = true;
+              $logger->error('400 ' . 'Invalid password: '. $username);
               throw new HttpException(400, 'Invalid password: '. $username);
           }
         } else {
           // Username bad
           $ifErred = true;
+          $logger->error('400 ' . 'Invalid username: ' . $username);
           throw new HttpException(400, 'Invalid username: ' . $username);
         }
 
@@ -163,6 +164,8 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
                                       ));
 
         $clientManager->updateClient($client);
+
+        $logger->info('200 ' . 'Client successfully created: ' . $client->getPublicId());
 
         return new JsonResponse(array(
           'client_id' => $client->getPublicId(),
@@ -184,7 +187,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *      {"name"="password", "dataType"="string", "required"=true, "description"="password"},
       *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname"},
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname"},
-      *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth"},
+      *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
       *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"},
       *      {"name"="scope", "dataType"="string", "required"=true, "description"="Fixed value - API"}
@@ -193,11 +196,14 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getRegisterAction()
     {
+        $logger = $this->get('logger');
+
         // First check if we have a valid redirectUrl
         $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
         // Check if this URL actually exists
         $headers = @get_headers($redirectUrl);
         if (strpos($headers[0],'200')=== false) {
+          $logger->error('400 ' . 'Invalid redirectURL: ' . $redirectUrl);
           throw new HttpException(400, 'Invalid redirectURL: ' . $redirectUrl);
         }
 
@@ -205,12 +211,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
-        $method = $this->get('request')->getMethod();
-        if ('GET' === $method) {
-          $data = $request->query->all();
-        } else {
-          $data = $request->request->all();
-        }
+        $data = $request->request->all();
 
         $clientId = $data['client_id'];
         $clientSecret = $data['client_secret'];
@@ -228,6 +229,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         ));
 
         if (null == $client) {
+            $logger->error('400 ' . 'Invalid Client Credentials: ' . $clientId);
             throw new HttpException(400, 'Invalid Client Credentials: ' . $clientId);
         }
 
@@ -245,37 +247,44 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         /** @var $user UserInterface */
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
         if (null != $user) {
+          $logger->error('400 ' . 'User already exists. Username: ' . $user->getUsername());
           throw new HttpException(400, 'User already exists. Username: ' . $user->getUsername());
         }
 
         // Check if password is empty
         if (null == $password) {
+            $logger->error('400 ' . 'Invalid empty password');
             throw new HttpException(400, 'Invalid empty password');
         }
 
         // Check if email is valid
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+          $logger->error('400 ' . 'Invalid email: ' . $email);
           throw new HttpException(400, 'Invalid email: ' . $email);
         }
 
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
         if (null != $user) {
+          $logger->error('400 ' . 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername());
           throw new HttpException(400, 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername());
         }
 
         // Check if dob is valid
         list($mm,$dd,$yyyy) = explode('/',$dob);
         if (!checkdate($mm,$dd,$yyyy)) {
+            $logger->error('400 ' . 'Invalid mm/dd/yyyy DOB: ' . $dob);
             throw new HttpException(400, 'Invalid mm/dd/yyyy DOB: ' . $dob);
         }
 
         // Check if scope is set to API
         if ('API' != $scope) {
+            $logger->error('400 ' . 'Invalid scope: ' . $scope);
             throw new HttpException(400, 'Invalid scope: ' . $scope);
         }
 
         // Check if firstname is empty. At least firstname is required.
         if (null == $firstname) {
+            $logger->error('400 ' . 'Invalid empty firstname');
             throw new HttpException(400, 'Invalid empty firstname');
         }
 
@@ -304,6 +313,8 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
                                                 $grantType, null, $username, $password, $scope);
         }
 
+        $logger->info('200 ' . 'User successfully created ' . $username);
+
         return new JsonResponse(array(
                 'code' => 201,
                 'message' => $msg,
@@ -328,8 +339,11 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getChangePasswordAction()
     {
+        $logger = $this->get('logger');
+
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
+            $logger->error('400 ' . 'invalid User or this user does not have access to this section.');
             throw new HttpException(400, 'invalid User or this user does not have access to this section.');
         }
 
@@ -337,12 +351,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
-        $method = $this->get('request')->getMethod();
-        if ('GET' === $method) {
-          $data = $request->query->all();
-        } else {
-          $data = $request->request->all();
-        }
+        $data = $request->request->all();
         $password = $data['password'];
 
         $user->setPlainPassword($password);
@@ -371,9 +380,17 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getProfileShowAction()
     {
+        $logger = $this->get('logger');
+
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
+            $logger->error('400 ' . 'invalid User or this user does not have access to this section.');
             throw new HttpException(400, 'This user does not have access to this section.');
+        }
+
+        // Check if dob is valid
+        if ($user->dobString() == "Null Date of Birth" || $user->dobString() == "Malformed date of birth") {
+            $logger->error('400 ' . 'Invalid or null DOB: ' . $user->dobString());
         }
 
         return new JsonResponse(array(
@@ -395,14 +412,21 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *  description="Update User profile detail",
       *  parameters={
       *      {"name"="access_token", "dataType"="string", "required"=true, "description"="oAuth Access Token"},
-      *      {"name"="name", "dataType"="string", "required"=true, "description"="User Cannonical name"},
+      *      {"name"="username", "dataType"="string", "required"=true, "description"="username, leave null if unchanged"},
+      *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname, leave null if unchanged"},
+      *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname, leave null if unchanged"},
+      *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy, leave null if unchanged"},
+      *      {"name"="email", "dataType"="email", "required"=true, "description"="Email, leave null if unchanged"},
       *  },
       * )
       */
     public function getProfileEditAction()
     {
+        $logger = $this->get('logger');
+
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
+            $logger->error('400 ' . 'invalid User or this user does not have access to this section.');
             throw new HttpException(400, 'This user does not have access to this section.');
         }
 
@@ -410,26 +434,54 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
-        $method = $this->get('request')->getMethod();
-        if ('GET' === $method) {
-          $data = $request->query->all();
-        } else {
-          $data = $request->request->all();
-        }
+        $data = $request->request->all();
 
         if ($data['username']) {
+          // Check if username is already taken
+          $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
+          if (null != $user1) {
+            $logger->error('400 ' . 'Already taken by Username: ' . $user1->getUsername());
+            throw new HttpException(400, 'Already taken by Username: ' . $user1->getUsername());
+          }
           $user->setUsername($data['username']);
         }
+
         if ($data['firstname']) {
+          // Check if firstname is empty. At least firstname is required.
+          if (null == $data['firstname']) {
+              $logger->error('400 ' . 'Invalid empty firstname');
+              throw new HttpException(400, 'Invalid empty firstname');
+          }
           $user->setFirstname($data['firstname']);
         }
+
         if ($data['lastname']) {
           $user->setLastname($data['lastname']);
         }
+
         if ($data['email']) {
+          // Check if email is valid
+          if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $logger->error('400 ' . 'Invalid email: ' . $data['email']);
+            throw new HttpException(400, 'Invalid email: ' . $data['email']);
+          }
+
+          // Check if email is already taken
+          $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
+          if (null != $user1) {
+            $logger->error('400 ' . 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername());
+            throw new HttpException(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername());
+          }
           $user->setEmail($data['email']);
         }
+
         if ($data['dob']) {
+          // Check if dob is valid
+          list($mm,$dd,$yyyy) = array_merge( explode('/',$data['dob']), array(0,0,0) );
+          if (!checkdate($mm,$dd,$yyyy)) {
+              $logger->error('400 ' . 'Invalid mm/dd/yyyy DOB: ' . $data['dob']);
+              throw new HttpException(400, 'Invalid mm/dd/yyyy DOB: ' . $data['dob']);
+          }
           $user->setDob($data['dob']);
         }
 
@@ -458,16 +510,20 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getResettingRequestEmailAction()
     {
+        $logger = $this->get('logger');
+
         $username = $this->container->get('request')->request->get('username');
 
         /** @var $user UserInterface */
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
 
         if (null === $user) {
+            $logger->error('400 ' . 'invalid User or this user does not have access to this section.');
             throw new HttpException(400, 'This user does not have access to this section.');
         }
 
         if ($user->isPasswordRequestNonExpired($this->container->getParameter('fos_user.resetting.token_ttl'))) {
+            $logger->error('400 ' . 'Password reset request already received');
             throw new HttpException(400, 'Password reset request already received');
         }
 
@@ -498,6 +554,8 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getResettingCheckEmailAction()
     {
+        $logger = $this->get('logger');
+
         $session = $this->container->get('session');
         $email = $session->get(static::SESSION_EMAIL);
         $session->remove(static::SESSION_EMAIL);
@@ -521,10 +579,14 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
      */
     protected function getObfuscatedEmail(UserInterface $user)
     {
+        $logger = $this->get('logger');
+
         $email = $user->getEmail();
         if (false !== $pos = strpos($email, '@')) {
             $email = '...' . substr($email, $pos);
         }
+
+        $logger->info('200 ' . $email);
 
         return $email;
     }
@@ -547,16 +609,13 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getAccessTokenAction()
     {
+        $logger = $this->get('logger');
+
         $userManager = $this->get('fos_user.user_manager');
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
-        $method = $this->get('request')->getMethod();
-        if ('GET' === $method) {
-          $data = $request->query->all();
-        } else {
-          $data = $request->request->all();
-        }
+        $data = $request->request->all();
 
         $username = $data['username'];
         $password = $data['password'];
@@ -566,6 +625,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $grantType = 'password';
 
         if (!$username || !$password || !$clientId || !$clientSecret) {
+            $logger->error('400 ' . 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.');
             throw new HttpException(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.');
         }
 
@@ -588,16 +648,13 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getRefreshTokenAction()
     {
+        $logger = $this->get('logger');
+
         $userManager = $this->get('fos_user.user_manager');
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
-        $method = $this->get('request')->getMethod();
-        if ('GET' === $method) {
-          $data = $request->query->all();
-        } else {
-          $data = $request->request->all();
-        }
+        $data = $request->request->all();
 
         $clientId = $data['client_id'];
         $clientSecret = $data['client_secret'];
@@ -605,6 +662,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $grantType = 'refresh_token';
 
         if (!$refreshToken || !$clientId || !$clientSecret) {
+            $logger->error('400 ' . 'Unable to obtain Access Token for missing refresh token/clientId/clientSecret.');
             throw new HttpException(400, 'Unable to obtain Access Token for missing refresh token/clientId/clientSecret.');
         }
 
@@ -617,8 +675,13 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     private function fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken = null, $username = null, $password = null, $scope = null)
     {
+        $logger = $this->get('logger');
+
         $client = new OAuth2\Client($clientId, $clientSecret);
-        if ('refresh_token' == $grantType) {
+
+        // This is a common function for both getAccessTokenAction() and getRefreshTokenAction().
+        // Hence, we need to distinguish between parameters passed.
+        if (null != $refreshToken) {
           $params = array('refresh_token' => $refreshToken
                         );
         } else {
@@ -636,6 +699,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
             $accessToken = $response['result']['access_token'];
           } elseif (isset($response['result']['error'])) {
             // If error occurred, then throw an exception, else return the result
+            $logger->error('400 ' . $response['result']['error'].' - '.$response['result']['error_description']);
             throw new HttpException(400, $response['result']['error'].' - '.$response['result']['error_description']);
           }
         }
