@@ -1,12 +1,11 @@
 {
 	"id": "68e49833-0673-1773-7fd9-0f71b9b358e0",
 	"name": "myCollection",
-	"description": "",
+	"description": null,
 	"order": [
 		"fcb900d6-8aad-46be-7d98-dbb4835b49df",
 		"9c0a3fa5-fc45-c873-ce95-b6048b2f1435",
 		"409f7dfa-fe26-1ea6-77e3-a452850b85aa",
-		"31a620eb-404d-26a9-2cd4-5b088e10f55c",
 		"be1e3b9f-10da-ffd3-56bb-31a7c6ac1aed",
 		"ee55ee6b-bb9e-62ce-87b1-37bbe4613884",
 		"f8825096-707a-e75c-31f9-f6032a40cd6c",
@@ -16,61 +15,13 @@
 		"3782e057-0049-eef8-d9e7-310eb7a07f34"
 	],
 	"folders": [],
-	"timestamp": 1485590996893,
+	"timestamp": 0,
 	"owner": "1510042",
 	"public": false,
 	"requests": [
 		{
-			"id": "31a620eb-404d-26a9-2cd4-5b088e10f55c",
-			"headers": "",
-			"url": "http://localhost/auth/web/api/v1.0/user/access/token",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "client_id",
-					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "client_secret",
-					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "username",
-					"value": "a77",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "password",
-					"value": "a77",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "scope",
-					"value": "API",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486010681439,
-			"name": "get access token existing user",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
 			"id": "3782e057-0049-eef8-d9e7-310eb7a07f34",
-			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
 			"url": "http://localhost/auth/web/api/v1.0/users",
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -90,15 +41,13 @@
 				}
 			],
 			"dataMode": "urlencoded",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010833976,
+			"time": 1486033938299,
 			"name": "get all users",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "409f7dfa-fe26-1ea6-77e3-a452850b85aa",
@@ -110,25 +59,25 @@
 			"data": [
 				{
 					"key": "client_id",
-					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"value": "7_2uii6vkzzxusk0goc4wwckgcsg00ccc08008ww0scokog448gs",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "client_secret",
-					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"value": "881tcyvdvnk040c4k4c88csgk0s0400oc8oook44kwc40w8cg",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "username",
-					"value": "a77",
+					"value": "a77778",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "password",
-					"value": "a77",
+					"value": "a77778",
 					"type": "text",
 					"enabled": true
 				},
@@ -140,19 +89,17 @@
 				}
 			],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010647970,
+			"time": 1486033286966,
 			"name": "get Access Token",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "5bea2ef7-4b22-182c-3360-23682cd19e08",
-			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
 			"url": "http://localhost/auth/web/api/v1.0/user/profile/showme",
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -166,19 +113,17 @@
 				}
 			],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010785214,
+			"time": 1486033894116,
 			"name": "error_route",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "6498ddb9-e827-bc67-7dc3-1586dafeed4a",
-			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
 			"url": "http://localhost/auth/web/api/v1.0/user/profile/edit",
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -186,7 +131,7 @@
 			"data": [
 				{
 					"key": "lastname",
-					"value": "lastofa77",
+					"value": "lastofa7778",
 					"type": "text",
 					"enabled": true
 				},
@@ -216,34 +161,30 @@
 				}
 			],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010823841,
+			"time": 1486033921003,
 			"name": "profile_edit",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "86372d09-b7b2-004f-aa9c-caf74be597e4",
-			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
-			"url": "http://localhost/auth/web/api/v1.0/user/profile/show",
+			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
+			"url": "http://192.168.1.204/auth/web/api/v1.0/user/profile/show",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
 			"data": [],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010796935,
+			"time": 1486033903291,
 			"name": "profile_show",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "9c0a3fa5-fc45-c873-ce95-b6048b2f1435",
@@ -255,31 +196,31 @@
 			"data": [
 				{
 					"key": "client_id",
-					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"value": "7_2uii6vkzzxusk0goc4wwckgcsg00ccc08008ww0scokog448gs",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "client_secret",
-					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"value": "881tcyvdvnk040c4k4c88csgk0s0400oc8oook44kwc40w8cg",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "username",
-					"value": "a77",
+					"value": "a77778",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "password",
-					"value": "a77",
+					"value": "a77778",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "email",
-					"value": "a77@nerd.com",
+					"value": "a77778@nerd.com",
 					"type": "text",
 					"enabled": true
 				},
@@ -315,15 +256,13 @@
 				}
 			],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010630076,
+			"time": 1486033014369,
 			"name": "register",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "be1e3b9f-10da-ffd3-56bb-31a7c6ac1aed",
@@ -335,37 +274,35 @@
 			"data": [
 				{
 					"key": "client_id",
-					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"value": "7_2uii6vkzzxusk0goc4wwckgcsg00ccc08008ww0scokog448gs",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "client_secret",
-					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"value": "881tcyvdvnk040c4k4c88csgk0s0400oc8oook44kwc40w8cg",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "refresh_token",
-					"value": "ODZhYjZhZjQxMTVhMjIxODk0M2M4MDk2YThlYzYwZWFiZmIyZmEzMjVkN2YzZjdlMjU3NzE4YWE2NTk5MDIyMA",
+					"value": "OWNkMjU3MGFlZTgzY2MxNTU0NDMyYjNmZjFlMTAwNDc1MGYwNDk2MTRjZWViOGM1YTcwMzhkZDk4OTVjYzI1MA",
 					"type": "text",
 					"enabled": true
 				}
 			],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010709945,
+			"time": 1486033807403,
 			"name": "get Refresh Token ",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "ee55ee6b-bb9e-62ce-87b1-37bbe4613884",
-			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
 			"url": "http://localhost/auth/web/api/v1.0/user/change/password",
 			"preRequestScript": null,
 			"pathVariables": {},
@@ -373,47 +310,49 @@
 			"data": [
 				{
 					"key": "password",
-					"value": "a77",
+					"value": "a77778",
 					"type": "text",
 					"enabled": true
 				}
 			],
 			"dataMode": "params",
-			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010731330,
+			"time": 1486033877795,
 			"name": "Password change",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "f8825096-707a-e75c-31f9-f6032a40cd6c",
-			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
-			"url": "http://localhost/auth/web/api/v1.0/user/resetting/request/email",
+			"headers": "",
+			"url": "http://localhost/auth/web/api/v1.0/user/resetting/request/email?username=a777",
 			"preRequestScript": null,
 			"pathVariables": {},
-			"method": "POST",
+			"method": "GET",
 			"data": [
 				{
-					"key": "username",
-					"value": "a77",
+					"key": "access_token",
+					"value": "OGQ1NTQ4YjgyOTdjMjIzNmE0Zjk3M2U4MDk5YmIzMTQzY2NkYjRiMWE1MjdmNGNhMWNjMWVhNTBjMDc4ZDgxMg",
 					"type": "text",
 					"enabled": true
+				},
+				{
+					"key": "version",
+					"value": "v1",
+					"type": "text",
+					"enabled": false
 				}
 			],
-			"dataMode": "params",
-			"version": 2,
+			"dataMode": "urlencoded",
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486010752385,
+			"time": 1486035471042,
 			"name": "Resetting request email",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		},
 		{
 			"id": "fcb900d6-8aad-46be-7d98-dbb4835b49df",
@@ -440,11 +379,10 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486003300707,
+			"time": 1486032750325,
 			"name": "create_client",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-			"responses": []
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
 		}
 	]
 }

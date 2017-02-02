@@ -533,30 +533,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $user->setPasswordRequestedAt(new \DateTime());
         $this->container->get('fos_user.user_manager')->updateUser($user);
 
-        return new RedirectResponse($this->container->get('router')->generate('api_get_user_resetting_check_email'));
-    }
-
-    /**
-      * Tell the user to check his email provider
-      *
-      * @ApiDoc(
-      *  resource=true,
-      *  description="Tell the user to check his email provider",
-      *  parameters={
-      *      {"name"="access_token", "dataType"="string", "required"=true, "description"="oAuth Access Token"},
-      *  },
-      * )
-      */
-    public function getResettingCheckEmailAction()
-    {
         $session = $this->container->get('session');
         $email = $session->get(static::SESSION_EMAIL);
         $session->remove(static::SESSION_EMAIL);
-
-        if (empty($email)) {
-            // the user does not come from the sendEmail action
-            return new RedirectResponse($this->container->get('router')->generate('api_get_user_resetting_request_email'));
-        }
 
         return new JsonResponse(array(
             'code' => 201,

@@ -21,7 +21,3 @@ api_get_user_resetting_request_email:
     path:  /api/v1.0/user/resetting/request/email
     defaults:  { _controller: ApiBundle:User1_0:getResettingRequestEmail }
     methods: GET
-api_get_user_resetting_check_email:
-    path:  /api/v1.0/user/resetting/check/email
-    defaults:  { _controller: ApiBundle:User1_0:getResettingCheckEmail }
-    methods: GET
