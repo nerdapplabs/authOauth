@@ -538,6 +538,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $user->setPasswordRequestedAt(new \DateTime());
         $this->container->get('fos_user.user_manager')->updateUser($user);
 
+        // TODO: Check why route api_get_user_resetting_check_email is not accepting POST request
         return new RedirectResponse($this->container->get('router')->generate('api_get_user_resetting_check_email'));
     }
 

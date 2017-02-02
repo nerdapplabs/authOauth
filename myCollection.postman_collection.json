@@ -1,0 +1,450 @@
+{
+	"id": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+	"name": "myCollection",
+	"description": "",
+	"order": [
+		"fcb900d6-8aad-46be-7d98-dbb4835b49df",
+		"9c0a3fa5-fc45-c873-ce95-b6048b2f1435",
+		"409f7dfa-fe26-1ea6-77e3-a452850b85aa",
+		"31a620eb-404d-26a9-2cd4-5b088e10f55c",
+		"be1e3b9f-10da-ffd3-56bb-31a7c6ac1aed",
+		"ee55ee6b-bb9e-62ce-87b1-37bbe4613884",
+		"f8825096-707a-e75c-31f9-f6032a40cd6c",
+		"5bea2ef7-4b22-182c-3360-23682cd19e08",
+		"86372d09-b7b2-004f-aa9c-caf74be597e4",
+		"6498ddb9-e827-bc67-7dc3-1586dafeed4a",
+		"3782e057-0049-eef8-d9e7-310eb7a07f34"
+	],
+	"folders": [],
+	"timestamp": 1485590996893,
+	"owner": "1510042",
+	"public": false,
+	"requests": [
+		{
+			"id": "31a620eb-404d-26a9-2cd4-5b088e10f55c",
+			"headers": "",
+			"url": "http://localhost/auth/web/api/v1.0/user/access/token",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "client_id",
+					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "client_secret",
+					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "scope",
+					"value": "API",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010681439,
+			"name": "get access token existing user",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
+		},
+		{
+			"id": "3782e057-0049-eef8-d9e7-310eb7a07f34",
+			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"url": "http://localhost/auth/web/api/v1.0/users",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [
+				{
+					"key": "access_token",
+					"value": "OGQ1NTQ4YjgyOTdjMjIzNmE0Zjk3M2U4MDk5YmIzMTQzY2NkYjRiMWE1MjdmNGNhMWNjMWVhNTBjMDc4ZDgxMg",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "version",
+					"value": "v1",
+					"type": "text",
+					"enabled": false
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010833976,
+			"name": "get all users",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "409f7dfa-fe26-1ea6-77e3-a452850b85aa",
+			"headers": "",
+			"url": "http://localhost/auth/web/api/v1.0/user/access/token",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "client_id",
+					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "client_secret",
+					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "scope",
+					"value": "API",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010647970,
+			"name": "get Access Token",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "5bea2ef7-4b22-182c-3360-23682cd19e08",
+			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"url": "http://localhost/auth/web/api/v1.0/user/profile/showme",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010785214,
+			"name": "error_route",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "6498ddb9-e827-bc67-7dc3-1586dafeed4a",
+			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"url": "http://localhost/auth/web/api/v1.0/user/profile/edit",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "lastname",
+					"value": "lastofa77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "firstname",
+					"value": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "email",
+					"value": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "dob",
+					"value": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010823841,
+			"name": "profile_edit",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "86372d09-b7b2-004f-aa9c-caf74be597e4",
+			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"url": "http://localhost/auth/web/api/v1.0/user/profile/show",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010796935,
+			"name": "profile_show",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "9c0a3fa5-fc45-c873-ce95-b6048b2f1435",
+			"headers": "",
+			"url": "http://localhost/auth/web/api/v1.0/user/register",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "client_id",
+					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "client_secret",
+					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "email",
+					"value": "a77@nerd.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "email_confirmation",
+					"value": "0",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "firstname",
+					"value": "first",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "lastname",
+					"value": "last",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "dob",
+					"value": "11/28/1976",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "scope",
+					"value": "API",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010630076,
+			"name": "register",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "be1e3b9f-10da-ffd3-56bb-31a7c6ac1aed",
+			"headers": "",
+			"url": "http://localhost/auth/web/api/v1.0/user/refresh/token",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "client_id",
+					"value": "1_4ecyuqcmwge8ks04k0cck4o4wswgocss4owg0coco8swk4cgk8",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "client_secret",
+					"value": "6615g8r6wp8ocw488c8w00ckco0c0k80ws8ww4ok4sk84w4w0w",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "refresh_token",
+					"value": "ODZhYjZhZjQxMTVhMjIxODk0M2M4MDk2YThlYzYwZWFiZmIyZmEzMjVkN2YzZjdlMjU3NzE4YWE2NTk5MDIyMA",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010709945,
+			"name": "get Refresh Token ",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "ee55ee6b-bb9e-62ce-87b1-37bbe4613884",
+			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"url": "http://localhost/auth/web/api/v1.0/user/change/password",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "password",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010731330,
+			"name": "Password change",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "f8825096-707a-e75c-31f9-f6032a40cd6c",
+			"headers": "Authorization: Bearer ZWNkYTc4NjRjODI5Yzg4NzM2MWRiYjIxNjgzMzJmNWJlMTFiZjY1ZTkxNzM3Yzg3NzA2ZDdjN2FmMzIwMGVjNw\n",
+			"url": "http://localhost/auth/web/api/v1.0/user/resetting/request/email",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "a77",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486010752385,
+			"name": "Resetting request email",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		},
+		{
+			"id": "fcb900d6-8aad-46be-7d98-dbb4835b49df",
+			"headers": "",
+			"url": "http://localhost/auth/web/api/v1.0/user/new/client",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "aUser",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "test1test1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486003300707,
+			"name": "create_client",
+			"description": "",
+			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0",
+			"responses": []
+		}
+	]
+}
