@@ -48,12 +48,16 @@ class ApiExceptionController extends Controller
     {
         $currentContent = $this->getAndCleanOutputBuffering($request->headers->get('X-Php-Ob-Level', -1));
         $code = $this->getStatusCode($exception);
-        $errorMessage = $exception->getMessage();
+
+        $errMessageArray = split('#showme#', $exception->getMessage());
+        $errorMessage = $errMessageArray[0];
+        $showMessage = count($errMessageArray) > 1 ? $errMessageArray[1] : '';
 
         $templateData = [
             'code' => $code,
             'error' => array_key_exists($code, Response::$statusTexts) ? Response::$statusTexts[$code] : 'client error',
-            'error_description' => $exception->getMessage(),
+            'error_description' => $errorMessage,
+            'show_message' => $showMessage
         ];
         return new JsonResponse($templateData);
     }
