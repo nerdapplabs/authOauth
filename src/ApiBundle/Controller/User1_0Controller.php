@@ -119,6 +119,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
         // First check if we have a valid redirectUrl
         $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
+        if (substr($redirectUrl, -1) != '/') {
+          $redirectUrl .= '/';
+        }
         // Check if this URL actually exists
         $headers = @get_headers($redirectUrl);
         if (strpos($headers[0],'200')=== false) {
@@ -200,6 +203,10 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
         // First check if we have a valid redirectUrl
         $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
+        if (substr($redirectUrl, -1) != '/') {
+          $redirectUrl .= '/';
+        }
+
         // Check if this URL actually exists
         $headers = @get_headers($redirectUrl);
         if (strpos($headers[0],'200')=== false) {
