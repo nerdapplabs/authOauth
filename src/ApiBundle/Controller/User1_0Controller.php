@@ -327,9 +327,8 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *
       * @ApiDoc(
       *  resource=true,
-      *  description="Change password of the user",
+      *  description="Change password of the user. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
-      *      {"name"="access_token", "dataType"="string", "required"=true, "description"="oAuth Access Token"},
       *      {"name"="password", "dataType"="string", "required"=true, "description"="New password"},
       *  },
       * )
@@ -369,10 +368,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *
       * @ApiDoc(
       *  resource=true,
-      *  description="Fetch User profile detail",
-      *  parameters={
-      *      {"name"="access_token", "dataType"="string", "required"=true, "description"="oAuth Access Token"},
-      *  },
+      *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
       * )
       */
     public function getProfileShowAction()
@@ -412,9 +408,8 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *
       * @ApiDoc(
       *  resource=true,
-      *  description="Update User profile detail",
+      *  description="Update User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
-      *      {"name"="access_token", "dataType"="string", "required"=true, "description"="oAuth Access Token"},
       *      {"name"="username", "dataType"="string", "required"=true, "description"="username, leave null if unchanged"},
       *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname, leave null if unchanged"},
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname, leave null if unchanged"},
@@ -572,7 +567,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *
       * @ApiDoc(
       *  resource=true,
-      *  description="Request an oAuth Access Token",
+      *  description="Request a new Access Token",
       *  parameters={
       *      {"name"="client_id", "dataType"="string", "required"=true, "description"="oAuth ClientId"},
       *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
@@ -620,7 +615,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       *
       * @ApiDoc(
       *  resource=true,
-      *  description="Request an oAuth Access Token from a Refersh Token",
+      *  description="Request a new Access Token from a Refresh Token",
       *  parameters={
       *      {"name"="client_id", "dataType"="string", "required"=true, "description"="oAuth ClientId"},
       *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
