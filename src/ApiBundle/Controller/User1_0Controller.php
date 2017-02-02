@@ -608,11 +608,10 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $msg = 'Access Token successfully fetched for ' . $username;
         $this->logMessage('201 ' . $msg);
 
-        return new JsonResponse(array(
-          'code' => 201,
-          'show_message' => '', // Not required to show this message to client
-          'oauth' => $oAuthRtn
-        ));
+        $oAuthRtn['code'] = 201;
+        $oAuthRtn['show_message'] = 'Logged in successfully';
+
+        return new JsonResponse($oAuthRtn);
     }
 
     /**
@@ -653,11 +652,10 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $msg = 'Access Token successfully fetched on Refresh Token';
         $this->logMessage('201 ' . $msg);
 
-        return new JsonResponse(array(
-          'code' => 201,
-          'show_message' => '', // Not required to show this message to client
-          'oauth' => $oAuthRtn
-        ));
+        $oAuthRtn['code'] = 201;
+        $oAuthRtn['show_message'] = 'Logged in successfully';
+
+        return new JsonResponse($oAuthRtn);
     }
 
     /**
