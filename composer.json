@@ -28,7 +28,6 @@
         "friendsofsymfony/oauth-server-bundle": "^1.5",
         "adoy/oauth2": "dev-master",
         "symfony/assetic-bundle": "^2.8",
-        "white-october/pagerfanta-bundle"      : "^1.0",
         "erusev/parsedown": "^1.6"
     },
     "require-dev": {
