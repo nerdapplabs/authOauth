@@ -5,5 +5,22 @@ parameters:
 
 services:
 #    service_name:
-#        class: AppBundle\Directory\ClassName
+#        class: ApiBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+    # First we define some basic services to make these utilities available in
+    # the entire application
+    slugger:
+        class: ApiBundle\Utils\Slugger
+
+    markdown:
+        class: ApiBundle\Utils\Markdown
+
+    # These are the Twig extensions that create new filters and functions for
+    # using them in the templates
+    app.twig.app_extension:
+        public:    false
+        class:     ApiBundle\Twig\AppExtension
+        arguments: ['@markdown', '%app_locales%']
+        tags:
+            - { name: twig.extension }

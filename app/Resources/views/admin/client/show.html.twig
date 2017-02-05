@@ -1,0 +1,35 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_client_show' %}
+
+{% block main %}
+    <h1>{{ 'title.client'|trans }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">{{ 'label.client_id'|trans }}</th>
+                <td>{{ client.id }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.client_randomid'|trans }}</th>
+                <td>{{ client.randomid }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.client_secret'|trans }}</th>
+                <td>{{ client.secret }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        {{ include('admin/client/_form.html.twig', {
+            form: delete_form,
+            button_label: 'action.delete_client'|trans,
+            button_css: 'btn btn-lg btn-block btn-danger',
+            show_confirmation: true,
+        }, with_context = false) }}
+    </div>
+{% endblock %}

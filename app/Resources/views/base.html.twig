@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale }}">
     <head>
         <!-- Basic Page Needs
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -7,12 +7,12 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <meta name="description" content="">
         <meta name="author" content="">
-        
+
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- Mobile Specific Metas
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
-       
+
         <!-- FONT
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
@@ -29,26 +29,30 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        
-       
+
+
         <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  {% include "nav.html.twig" %} 
-  <div class="container"> 
-    <div class="row">   
-        {% block body %}{% endblock %}     
-    </div>
-  </div>
+  {% include "nav.html.twig" %}
 
+  <div class="container body-container">
+      {% block body %}
+          <div class="row">
+              <div id="main" class="col-sm-9">
+                  {{ include('default/_flash_messages.html.twig') }}
+
+                  {% block main %}{% endblock %}
+              </div>
+
+              <div id="sidebar" class="col-sm-3">
+                  {% block sidebar %}{% endblock %}
+              </div>
+          </div>
+      {% endblock %}
+  </div>
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    
+
         {% block javascripts %}{% endblock %}
     </body>
 </html>
-
-
-
-    
-
-    

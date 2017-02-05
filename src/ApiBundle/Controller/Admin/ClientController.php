@@ -1,0 +1,182 @@
+<?php
+
+namespace ApiBundle\Controller\Admin;
+
+use ApiBundle\Entity\Client;
+use ApiBundle\Form\ClientType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+use OAuth2;
+
+/**
+ * Controller used to manage client contents in the backend.
+ *
+ * @Route("/admin/client")
+ * @Security("has_role('ROLE_ADMIN')")
+ *
+ * @author Amarendra Kumar Sinha <aksinha@nerdapplabs.com>
+ */
+class ClientController extends Controller
+{
+    /**
+     * Lists all Client entities.
+     *
+     * @Route("/", name="admin_client_index")
+     * @Method("GET")
+     */
+    public function indexAction()
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $clients = $entityManager->getRepository(Client::class)->findAll();
+
+        return $this->render('admin/client/index.html.twig', ['clients' => $clients]);
+    }
+
+    /**
+     * Creates a new Client entity.
+     *
+     * @Route("/new", name="admin_client_new")
+     * @Method({"GET", "POST"})
+     */
+    public function newAction(Request $request)
+    {
+        $defaultData = array('message' => 'Create a new Client');
+        $form = $this->createFormBuilder($defaultData)
+           ->add('password', 'password', array('label' => 'Admin password' ))
+           ->add('send', 'submit', array('label' => 'Create Client' ))
+           ->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $user = $this->container->get('security.context')->getToken()->getUser();
+            $username = $user->getUsername();
+            $password = $form['password']->getData();
+
+            // First check if we have a valid redirectUrl
+            $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
+            if (substr($redirectUrl, -1) != '/') {
+              $redirectUrl .= '/';
+            }
+            // Check if this URL actually exists
+            $headers = @get_headers($redirectUrl);
+            if (strpos($headers[0],'200')=== false) {
+              $this->logAndThrowError(400, 'Invalid redirectURL: ' . $redirectUrl);
+            }
+
+            // Check for the valid Admin user
+            if ($user) {
+              // Get the encoder for the users password
+              $encoder_service = $this->get('security.encoder_factory');
+              $encoder = $encoder_service->getEncoder($user);
+
+              if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
+                // Not an Admin
+                if (!in_array('ROLE_ADMIN', $user->getRoles())) {
+                  $ifErred = true;
+                  $this->logAndThrowError(400, 'User is not an Admin: ' . $username . '#showme#' . 'Sorry, you are not an Admin!');
+                }
+              } else {
+                  // Password bad
+                  $ifErred = true;
+                  $this->logAndThrowError(400, 'Invalid password: '. $username . '#showme#' . 'Sorry, Wrong/Missing Password!');
+              }
+            } else {
+              // Username bad
+              $ifErred = true;
+              $this->logAndThrowError(400, 'Invalid username: ' . $username. $username . '#showme#' . 'Sorry, Wrong/Missing Username!');
+            }
+
+            // Everything ok, now proceed to create the client
+            $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
+            $client = $clientManager->createClient();
+            $client->setRedirectUris(array($redirectUrl));
+            $client->setAllowedGrantTypes(array("authorization_code",
+                                                "password",
+                                                "refresh_token",
+                                                "token",
+                                                "client_credentials"
+                                          ));
+
+            $clientManager->updateClient($client);
+
+            $this->logMessage('200 ' . 'Client successfully created: ' . $client->getPublicId());
+
+            $this->addFlash('success', 'client.created_successfully');
+
+            return $this->redirectToRoute('admin_client_index');
+        }
+
+        return $this->render('admin/client/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * Finds and displays a Client entity.
+     *
+     * @Route("/{id}", name="admin_client_show")
+     * @Method("GET")
+     */
+    public function showAction(Client $client)
+    {
+        $deleteForm = $this->createDeleteForm($client);
+
+        return $this->render('admin/client/show.html.twig', [
+            'client' => $client,
+            'delete_form' => $deleteForm->createView(),
+        ]);
+    }
+
+    /**
+     * Deletes a Client entity.
+     *
+     * @Route("/delete/{id}", name="admin_client_delete")
+     */
+    public function deleteAction(Request $request, Client $client)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->remove($client);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'client.deleted_successfully');
+
+        return $this->redirectToRoute('admin_client_index');
+    }
+
+    /**
+     * Creates a form to delete a Client entity by id.
+     *
+     * @param Client $client The client object
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm(Client $client)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('admin_client_delete', ['id' => $client->getId()]))
+            ->setMethod('POST')
+            ->getForm()
+        ;
+    }
+
+    private function logAndThrowError($errCode = 400, $errMsg = 'Bad Request') {
+      $logger = $this->get('logger');
+
+      $logger->error($errCode. ' ' . $errMsg);
+      throw new HttpException($errCode, $errMsg);
+    }
+
+    private function logMessage($logMsg = 'Nil Log Message') {
+      $logger = $this->get('logger');
+
+      $logger->info(200 . ' ' . $logMsg);
+    }
+}
