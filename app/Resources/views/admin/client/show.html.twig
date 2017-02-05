@@ -8,6 +8,10 @@
     <table class="table">
         <tbody>
             <tr>
+                <th scope="row">{{ 'label.client_name'|trans }}</th>
+                <td>{{ client.name }}</td>
+            </tr>
+            <tr>
                 <th scope="row">{{ 'label.client_id'|trans }}</th>
                 <td>{{ client.id }}</td>
             </tr>
@@ -24,6 +28,12 @@
 {% endblock %}
 
 {% block sidebar %}
+    <div class="section">
+        <a href="{{ path('admin_client_edit', { id: client.id }) }}" class="btn btn-lg btn-block btn-success">
+            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+        </a>
+    </div>
+
     <div class="section">
         {{ include('admin/client/_form.html.twig', {
             form: delete_form,

@@ -48,9 +48,10 @@ class ClientController extends Controller
     {
         $defaultData = array('message' => 'Create a new Client');
         $form = $this->createFormBuilder($defaultData)
-           ->add('password', 'password', array('label' => 'Admin password' ))
-           ->add('send', 'submit', array('label' => 'Create Client' ))
-           ->getForm();
+                ->add('name', 'text', array('label' => 'label.client_name' ))
+                ->add('password', 'password', array('label' => 'label.admin_password' ))
+                ->add('send', 'submit', array('label' => 'label.create_client' ))
+                ->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -96,6 +97,7 @@ class ClientController extends Controller
             // Everything ok, now proceed to create the client
             $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
             $client = $clientManager->createClient();
+            $client->setName($form['name']->getData());
             $client->setRedirectUris(array($redirectUrl));
             $client->setAllowedGrantTypes(array("authorization_code",
                                                 "password",
@@ -130,6 +132,41 @@ class ClientController extends Controller
 
         return $this->render('admin/client/show.html.twig', [
             'client' => $client,
+            'delete_form' => $deleteForm->createView(),
+        ]);
+    }
+
+    /**
+     * Displays a form to edit an existing Client entity.
+     *
+     * @Route("/edit/{id}", requirements={"id": "\d+"}, name="admin_client_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function editAction(Client $client, Request $request)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $defaultData = array('message' => 'Edit a Client');
+        $editForm = $this->createFormBuilder($defaultData)
+                ->add('name', 'text', array('label' => 'label.client_name' ))
+                ->getForm();
+
+        $deleteForm = $this->createDeleteForm($client);
+
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $client->setName($editForm['name']->getData());
+            $entityManager->flush();
+
+            $this->addFlash('success', 'client.updated_successfully');
+
+            return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
+        }
+
+        return $this->render('admin/client/edit.html.twig', [
+            'client' => $client,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ]);
     }

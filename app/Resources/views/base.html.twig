@@ -1,58 +1,7 @@
-<!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
-    <head>
-        <!-- Basic Page Needs
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <meta name="description" content="">
-        <meta name="author" content="">
-
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- Mobile Specific Metas
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- FONT
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
-        <!-- CSS
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        {% block stylesheets %}
-            {% stylesheets '@ApiBundle/Resources/public/skeleton/css/*' filter='cssrewrite' %}
-                <link rel="stylesheet" href="{{ asset_url }}" />
-            {% endstylesheets %}
-        {% endblock %}
-        <!-- Favicon
-        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-
-
-        <!-- Primary Page Layout
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  {% include "nav.html.twig" %}
-
-  <div class="container body-container">
-      {% block body %}
-          <div class="row">
-              <div id="main" class="col-sm-9">
-                  {{ include('default/_flash_messages.html.twig') }}
-
-                  {% block main %}{% endblock %}
-              </div>
-
-              <div id="sidebar" class="col-sm-3">
-                  {% block sidebar %}{% endblock %}
-              </div>
-          </div>
-      {% endblock %}
-  </div>
-<!-- End Document
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-
-        {% block javascripts %}{% endblock %}
-    </body>
-</html>
+{#
+   This is the base template of the all backend pages. The layout is inherited
+   from the desired front end theme. Currently the available options are\
+   bootstrap and skeleton. Just change the below line to select the other desired
+   theme.
+#}
+{% extends 'base_bootstrap.html.twig' %}

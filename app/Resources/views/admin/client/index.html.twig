@@ -8,6 +8,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_name'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_id'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_randomid'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_secret'|trans }}</th>
@@ -16,6 +17,7 @@
         <tbody>
         {% for client in clients %}
             <tr>
+                <td>{{ client.name }}</td>
                 <td>{{ client.id }}</td>
                 <td>{{ client.randomid }}</td>
                 <td>{{ client.secret }}</td>

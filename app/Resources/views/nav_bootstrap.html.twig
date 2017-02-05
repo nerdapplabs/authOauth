@@ -1,0 +1,68 @@
+{% block nav %}
+<!-- Static navbar -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Nerd Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            <li>
+                <a href="{{ path('fos_user_security_logout') }}">{{ 'Logged in as'}} {{ app.user.username }} | {{ 'action.sign_out'|trans }}</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'action.settings'|trans }}<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ path('fos_user_resetting_request') }}">{{ 'action.reset_password'|trans }}</a></li>
+                    <li><a href="{{ path('fos_user_change_password') }}">{{ 'action.change_password'|trans }}</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'action.profile'|trans }}<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{{ path('fos_user_profile_show') }}">{{ 'action.show_profile'|trans }}</a></li>
+                  <li><a href="{{ path('fos_user_profile_edit') }}">{{ 'action.edit_profile'|trans }}</a></li>
+                </ul>
+            </li>
+        {% else %}
+            <li><a href="{{ path('fos_user_security_login') }}">{{ 'action.sign_in'|trans }}</a></li>
+            <li><a href="{{ path('fos_user_registration_register') }}">{{ 'action.sign_up'|trans }}</a></li>
+        {% endif %}
+        {% if is_granted("ROLE_ADMIN") %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'action.admin_menu'|trans }}<span class="caret"></span></a>
+              <ul class="dropdown-menu locales" role="menu" aria-labelledby="locales">
+                <li><a href="#">{{ 'action.role_management'|trans }}</a></li>
+                <li><a href="#">{{ 'action.user_management'|trans }}</a></li>
+                <li><a href="{{ path('admin_client_index') }}">{{ 'action.client_management'|trans }}</a></li>
+                <li><a href="{{ path('admin_client_new') }}">{{ 'action.create_new_client'|trans }}</a></li>
+              </ul>
+            </li>
+        {% endif %}
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" id="locales">
+                <i class="fa fa-globe" aria-hidden="true"></i>
+                <span class="caret"></span>
+                <span>{{ 'menu.choose_language'|trans }}</span>
+            </a>
+            <ul class="dropdown-menu locales" role="menu" aria-labelledby="locales">
+                {% for locale in locales() %}
+                    <li {% if app.request.locale == locale.code %}aria-checked="true" class="active"{%else%}aria-checked="false"{% endif %} role="menuitem"><a href="{{ path(app.request.get('_route', 'blog_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container-fluid -->
+</nav>
+
+{% endblock %}
