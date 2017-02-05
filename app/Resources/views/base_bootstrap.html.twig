@@ -20,7 +20,7 @@
         <!-- CSS
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         {% block stylesheets %}
-          {% stylesheets 'bundles/api/bootstrap/css/*' filter='cssrewrite' %}
+          {% stylesheets '@ApiBundle/Resources/public/bootstrap/css/*' filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}"/>
           {% endstylesheets %}
         {% endblock %}
@@ -54,7 +54,7 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         {% block javascripts %}
-            {% javascripts 'bundles/api/bootstrap/js/*' %}
+            {% javascripts '@ApiBundle/Resources/public/bootstrap/js/*' %}
                 <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
         {% endblock %}
