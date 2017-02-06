@@ -72,11 +72,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
       $users = $query->getResult();
 
-      $logger = $this->get('logger');
-      // $logger->info('I just got the logger');
-      // $logger->error('An error occurred');
-
-      $logger->critical('Users fetched', $users);
+      $this->logMessage(200, 'Users fetched', $users);
 
       $view = $this->view($users, 200)
           ->setTemplate("default/users.html.twig")
@@ -108,8 +104,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         $username = $data['username'];
         $password = $data['password'];
 
-        $em = $this->get('doctrine')->getEntityManager();
-        $query = $em->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
+        $query = $entityManager->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
         $query->setParameter('username', $username);
         $user = $query->getOneOrNullResult();
 
@@ -208,7 +203,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         }
 
         $userManager = $this->get('fos_user.user_manager');
-        $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
         $data = $request->request->all();
@@ -322,13 +316,13 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
     /**
       * Change Password request. Will return a JsonResponse(username, msg) upon success, else
-      * will throw ErrorException in html. Since existing user is verified by access_token,
-      * username + old password is not needed.
+      * will throw ErrorException in html. 
       *
       * @ApiDoc(
       *  resource=true,
       *  description="Change password of the user. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
+      *      {"name"="old_password", "dataType"="string", "required"=true, "description"="Old password"},
       *      {"name"="password", "dataType"="string", "required"=true, "description"="New password"},
       *  },
       * )
@@ -341,11 +335,21 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         }
 
         $userManager = $this->get('fos_user.user_manager');
-        $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
         $data = $request->request->all();
+        $oldPassword = $data['old_password'];
         $password = $data['password'];
+
+        // Check if old password is valid
+        // Get the encoder for the users password
+        $encoder_service = $this->get('security.encoder_factory');
+        $encoder = $encoder_service->getEncoder($user);
+        if (!$encoder->isPasswordValid($user->getPassword(), $oldPassword, $user->getSalt()))
+        {
+            // Password bad
+            $this->logAndThrowError(400, 'Invalid old password: '.  $user->getUsername() . '#showme#' . 'Sorry, Wrong Old Password!');
+        }
 
         $user->setPlainPassword($password);
         $msg = 'Password changed successfully';
@@ -428,18 +432,36 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         }
 
         $userManager = $this->get('fos_user.user_manager');
-        $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
         $data = $request->request->all();
 
         if ($data['username']) {
-          // Check if username is already taken
-          $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
-          if (null != $user1) {
-            $this->logAndThrowError(400, 'Already taken by Username: ' . $user1->getUsername() . '#showme#' . 'Already taken by Username: ' . $user1->getUsername());
+          // Change username only if username is changed
+          if ($data['username'] != $user->getUsername()) {
+            // Check if username is already taken
+            $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
+            if (null != $user1) {
+              $this->logAndThrowError(400, 'Already taken by Username: ' . $user1->getUsername() . '#showme#' . 'Already taken by Username: ' . $user1->getUsername());
+            }
+            $user->setUsername($data['username']);
           }
-          $user->setUsername($data['username']);
+        }
+
+        if ($data['email']) {
+          // Check if email is valid
+          if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+              $this->logAndThrowError(400, 'Invalid email: ' . $data['email'] . '#showme#' . 'Invalid email: ' . $data['email']);
+          }
+          // Update email only if email is changed
+          if ($data['email'] != $user->getEmail()) {
+              // Check if email is already taken
+              $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
+              if (null != $user1) {
+                $this->logAndThrowError(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername() . '#showme#' . 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername());
+              }
+              $user->setEmail($data['email']);
+          }
         }
 
         if ($data['firstname']) {
@@ -452,20 +474,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
         if ($data['lastname']) {
           $user->setLastname($data['lastname']);
-        }
-
-        if ($data['email']) {
-          // Check if email is valid
-          if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->logAndThrowError(400, 'Invalid email: ' . $data['email'] . '#showme#' . 'Invalid email: ' . $data['email']);
-          }
-
-          // Check if email is already taken
-          $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
-          if (null != $user1) {
-            $this->logAndThrowError(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername() . '#showme#' . 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername());
-          }
-          $user->setEmail($data['email']);
         }
 
         if ($data['dob']) {
@@ -549,14 +557,12 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
      */
     protected function getObfuscatedEmail(UserInterface $user)
     {
-        $logger = $this->get('logger');
-
         $email = $user->getEmail();
         if (false !== $pos = strpos($email, '@')) {
             $email = '...' . substr($email, $pos);
         }
 
-        $logger->info('200 ' . $email);
+        $this->logMessage(200, $email);
 
         return $email;
     }
@@ -579,10 +585,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getAccessTokenAction()
     {
-        $logger = $this->get('logger');
-
-        $userManager = $this->get('fos_user.user_manager');
-        $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
         $data = $request->request->all();
@@ -625,10 +627,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getRefreshTokenAction()
     {
-        $logger = $this->get('logger');
-
-        $userManager = $this->get('fos_user.user_manager');
-        $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
         $data = $request->request->all();
@@ -659,8 +657,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     private function fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken = null, $username = null, $password = null, $scope = null)
     {
-        $logger = $this->get('logger');
-
         $client = new OAuth2\Client($clientId, $clientSecret);
 
         // This is a common function for both getAccessTokenAction() and getRefreshTokenAction().
