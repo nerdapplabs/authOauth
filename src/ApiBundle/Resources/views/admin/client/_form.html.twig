@@ -6,11 +6,21 @@
     {{ form_start(form, { attr: { novalidate: 'novalidate' } }) }}
 #}
 
+{#
+{% if show_confirmation|default(false) %}
+    {% set attr = {'data-confirmation': 'true'} %}
+    {{ include('ApiBundle:admin/client:_delete_client_confirmation.html.twig') }}
+{% endif %}
+#}
+
 {{ form_start(form, { attr: attr|default({}) }) }}
     {{ form_widget(form) }}
 
+{% if show_submit_button %} {# TBD - Enabled currently for edit_form only. Not working for delete_form. #}
     <input type="submit" value="{{ button_label|default('label.create_client'|trans) }}"
-           class="{{ button_css|default("btn btn-primary") }}" />
+           class="{{ button_css|default("btn btn-primary") }}"
+     />
+{% endif %}
 
     {% if include_back_to_home_link|default(false) %}
         <a href="{{ path('admin_client_index') }}" class="btn btn-link">

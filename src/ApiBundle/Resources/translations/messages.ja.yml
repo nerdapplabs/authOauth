@@ -59,7 +59,7 @@ label:
   client_allowedgranttypes: 許可された許可タイプ
   client_name: クライアント名
   admin_password: 管理者パスワード
-  delete_post: "消して！"
+  delete_it: "消して！"
 menu:
   client_list: 記事一覧
   back_to_blog: ブログへ戻る

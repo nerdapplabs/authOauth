@@ -32,10 +32,13 @@ class ClientController extends Controller
      */
     public function indexAction()
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $clients = $entityManager->getRepository(Client::class)->findAll();
+        $repository = $this->getDoctrine()->getRepository('ApiBundle:Client');
+        $query = $repository->createQueryBuilder('p')
+                              ->where('p.enabled = TRUE')
+                              ->getQuery();
+        $clients = $query->getResult();
 
-        return $this->render('admin/client/index.html.twig', ['clients' => $clients]);
+        return $this->render('@ApiBundle/Resources/views/admin/client/index.html.twig', ['clients' => $clients]);
     }
 
     /**
@@ -115,7 +118,7 @@ class ClientController extends Controller
             return $this->redirectToRoute('admin_client_index');
         }
 
-        return $this->render('admin/client/new.html.twig', [
+        return $this->render('@ApiBundle/Resources/views/admin/client/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -130,7 +133,7 @@ class ClientController extends Controller
     {
         $deleteForm = $this->createDeleteForm($client);
 
-        return $this->render('admin/client/show.html.twig', [
+        return $this->render('@ApiBundle/Resources/views/admin/client/show.html.twig', [
             'client' => $client,
             'delete_form' => $deleteForm->createView(),
         ]);
@@ -148,7 +151,9 @@ class ClientController extends Controller
 
         $defaultData = array('message' => 'Edit a Client');
         $editForm = $this->createFormBuilder($defaultData)
-                ->add('name', 'text', array('label' => 'label.client_name' ))
+                ->add('name', 'text', array('label' => 'label.client_name', 'data' => $client->getName() ))
+                ->add('randomid', 'text', array('label' => 'label.client_randomid', 'data' => $client->getRandomId(), 'disabled' => 'disabled'))
+                ->add('secret', 'text', array('label' => 'label.client_secret', 'data' => $client->getSecret(), 'disabled' => 'disabled'))
                 ->getForm();
 
         $deleteForm = $this->createDeleteForm($client);
@@ -157,6 +162,8 @@ class ClientController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $client->setName($editForm['name']->getData());
+            $client->setUpdatedAt(new \DateTime());
+
             $entityManager->flush();
 
             $this->addFlash('success', 'client.updated_successfully');
@@ -164,7 +171,7 @@ class ClientController extends Controller
             return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
         }
 
-        return $this->render('admin/client/edit.html.twig', [
+        return $this->render('@ApiBundle/Resources/views/admin/client/edit.html.twig', [
             'client' => $client,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
@@ -180,7 +187,9 @@ class ClientController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $entityManager->remove($client);
+        // $entityManager->remove($client);
+        $client->setEnabled(false);
+        $client->setUpdatedAt(new \DateTime());
         $entityManager->flush();
 
         $this->addFlash('success', 'client.deleted_successfully');
@@ -200,6 +209,10 @@ class ClientController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('admin_client_delete', ['id' => $client->getId()]))
             ->setMethod('POST')
+            ->add('submit', 'submit', array('label' => $this->get('translator')->trans('action.delete_client'),
+                                            'attr' => array('onclick' => 'return confirm("Are you sure?")',
+                                                            'class' => 'btn btn-lg btn-block btn-danger',
+                                           )))
             ->getForm()
         ;
     }

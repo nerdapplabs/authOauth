@@ -1,0 +1,112 @@
+note: NOTE
+tip: TIP
+not_available: Not available
+mit_license: MIT License
+http_error:
+  name: "Error %status_code%"
+  description: "There was an unknown error (HTTP %status_code%) that prevented to complete your request."
+  suggestion: "Try loading this page again in some minutes or <a href=\"%url%\">go back to the homepage</a>."
+http_error_403:
+  description: "You don't have permission to access to this resource."
+  suggestion: Ask your manager or system administrator to grant you access to this resource.
+http_error_404:
+  description: "We couldn't find the page you requested."
+  suggestion: "Check out any misspelling in the URL or <a href=\"%url%\">go back to the homepage</a>."
+http_error_500:
+  description: There was an internal server error.
+  suggestion: "Try loading this page again in some minutes or <a href=\"%url%\">go back to the homepage</a>."
+title:
+  homepage: "Welcome to the <strong>Symfony Demo</strong> application"
+  source_code: Source code used to render this page
+  controller_code: Controller code
+  twig_template_code: Twig template code
+  login: Secure Sign in
+  client_list: ग्राहक सूची
+  edit_client: "Edit client #%id%"
+  add_comment: Add a comment
+  comment_error: There was an error publishing your comment
+  client_new: हमारे ग्राहकों का सृजन
+  client: ग्राहक
+action:
+  show: दिखाना
+  show_code: शो कोड
+  edit: संपादित करें
+  edit_client: ग्राहक संपादित करें
+  save: परिवर्तनों को सुरक्षित करें
+  delete_client: ग्राहक को हटाएँ
+  create_client: एक नए ग्राहक बनाएं
+  back_to_list: वापस ग्राहकों की सूची में
+  publish_comment: Publish comment
+  sign_in: साइन इन करें
+  sign_out: साइन आउट
+  sign_up: साइन अप करें
+  settings: सेटिंग्स
+  reset_password: पासवर्ड रीसेट
+  change_password: पासवर्ड बदलें
+  profile: प्रोफाइल
+  show_profile: प्रोफ़ाइल दिखाएं
+  edit_profile: प्रोफाइल एडिट करें
+  admin_menu: व्यवस्थापक
+  role_management: भूमिका प्रबंधन
+  user_management: उपयोगकर्ता प्रबंधन
+  client_management: ग्राहक प्रबंधन
+  create_new_client: एक नए ग्राहक बनाएं
+  browse_app: ब्राउज़ आवेदन
+  browse_admin: ब्राउज़ बैकेंड
+  edit_contents: सामग्री को संपादित
+delete_client_modal:
+  title: आप इस ग्राहक को हटाना चाहते हैं आप सुनिश्चित हैं?
+  body: इस क्रिया को पूर्ववत नहीं किया जा सकता है।
+label:
+  delete_client: ग्राहक को हटाएँ
+  cancel: रद्द करना
+  create_client: ग्राहक बनाएं
+  save_and_create_new: सहेजें और नया बनाने
+  title: शीर्षक
+  author: लेखक
+  author_email: लेखक ईमेल
+  username: उपयोगकर्ता नाम
+  password: पासवर्ड
+  role: भूमिका
+  content: सामग्री
+  summary: सारांश
+  published_at: पर प्रकाशित
+  actions: प्रक्रिया
+  client_id: पहचान पत्र
+  client_randomid: रैंडम पहचान पत्र
+  client_secret: हमारे ग्राहकों का सीक्रेट
+  client_redirecturis:  यूआरआई पुनर्निर्देशन
+  client_allowedgranttypes: जो स्वीकृत अनुदान के प्रकार
+  client_name: ग्राहक का नाम
+  admin_password: व्यवस्थापक का पारण शब्द
+  delete_it: "इसे मिटाओ!"
+menu:
+  toggle_nav: Toggle navigation
+  choose_language: Choose language
+  client_list: Client list
+  back_to_blog: Back to blog
+  homepage: Homepage
+  admin: Backend
+  logout: Logout
+client:
+  to_publish_a_comment: to publish a comment
+  num_comments: "%count% comment|%count% comments"
+  commented_on: commented on
+  no_comments: Be the first to comment on this client.
+  no_clients_found: No clients found.
+  created_successfully: "Client created successfully!"
+  updated_successfully: "Client updated successfully!"
+  deleted_successfully: "Client deleted successfully!"
+help:
+  app_description: "This is a <strong>demo application</strong> built in the Symfony Framework to illustrate the recommended way of developing Symfony applications."
+  show_code: "Click on this button to show the source code of the <strong>Controller</strong> and <strong>template</strong> used to render this page."
+  browse_app: "Browse the <strong>public section</strong> of the demo application."
+  browse_admin: "Browse the <strong>admin backend</strong> of the demo application."
+  login_users: Try either of the following users
+  role_user: regular user
+  role_admin: administrator
+  reload_fixtures: "If these users don't work, reload application fixtures by running this command from the terminal:"
+  add_user: "If you want to create new users, run this other command:"
+  more_information: "For more information, check out the <a href=\"http://symfony.com/doc\">Symfony doc</a>."
+delete_post_modal:
+  title: Delete Client

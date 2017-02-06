@@ -79,7 +79,7 @@ label:
   client_allowedgranttypes: Allowed Grant Types
   client_name: Client Name
   admin_password: Admin Password
-  delete_post: "Delete It!"
+  delete_it: "Delete It!"
 menu:
   toggle_nav: Toggle navigation
   choose_language: Choose language

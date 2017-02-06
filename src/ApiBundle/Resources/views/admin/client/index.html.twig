@@ -1,4 +1,4 @@
-{% extends 'admin/layout.html.twig' %}
+{% extends 'ApiBundle:admin:layout.html.twig' %}
 
 {% block body_id 'admin_client_index' %}
 
@@ -9,7 +9,6 @@
         <thead>
             <tr>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_name'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_id'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_randomid'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_secret'|trans }}</th>
             </tr>
@@ -18,7 +17,6 @@
         {% for client in clients %}
             <tr>
                 <td>{{ client.name }}</td>
-                <td>{{ client.id }}</td>
                 <td>{{ client.randomid }}</td>
                 <td>{{ client.secret }}</td>
                 <td>
