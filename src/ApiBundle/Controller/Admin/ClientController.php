@@ -108,12 +108,17 @@ class ClientController extends Controller
                                                 "token",
                                                 "client_credentials"
                                           ));
+            try {
+                  $clientManager->updateClient($client);
+                  $this->logMessage(200, 'Client successfully created: ' . $client->getPublicId());
+                  $this->addFlash('success', 'client.created_successfully');
 
-            $clientManager->updateClient($client);
-
-            $this->logMessage('200 ' . 'Client successfully created: ' . $client->getPublicId());
-
-            $this->addFlash('success', 'client.created_successfully');
+            // Always catch exact exception for which flash message or logger is needed,
+            // otherwise catch block will not get executed on higher or lower ranked exceptions.
+            } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                  $this->logMessage(400, $e->getMessage());
+                  $this->addFlash('danger', $e->getMessage());
+            }
 
             return $this->redirectToRoute('admin_client_index');
         }
@@ -164,9 +169,17 @@ class ClientController extends Controller
             $client->setName($editForm['name']->getData());
             $client->setUpdatedAt(new \DateTime());
 
-            $entityManager->flush();
+            try {
+                  $entityManager->flush();
+                  $this->logMessage(200, 'Client successfully updated: ' . $client->getPublicId());
+                  $this->addFlash('success', 'client.updated_successfully');
 
-            $this->addFlash('success', 'client.updated_successfully');
+            // Always catch exact exception for which flash message or logger is needed,
+            // otherwise catch block will not get executed on higher or lower ranked exceptions.
+            } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                  $this->logMessage(400, $e->getMessage());
+                  $this->addFlash('danger', $e->getMessage());
+            }
 
             return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
         }
@@ -190,6 +203,7 @@ class ClientController extends Controller
         // $entityManager->remove($client);
         $client->setEnabled(false);
         $client->setUpdatedAt(new \DateTime());
+        
         $entityManager->flush();
 
         $this->addFlash('success', 'client.deleted_successfully');
@@ -220,9 +234,9 @@ class ClientController extends Controller
       throw new HttpException($errCode, $errMsg);
     }
 
-    private function logMessage($logMsg = 'Nil Log Message') {
+    private function logMessage($errCode = 200, $logMsg = 'Nil Log Message') {
       $logger = $this->get('logger');
 
-      $logger->info(200 . ' ' . $logMsg);
+      $logger->info($errCode . ' ' . $logMsg);
     }
 }
