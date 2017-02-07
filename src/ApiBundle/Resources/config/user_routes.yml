@@ -1,0 +1,13 @@
+# Attention: The order of the entries are extremely important.
+# Here, we first define all routes to be of POST type and then override specific
+# routes with GET type next.
+#
+# Never ever change the order.
+
+users_1_0:
+    resource: "@ApiBundle/Controller/AuthController.php"
+    type:     rest
+
+users_2_0:
+    resource: "@ApiBundle/Controller/V2_0_AuthController.php"
+    type:     rest

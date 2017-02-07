@@ -21,8 +21,8 @@ fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /profile
 
-users_1_0:
-    resource: "@ApiBundle/Resources/config/user_routes1_0.yml"
+users:
+    resource: "@ApiBundle/Resources/config/user_routes.yml"
     defaults: { _format: json }
 
 NelmioApiDocBundle:

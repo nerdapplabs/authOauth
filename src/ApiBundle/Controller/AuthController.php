@@ -29,26 +29,41 @@ use OAuth2;
 
 use FOS\RestBundle\Controller\Annotations\Version;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Controller\Annotations\Prefix;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
 
 /**
- * Version({"v1.0."}) - TBD. Not functioning due to a bug in FOSRestBundle.
+ * @Version({"1.0"})
  *
- * @NamePrefix("api_")
+ * @NamePrefix("api_v1_0_")
+ * @Prefix("/api")
  * @RouteResource("User")
  */
-class User1_0Controller extends FOSRestController implements ClassResourceInterface
+class AuthController extends FOSRestController implements ClassResourceInterface
 {
     const SESSION_EMAIL = 'fos_user_send_resetting_email/email';
 
     /**
+      * @Get("/user/dummy")
+      */
+    public function getDummyAction()
+    {
+        return new JsonResponse(array(
+          'show_message' => 'This is from v1.0',
+        ));
+    }
+
+    /**
       * Fetch all Users.
+      *
+      * @Get("/users")
       *
       * @ApiDoc(
       *  resource=true,
       *  description="Fetch All Users",
       * )
       *
-      * Method = GET. Provide this info in user_routes1_0.yml.
       */
     public function cgetAction()
     {
@@ -85,6 +100,8 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
     /**
       * Create a new Client for the given URL. Only to be created by Admin.
       *
+      * @Post("/user/new/client")
+      *
       * @ApiDoc(
       *  resource=true,
       *  description="Create a new Client",
@@ -96,7 +113,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getNewClientAction()
     {
-        $userManager = $this->get('fos_user.user_manager');
         $entityManager = $this->get('doctrine')->getManager();
         $request = $this->container->get('request');
 
@@ -170,6 +186,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
     /**
       * Register a new user. Will return a JsonResponse(username, msg, oAuthRtn, code) upon success, else
       * will throw ErrorException in html.
+      *
+      *
+      * @Post("/user/register")
       *
       * @ApiDoc(
       *  resource=true,
@@ -316,7 +335,10 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
     /**
       * Change Password request. Will return a JsonResponse(username, msg) upon success, else
-      * will throw ErrorException in html. 
+      * will throw ErrorException in html.
+      *
+      *
+      * @Post("/user/change/password")
       *
       * @ApiDoc(
       *  resource=true,
@@ -370,6 +392,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       * will throw ErrorException in html. Since existing user is verified by access_token,
       * username + old password is not needed.
       *
+      *
+      * @Post("/user/profile/show")
+      *
       * @ApiDoc(
       *  resource=true,
       *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
@@ -377,8 +402,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getProfileShowAction()
     {
-        $logger = $this->get('logger');
-
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             $this->logAndThrowError(400, 'Invalid User' . '#showme#' . 'You are not permitted to view user profile.');
@@ -387,7 +410,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
         // Check if dob is valid
         if ($user->dobString() == "Null Date of Birth" || $user->dobString() == "Malformed date of birth") {
             $dobString = '';
-            $logger->error('400 ' . 'Invalid or null DOB: ' . $user->dobString() . ' for ' . $user->getUsername());
+            $this->logMessage(400, 'Invalid or null DOB: ' . $user->dobString() . ' for ' . $user->getUsername());
         } else {
             $dobString = $user->dobString();
         }
@@ -410,6 +433,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       * will throw ErrorException in html. Since existing user is verified by access_token,
       * username + old password is not needed.
       *
+      *
+      * @Post("/user/profile/edit")
+      *
       * @ApiDoc(
       *  resource=true,
       *  description="Update User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
@@ -424,8 +450,6 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       */
     public function getProfileEditAction()
     {
-        $logger = $this->get('logger');
-
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             $this->logAndThrowError(400, 'Invalid User' . '#showme#' . 'You are not permitted to edit user profile.');
@@ -436,7 +460,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
         $data = $request->request->all();
 
-        if ($data['username']) {
+        if (array_key_exists('username', $data)) {
           // Change username only if username is changed
           if ($data['username'] != $user->getUsername()) {
             // Check if username is already taken
@@ -448,7 +472,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
           }
         }
 
-        if ($data['email']) {
+        if (array_key_exists('email', $data)) {
           // Check if email is valid
           if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
               $this->logAndThrowError(400, 'Invalid email: ' . $data['email'] . '#showme#' . 'Invalid email: ' . $data['email']);
@@ -464,7 +488,7 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
           }
         }
 
-        if ($data['firstname']) {
+        if (array_key_exists('firstname', $data)) {
           // Check if firstname is empty. At least firstname is required.
           if (null == $data['firstname']) {
               $this->logAndThrowError(400, 'Invalid empty firstname' . '#showme#' . 'Invalid empty firstname');
@@ -472,11 +496,11 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
           $user->setFirstname($data['firstname']);
         }
 
-        if ($data['lastname']) {
+        if (array_key_exists('lastname', $data)) {
           $user->setLastname($data['lastname']);
         }
 
-        if ($data['dob']) {
+        if (array_key_exists('dob', $data)) {
           // Check if dob is valid
           list($mm,$dd,$yyyy) = array_merge( explode('/',$data['dob']), array(0,0,0) );
           if (!checkdate($mm,$dd,$yyyy)) {
@@ -501,6 +525,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
 
     /**
       * Request reset user password. A mail will be sent, if not sent earlier else will return  error msg.
+      *
+      *
+      * @Get("/user/resetting/request/email")
       *
       * @ApiDoc(
       *  resource=true,
@@ -571,6 +598,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
       * Get Access Token. Will return a JsonResponse from oAuth upon success, else
       * will throw ErrorException in html.
       *
+      *
+      * @Post("/user/access/token")
+      *
       * @ApiDoc(
       *  resource=true,
       *  description="Request a new Access Token",
@@ -614,6 +644,9 @@ class User1_0Controller extends FOSRestController implements ClassResourceInterf
     /**
       * Get a new Access Token from a Refresh Token. Will return a JsonResponse from oAuth upon success, else
       * will throw ErrorException in html.
+      *
+      *
+      * @Post("/user/refresh/token")
       *
       * @ApiDoc(
       *  resource=true,
