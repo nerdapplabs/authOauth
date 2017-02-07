@@ -84,3 +84,10 @@ help:
   reload_fixtures: "Si ces utilisateurs ne fonctionnent pas, rechargez les fixtures de l'application en exécutant cette commande depuis le terminal :"
   add_user: "Si vous voulez créer de nouveaux utilisateurs, exécutez cette autre commande :"
   more_information: "Pour plus d'informations, consultez la <a href=\"http://symfony.com/doc\">documentation de Symfony</a>."
+delete_post_modal:
+  title: Delete Client
+flash:
+  client_already_exists: Pardon! Ce nom de client a déjà été pris. Veuillez choisir un autre nom.
+  client_created_successfully: Client créé avec succès!
+  client_updated_successfully: Client mis à jour avec succès!
+  client_deleted_successfully: Client supprimé avec succès!

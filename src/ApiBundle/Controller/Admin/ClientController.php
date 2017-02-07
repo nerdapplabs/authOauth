@@ -111,13 +111,15 @@ class ClientController extends Controller
             try {
                   $clientManager->updateClient($client);
                   $this->logMessage(200, 'Client successfully created: ' . $client->getPublicId());
-                  $this->addFlash('success', 'client.created_successfully');
+                  $flashMsg = $this->get('translator')->trans('flash.client_created_successfully');
+                  $this->addFlash('success', $flashMsg);
 
             // Always catch exact exception for which flash message or logger is needed,
             // otherwise catch block will not get executed on higher or lower ranked exceptions.
             } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
                   $this->logMessage(400, $e->getMessage());
-                  $this->addFlash('danger', $e->getMessage());
+                  $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
+                  $this->addFlash('danger', $flashMsg);
             }
 
             return $this->redirectToRoute('admin_client_index');
@@ -172,13 +174,15 @@ class ClientController extends Controller
             try {
                   $entityManager->flush();
                   $this->logMessage(200, 'Client successfully updated: ' . $client->getPublicId());
-                  $this->addFlash('success', 'client.updated_successfully');
+                  $flashMsg = $this->get('translator')->trans('flash.client_updated_successfully');
+                  $this->addFlash('success', $flashMsg);
 
             // Always catch exact exception for which flash message or logger is needed,
             // otherwise catch block will not get executed on higher or lower ranked exceptions.
             } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
                   $this->logMessage(400, $e->getMessage());
-                  $this->addFlash('danger', $e->getMessage());
+                  $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
+                  $this->addFlash('danger', $flashMsg);
             }
 
             return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
@@ -203,10 +207,11 @@ class ClientController extends Controller
         // $entityManager->remove($client);
         $client->setEnabled(false);
         $client->setUpdatedAt(new \DateTime());
-        
+
         $entityManager->flush();
 
-        $this->addFlash('success', 'client.deleted_successfully');
+        $flashMsg = $this->get('translator')->trans('flash.client_deleted_successfully');
+        $this->addFlash('success', $flashMsg);
 
         return $this->redirectToRoute('admin_client_index');
     }

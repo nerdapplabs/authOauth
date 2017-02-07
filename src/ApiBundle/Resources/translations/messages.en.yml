@@ -111,3 +111,8 @@ help:
   more_information: "For more information, check out the <a href=\"http://symfony.com/doc\">Symfony doc</a>."
 delete_post_modal:
   title: Delete Client
+flash:
+  client_already_exists: Sorry! This client name has already been taken. Please choose another name.
+  client_created_successfully: Client created successfully!
+  client_updated_successfully: Client updated successfully!
+  client_deleted_successfully: Client deleted successfully!
