@@ -40,6 +40,7 @@ action:
   sign_in: Sign in
   sign_out: Sign Out
   sign_up: Sign Up
+  logged_in_as: Logged in as
   settings: Settings
   reset_password: Reset Password
   change_password: Change Password

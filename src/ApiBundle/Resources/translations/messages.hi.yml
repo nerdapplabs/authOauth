@@ -40,6 +40,7 @@ action:
   sign_in: साइन इन करें
   sign_out: साइन आउट
   sign_up: साइन अप करें
+  logged_in_as: के रूप में लॉग इन किया
   settings: सेटिंग्स
   reset_password: पासवर्ड रीसेट
   change_password: पासवर्ड बदलें
@@ -72,7 +73,7 @@ label:
   summary: सारांश
   published_at: पर प्रकाशित
   actions: प्रक्रिया
-  client_id: पहचान पत्र
+  client_id: पहचान
   client_randomid: रैंडम पहचान पत्र
   client_secret: हमारे ग्राहकों का सीक्रेट
   client_redirecturis:  यूआरआई पुनर्निर्देशन
@@ -89,10 +90,6 @@ menu:
   admin: Backend
   logout: Logout
 client:
-  to_publish_a_comment: to publish a comment
-  num_comments: "%count% comment|%count% comments"
-  commented_on: commented on
-  no_comments: Be the first to comment on this client.
   no_clients_found: No clients found.
   created_successfully: "Client created successfully!"
   updated_successfully: "Client updated successfully!"

@@ -26,6 +26,7 @@ action:
   sign_in: Connectez-vous
   sign_out: Déconnexion
   sign_up: "S'inscrire"
+  logged_in_as:connecté en tant que
   settings: Paramètres
   reset_password: réinitialiser le mot de passe
   change_password: Changer le mot de passe

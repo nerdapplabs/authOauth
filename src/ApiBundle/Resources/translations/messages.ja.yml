@@ -26,6 +26,7 @@ action:
   sign_in: ログイン
   sign_out: サインアウト
   sign_up: サインアップ
+  logged_in_as:ログインした
   settings: 設定
   reset_password: パスワードを再設定する
   change_password: パスワードを変更する
