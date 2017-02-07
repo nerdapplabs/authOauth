@@ -208,11 +208,7 @@ class ClientController extends Controller
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('admin_client_delete', ['id' => $client->getId()]))
-            ->setMethod('POST')
-            ->add('submit', 'submit', array('label' => $this->get('translator')->trans('action.delete_client'),
-                                            'attr' => array('onclick' => 'return confirm("Are you sure?")',
-                                                            'class' => 'btn btn-lg btn-block btn-danger',
-                                           )))
+            ->setMethod('DELETE')
             ->getForm()
         ;
     }

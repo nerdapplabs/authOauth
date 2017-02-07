@@ -6,13 +6,14 @@
     <h1>{{ 'title.client_new'|trans }}</h1>
 
     {{ form_start(form) }}
+      {{ form_row(form.name) }}
       {{ form_row(form.password) }}
       {{ form_row(form.send) }}
-
-        <a href="{{ path('admin_client_index') }}" class="btn btn-link">
-            {{ 'action.back_to_list'|trans }}
-        </a>
     {{ form_end(form) }}
+
+    <a href="{{ path('admin_client_index') }}" class="btn btn-link">
+        {{ 'action.back_to_list'|trans }}
+    </a>
 {% endblock %}
 
 {% block sidebar %}
