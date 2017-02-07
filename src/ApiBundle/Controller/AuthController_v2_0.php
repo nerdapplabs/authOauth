@@ -1,5 +1,9 @@
 <?php
 
+// Use statements are not inherited. So the need for below all lines.
+// See http://stackoverflow.com/questions/11794901/php-does-extending-class-need-another-use-to-call-namespace
+// Also http://php.net/manual/en/language.namespaces.importing.php
+
 namespace ApiBundle\Controller;
 
 use ApiBundle\Entity\User;
@@ -40,7 +44,7 @@ use FOS\RestBundle\Controller\Annotations\Post;
   * @Prefix("/api")
   * @RouteResource("User")
   */
-class V2_0_AuthController extends \ApiBundle\Controller\AuthController
+class AuthController_v2_0 extends \ApiBundle\Controller\AuthController
 {
     /**
       * @Get("/user/dummy")

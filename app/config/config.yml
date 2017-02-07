@@ -86,8 +86,8 @@ fos_rest:
     versioning:
         enabled: true
         resolvers:
-            query: true # Query parameter: /users?version=v1
-            custom_header: true # X-Accept-Version header
+            query: true # e.g. Query parameter: /users?version=1.0
+            custom_header: true # X-Accept-Version header: 1.0
         guessing_order:
             - query
             - custom_header

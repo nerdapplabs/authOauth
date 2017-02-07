@@ -1,5 +1,5 @@
 <?php
-// app/config/fos_rest_mime_types.php
+
 $versions = array(
     '1.0',
     '1.1',
