@@ -19,7 +19,7 @@
                   </ul>
               </li>
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <li><a href="{{ path('fos_user_security_logout') }}">{{ 'Logged in as'}} {{ app.user.username }} | {{ 'action.sign_out'|trans }}</a></li>
+                    <li><a href="{{ path('fos_user_security_logout') }}">{{ 'action.logged_in_as'|trans }} {{ app.user.username }} | {{ 'action.sign_out'|trans }}</a></li>
                     <li>
                   <a href="#">{{ 'action.settings'|trans }}<span class="caret"></span></a>
                   <ul>
