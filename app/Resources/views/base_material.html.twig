@@ -35,16 +35,16 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   {% include "nav_materialize.html.twig" %}
 
-  <div class="container body-container">
+  <div class="container">
       {% block body %}
           <div class="row">
-              <div id="main" class="col-sm-9">
+              <div id="main" class="col s9">
                   {{ include('_flash_messages.html.twig') }}
 
                   {% block main %}{% endblock %}
               </div>
 
-              <div id="sidebar" class="col-sm-3">
+              <div id="sidebar" class="col s3">
                   {% block sidebar %}{% endblock %}
               </div>
           </div>
@@ -53,6 +53,7 @@
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         {% block javascripts %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
             {% javascripts '@ApiBundle/Resources/public/materialize/js/*' %}
                 <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
