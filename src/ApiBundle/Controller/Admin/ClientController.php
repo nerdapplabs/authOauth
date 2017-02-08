@@ -71,7 +71,7 @@ class ClientController extends Controller
             // Check if this URL actually exists
             $headers = @get_headers($redirectUrl);
             if (strpos($headers[0],'200')=== false) {
-              $this->logAndThrowError(400, 'Invalid redirectURL: ' . $redirectUrl);
+              $this->logMessageAndFlash(400, 'danger', 'Invalid redirectURL: ' . $redirectUrl, 'Invalid redirectURL: ' . $redirectUrl);
             }
 
             // Check for the valid Admin user
@@ -84,17 +84,17 @@ class ClientController extends Controller
                 // Not an Admin
                 if (!in_array('ROLE_ADMIN', $user->getRoles())) {
                   $ifErred = true;
-                  $this->logAndThrowError(400, 'User is not an Admin: ' . $username . '#showme#' . 'Sorry, you are not an Admin!');
+                  $this->logMessageAndFlash(400, 'danger', 'User is not an Admin: ' . $username, 'User is not an Admin: ' . $username);
                 }
               } else {
                   // Password bad
                   $ifErred = true;
-                  $this->logAndThrowError(400, 'Invalid password: '. $username . '#showme#' . 'Sorry, Wrong/Missing Password!');
+                  $this->logMessageAndFlash(400, 'danger', 'Invalid password: '. $username, 'Invalid password: '. $username);
               }
             } else {
               // Username bad
               $ifErred = true;
-              $this->logAndThrowError(400, 'Invalid username: ' . $username. $username . '#showme#' . 'Sorry, Wrong/Missing Username!');
+              $this->logMessageAndFlash(400, 'danger', 'Invalid username: ' . $username, 'Invalid username: ' . $username);
             }
 
             // Everything ok, now proceed to create the client
@@ -110,16 +110,14 @@ class ClientController extends Controller
                                           ));
             try {
                   $clientManager->updateClient($client);
-                  $this->logMessage(200, 'Client successfully created: ' . $client->getPublicId());
                   $flashMsg = $this->get('translator')->trans('flash.client_created_successfully');
-                  $this->addFlash('success', $flashMsg);
+                  $this->logMessageAndFlash(200, 'success', 'Client successfully created: ' . $client->getPublicId(), $flashMsg);
 
             // Always catch exact exception for which flash message or logger is needed,
             // otherwise catch block will not get executed on higher or lower ranked exceptions.
             } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-                  $this->logMessage(400, $e->getMessage());
                   $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
-                  $this->addFlash('danger', $flashMsg);
+                  $this->logMessageAndFlash(400, 'danger', $e->getMessage(), $flashMsg);
             }
 
             return $this->redirectToRoute('admin_client_index');
@@ -173,16 +171,15 @@ class ClientController extends Controller
 
             try {
                   $entityManager->flush();
-                  $this->logMessage(200, 'Client successfully updated: ' . $client->getPublicId());
                   $flashMsg = $this->get('translator')->trans('flash.client_updated_successfully');
-                  $this->addFlash('success', $flashMsg);
+                  $this->logMessageAndFlash(200, 'success', 'Client successfully updated: ' . $client->getPublicId(), $flashMsg);
 
             // Always catch exact exception for which flash message or logger is needed,
             // otherwise catch block will not get executed on higher or lower ranked exceptions.
             } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
                   $this->logMessage(400, $e->getMessage());
                   $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
-                  $this->addFlash('danger', $flashMsg);
+                  $this->logMessageAndFlash(400, 'danger', $e->getMessage(), $flashMsg);
             }
 
             return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
@@ -211,7 +208,7 @@ class ClientController extends Controller
         $entityManager->flush();
 
         $flashMsg = $this->get('translator')->trans('flash.client_deleted_successfully');
-        $this->addFlash('success', $flashMsg);
+        $this->logMessageAndFlash(200, 'success', 'Client successfully deleted: ' . $client->getPublicId(), $flashMsg);
 
         return $this->redirectToRoute('admin_client_index');
     }
@@ -232,16 +229,22 @@ class ClientController extends Controller
         ;
     }
 
-    private function logAndThrowError($errCode = 400, $errMsg = 'Bad Request') {
-      $logger = $this->get('logger');
-
-      $logger->error($errCode. ' ' . $errMsg);
-      throw new HttpException($errCode, $errMsg);
+    private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '')
+    {
+        $this->logMessage($code, $type, $logMsg);
+        $this->addFlash($type, $flashMsg);
     }
 
-    private function logMessage($errCode = 200, $logMsg = 'Nil Log Message') {
-      $logger = $this->get('logger');
+    private function logMessage($code = 200, $type='success', $logMsg = '') {
+        $logger = $this->get('logger');
 
-      $logger->info($errCode . ' ' . $logMsg);
+        if($type === 'success'){
+           $logger->info($code . ' ' . $logMsg);
+        } else if($type === 'warning'){
+           $logger->warning($code . ' ' . $logMsg);
+        }
+        else if($type === 'danger'){
+           $logger->error($code . ' ' . $logMsg);
+        }
     }
 }
