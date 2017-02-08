@@ -51,7 +51,7 @@ class ClientController extends Controller
     {
         $data = $request->request->all();
         $clientName = array_key_exists('name', $data) ? $data['name'] : '';
-        $redirectUrl = array_key_exists('redirect_url', $data) ? $data['redirect_url'] : $this->container->getParameter('oauth2_redirect_url');
+        $redirectUrl = array_key_exists('redirect_url', $data) ? $data['redirect_url'] : '';
         $adminPassword = '';
 
         $defaultData = array('message' => 'Create a new Client', 'name' => $clientName, 'password' => $adminPassword );
@@ -75,8 +75,26 @@ class ClientController extends Controller
 
             // Password check is an additional security check
             if (!$encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-                $this->logMessageAndFlash(400, 'danger', 'Invalid password: '. $username, 'Invalid password: '. $username);
-                return $this->redirectToRoute('admin_client_index');
+                $this->logMessageAndFlash(400, 'danger', 'Invalid Admin password', 'Invalid Admin password');
+                return $this->redirectToRoute('admin_client_new');
+            }
+
+            // Check Client name is not empty
+            if (!$form['name']->getData()) {
+                $this->logMessageAndFlash(400, 'danger', 'Client Name cannot be empty', 'Client Name cannot be empty');
+                return $this->redirectToRoute('admin_client_new');
+            }
+
+            // Check Redirect URL is not empty
+            if (!$form['redirect_url']->getData()) {
+                $this->logMessageAndFlash(400, 'danger', 'Redirect URL cannot be empty', 'Redirect URL cannot be empty');
+                return $this->redirectToRoute('admin_client_new');
+            }
+
+            // Check if redirect URL is valid
+            if (!filter_var($form['redirect_url']->getData(), FILTER_VALIDATE_URL)) {
+              $this->logMessageAndFlash(400, 'danger', 'Invalid Redirect URL: ' . $form['redirect_url']->getData(), 'Invalid Redirect URL: ' . $form['redirect_url']->getData());
+              return $this->redirectToRoute('admin_client_new');
             }
 
             // Everything ok, now proceed to create the client
