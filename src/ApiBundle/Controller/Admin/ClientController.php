@@ -91,11 +91,11 @@ class ClientController extends Controller
                 return $this->redirectToRoute('admin_client_new');
             }
 
-            // Check if redirect URL is valid
-            if (!filter_var($form['redirect_url']->getData(), FILTER_VALIDATE_URL)) {
-              $this->logMessageAndFlash(400, 'danger', 'Invalid Redirect URL: ' . $form['redirect_url']->getData(), 'Invalid Redirect URL: ' . $form['redirect_url']->getData());
-              return $this->redirectToRoute('admin_client_new');
-            }
+            // TODO: Check if redirect URL is valid
+            // if (!filter_var($form['redirect_url']->getData(), FILTER_VALIDATE_URL)) {
+            //   $this->logMessageAndFlash(400, 'danger', 'Invalid Redirect URL: ' . $form['redirect_url']->getData(), 'Invalid Redirect URL: ' . $form['redirect_url']->getData());
+            //   return $this->redirectToRoute('admin_client_new');
+            // }
 
             // Everything ok, now proceed to create the client
             $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
@@ -156,16 +156,7 @@ class ClientController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
 
         $defaultData = array('message' => 'Edit a Client');
-        $editForm = $this->createFormBuilder($defaultData)
-                ->add('name', 'text', array('label' => 'label.client_name', 'data' => $client->getName() ))
-                ->add('randomid', 'text', array('label' => 'label.client_randomid', 'data' => $client->getRandomId(), 'disabled' => 'disabled'))
-                ->add('secret', 'text', array('label' => 'label.client_secret', 'data' => $client->getSecret(), 'disabled' => 'disabled'))
-                ->getForm();
-
-        $deleteForm = $this->createDeleteForm($client);
-
-        $editForm->handleRequest($request);
-
+        $editForm = $this->createFormBuilder($defaultData)aUser4444aUser4444
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             // Check Client name is not empty
             if (!$editForm['name']->getData()) {
