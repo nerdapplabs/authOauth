@@ -12,6 +12,10 @@
                 <td>{{ client.name }}</td>
             </tr>
             <tr>
+                <th scope="row">{{ 'label.client_redirecturis'|trans }}</th>
+                <td>{{ client.redirecturis|join() }}</td>
+            </tr>
+            <tr>
                 <th scope="row">{{ 'label.client_randomid'|trans }}</th>
                 <td>{{ client.randomid }}</td>
             </tr>

@@ -158,6 +158,7 @@ class ClientController extends Controller
         $defaultData = array('message' => $this->get('translator')->trans('action.edit_client'));
         $editForm = $this->createFormBuilder($defaultData)
                 ->add('name', 'text', array('label' => 'label.client_name', 'data' => $client->getName() ))
+                ->add('redirect_url', 'text', array('label' => 'label.admin_redirecturl', 'data' => implode($client->getRedirectUris()) ))
                 ->add('randomid', 'text', array('label' => 'label.client_randomid', 'data' => $client->getRandomId(), 'disabled' => 'disabled'))
                 ->add('secret', 'text', array('label' => 'label.client_secret', 'data' => $client->getSecret(), 'disabled' => 'disabled'))
                 ->getForm();
@@ -173,7 +174,20 @@ class ClientController extends Controller
                 return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
             }
 
+            // Check Redirect URL is not empty
+            if (!$editForm['redirect_url']->getData()) {
+                $this->logMessageAndFlash(400, 'danger', 'Redirect URL cannot be empty', $this->get('translator')->trans('action.client_redirect_not_empty'));
+                return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
+            }
+
+            // TODO: Check if redirect URL is valid
+            // if (!filter_var($form['redirect_url']->getData(), FILTER_VALIDATE_URL)) {
+            //   $this->logMessageAndFlash(400, 'danger', 'Invalid Redirect URL: ' . $form['redirect_url']->getData(), 'Invalid Redirect URL: ' . $form['redirect_url']->getData());
+            //   return $this->redirectToRoute('admin_client_new');
+            // }
+
             $client->setName($editForm['name']->getData());
+            $client->setRedirectUris(array($editForm['redirect_url']->getData()));
             $client->setUpdatedAt(new \DateTime());
 
             try {
