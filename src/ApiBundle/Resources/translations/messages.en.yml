@@ -55,6 +55,9 @@ action:
   browse_app: Browse application
   browse_admin: Browse backend
   edit_contents: Edit contents
+  client_not_empty: Client Name cannot be empty
+  client_invalid_password: Invalid Admin password
+  client_redirect_not_empty: Redirect URL cannot be empty
 delete_client_modal:
   title: Are you sure you want to delete this client?
   body: This action cannot be undone.

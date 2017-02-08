@@ -22,7 +22,7 @@ title:
   twig_template_code: Twig template code
   login: Secure Sign in
   client_list: ग्राहक सूची
-  edit_client: "Edit client #%id%"
+  edit_client: "ग्राहक संपादित करें #%id%"
   add_comment: Add a comment
   comment_error: There was an error publishing your comment
   client_new: हमारे ग्राहकों का सृजन
@@ -55,6 +55,9 @@ action:
   browse_app: ब्राउज़ आवेदन
   browse_admin: ब्राउज़ बैकेंड
   edit_contents: सामग्री को संपादित
+  client_not_empty: क्लाइंट का नाम रिक्त नहीं हो सकता
+  client_invalid_password: अमान्य व्यवस्थापक पासवर्ड
+  client_redirect_not_empty: रीडायरेक्ट URL रिक्त नहीं हो सकता
 delete_client_modal:
   title: आप इस ग्राहक को हटाना चाहते हैं आप सुनिश्चित हैं?
   body: इस क्रिया को पूर्ववत नहीं किया जा सकता है।

@@ -41,6 +41,9 @@ action:
   browse_app: "Naviguer sur l'application"
   browse_admin: "Naviguer sur l'admin"
   edit_contents: Modifier le contenu
+  client_not_empty: Le nom du client ne peut pas être vide
+  client_invalid_password: Mot de passe administrateur non valide
+  client_redirect_not_empty: L'URL de redirection ne peut pas être vide
 label:
   create_client: Créer un article
   title: Titre

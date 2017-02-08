@@ -75,19 +75,19 @@ class ClientController extends Controller
 
             // Password check is an additional security check
             if (!$encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-                $this->logMessageAndFlash(400, 'danger', 'Invalid Admin password', 'Invalid Admin password');
+                $this->logMessageAndFlash(400, 'danger', 'Invalid Admin password', $this->get('translator')->trans('action.client_invalid_password'));
                 return $this->redirectToRoute('admin_client_new');
             }
 
             // Check Client name is not empty
             if (!$form['name']->getData()) {
-                $this->logMessageAndFlash(400, 'danger', 'Client Name cannot be empty', 'Client Name cannot be empty');
+                $this->logMessageAndFlash(400, 'danger', 'Client Name cannot be empty', $this->get('translator')->trans('action.client_not_empty'));
                 return $this->redirectToRoute('admin_client_new');
             }
 
             // Check Redirect URL is not empty
             if (!$form['redirect_url']->getData()) {
-                $this->logMessageAndFlash(400, 'danger', 'Redirect URL cannot be empty', 'Redirect URL cannot be empty');
+                $this->logMessageAndFlash(400, 'danger', 'Redirect URL cannot be empty', $this->get('translator')->trans('action.client_redirect_not_empty'));
                 return $this->redirectToRoute('admin_client_new');
             }
 
@@ -155,12 +155,21 @@ class ClientController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $defaultData = array('message' => 'Edit a Client');
-        $editForm = $this->createFormBuilder($defaultData)aUser4444aUser4444
+        $defaultData = array('message' => $this->get('translator')->trans('action.edit_client'));
+        $editForm = $this->createFormBuilder($defaultData)
+                ->add('name', 'text', array('label' => 'label.client_name', 'data' => $client->getName() ))
+                ->add('randomid', 'text', array('label' => 'label.client_randomid', 'data' => $client->getRandomId(), 'disabled' => 'disabled'))
+                ->add('secret', 'text', array('label' => 'label.client_secret', 'data' => $client->getSecret(), 'disabled' => 'disabled'))
+                ->getForm();
+
+        $deleteForm = $this->createDeleteForm($client);
+
+        $editForm->handleRequest($request);
+
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             // Check Client name is not empty
             if (!$editForm['name']->getData()) {
-                $this->logMessageAndFlash(400, 'danger', 'Client Name cannot be empty', 'Client Name cannot be empty');
+                $this->logMessageAndFlash(400, 'danger', 'Client Name cannot be empty', $this->get('translator')->trans('action.client_not_empty'));
                 return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
             }
 
@@ -199,7 +208,6 @@ class ClientController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        // $entityManager->remove($client);
         $client->setEnabled(false);
         $client->setUpdatedAt(new \DateTime());
 

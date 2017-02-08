@@ -20,7 +20,7 @@
         <!-- CSS
         –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         {% block stylesheets %}
-          {% stylesheets 'bundles/api/material/css/*' filter='cssrewrite' %}
+          {% stylesheets '@ApiBundle/Resources/public/materialize/css/*' filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}"/>
           {% endstylesheets %}
         {% endblock %}
@@ -33,7 +33,7 @@
 
         <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  {% include "nav_skeleton.html.twig" %}
+  {% include "nav_materialize.html.twig" %}
 
   <div class="container body-container">
       {% block body %}
@@ -53,7 +53,7 @@
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
         {% block javascripts %}
-            {% javascripts 'bundles/api/material/js/*' %}
+            {% javascripts '@ApiBundle/Resources/public/materialize/js/*' %}
                 <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
         {% endblock %}

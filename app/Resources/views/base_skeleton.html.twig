@@ -38,13 +38,13 @@
   <div class="container body-container">
       {% block body %}
           <div class="row">
-              <div id="main" class="col-sm-9">
+              <div id="main">
                   {{ include('_flash_messages.html.twig') }}
 
                   {% block main %}{% endblock %}
               </div>
 
-              <div id="sidebar" class="col-sm-3">
+              <div id="sidebar">
                   {% block sidebar %}{% endblock %}
               </div>
           </div>
