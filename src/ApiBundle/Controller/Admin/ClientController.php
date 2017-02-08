@@ -167,6 +167,12 @@ class ClientController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            // Check Client name is not empty
+            if (!$editForm['name']->getData()) {
+                $this->logMessageAndFlash(400, 'danger', 'Client Name cannot be empty', 'Client Name cannot be empty');
+                return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
+            }
+
             $client->setName($editForm['name']->getData());
             $client->setUpdatedAt(new \DateTime());
 
