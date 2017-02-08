@@ -1,22 +1,10 @@
 {% block nav %}
     <nav class="row">
-          <div>
             <div>
               <a href="/">Nerd Project</a>
             </div>
             <div id="navbar">
               <ul>
-              <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" id="locales">
-                      <span class="caret"></span>
-                      <span class="sr-only">{{ 'menu.choose_language'|trans }}</span>
-                  </a>
-                  <ul class="dropdown-menu locales" role="menu" aria-labelledby="locales">
-                      {% for locale in locales() %}
-                          <li {% if app.request.locale == locale.code %}aria-checked="true" class="active"{%else%}aria-checked="false"{% endif %} role="menuitem"><a href="{{ path(app.request.get('_route', 'blog_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
-                      {% endfor %}
-                  </ul>
-              </li>
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                     <li><a href="{{ path('fos_user_security_logout') }}">{{ 'action.logged_in_as'|trans }} {{ app.user.username }} | {{ 'action.sign_out'|trans }}</a></li>
                     <li>
@@ -49,9 +37,18 @@
                       </ul>
                     </li>
                 {% endif %}
-
+                <li>
+                    <a href="#" id="locales">
+                        <span></span>
+                        <span>{{ 'menu.choose_language'|trans }}</span>
+                    </a>
+                    <ul class="locales">
+                        {% for locale in locales() %}
+                            <li {% if app.request.locale == locale.code %}aria-checked="true" class="active"{%else%}aria-checked="false"{% endif %} role="menuitem"><a href="{{ path(app.request.get('_route', 'blog_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
               </ul>
             </div>
-          </div>
         </nav>
  {% endblock %}

@@ -33,20 +33,17 @@
 
         <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  {% include "nav_skeleton.html.twig" %}
-
-  <div class="container body-container">
+  <div>
+      {% include "nav_skeleton.html.twig" %}
       {% block body %}
-          <div class="row">
-              <div id="main">
-                  {{ include('_flash_messages.html.twig') }}
+          <div id="main">
+              {{ include('_flash_messages.html.twig') }}
 
-                  {% block main %}{% endblock %}
-              </div>
+              {% block main %}{% endblock %}
+          </div>
 
-              <div id="sidebar">
-                  {% block sidebar %}{% endblock %}
-              </div>
+          <div id="sidebar">
+              {% block sidebar %}{% endblock %}
           </div>
       {% endblock %}
   </div>
