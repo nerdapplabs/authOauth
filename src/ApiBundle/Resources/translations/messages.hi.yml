@@ -80,6 +80,7 @@ label:
   client_allowedgranttypes: जो स्वीकृत अनुदान के प्रकार
   client_name: ग्राहक का नाम
   admin_password: व्यवस्थापक का पारण शब्द
+  admin_redirecturl: यूआरएल पुनर्निर्देशन
   delete_it: "इसे मिटाओ!"
 menu:
   toggle_nav: Toggle navigation

@@ -51,62 +51,39 @@ class ClientController extends Controller
     {
         $data = $request->request->all();
         $clientName = array_key_exists('name', $data) ? $data['name'] : '';
+        $redirectUrl = array_key_exists('redirect_url', $data) ? $data['redirect_url'] : $this->container->getParameter('oauth2_redirect_url');
         $adminPassword = '';
 
         $defaultData = array('message' => 'Create a new Client', 'name' => $clientName, 'password' => $adminPassword );
 
         $form = $this->createFormBuilder()
                 ->add('name', 'text', array('label' => 'label.client_name', 'data' => $clientName ))
+                ->add('redirect_url', 'text', array('label' => 'label.admin_redirecturl', 'data' => $redirectUrl ))
                 ->add('password', 'password', array('label' => 'label.admin_password' ))
                 ->add('send', 'submit', array('label' => 'label.create_client' ))
                 ->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $user = $this->container->get('security.context')->getToken()->getUser();
-            $username = $user->getUsername();
             $password = $form['password']->getData();
 
-            // First check if we have a valid redirectUrl
-            $redirectUrl = $this->container->getParameter('oauth2_redirect_url');
-            if (substr($redirectUrl, -1) != '/') {
-              $redirectUrl .= '/';
-            }
-            // Check if this URL actually exists
-            $headers = @get_headers($redirectUrl);
-            if (strpos($headers[0],'200')=== false) {
-              $this->logMessageAndFlash(400, 'danger', 'Invalid redirectURL: ' . $redirectUrl, 'Invalid redirectURL: ' . $redirectUrl);
-            }
+            // Check if Admin password is valid
+            // Get the encoder for the users password
+            $encoder_service = $this->get('security.encoder_factory');
+            $encoder = $encoder_service->getEncoder($user);
 
-            // Check for the valid Admin user
-            if ($user) {
-              // Get the encoder for the users password
-              $encoder_service = $this->get('security.encoder_factory');
-              $encoder = $encoder_service->getEncoder($user);
-
-              if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-                // Not an Admin
-                if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-                  $ifErred = true;
-                  $this->logMessageAndFlash(400, 'danger', 'User is not an Admin: ' . $username, 'User is not an Admin: ' . $username);
-                }
-              } else {
-                  // Password bad
-                  $ifErred = true;
-                  $this->logMessageAndFlash(400, 'danger', 'Invalid password: '. $username, 'Invalid password: '. $username);
-              }
-            } else {
-              // Username bad
-              $ifErred = true;
-              $this->logMessageAndFlash(400, 'danger', 'Invalid username: ' . $username, 'Invalid username: ' . $username);
+            // Password check is an additional security check
+            if (!$encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
+                $this->logMessageAndFlash(400, 'danger', 'Invalid password: '. $username, 'Invalid password: '. $username);
+                return $this->redirectToRoute('admin_client_index');
             }
 
             // Everything ok, now proceed to create the client
             $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
             $client = $clientManager->createClient();
             $client->setName($form['name']->getData());
-            $client->setRedirectUris(array($redirectUrl));
+            $client->setRedirectUris(array($form['redirect_url']->getData()));
             $client->setAllowedGrantTypes(array("authorization_code",
                                                 "password",
                                                 "refresh_token",
@@ -127,7 +104,7 @@ class ClientController extends Controller
             }
 
             return $this->redirectToRoute('admin_client_index');
-        }
+        } // if form is valid
 
         return $this->render('@ApiBundle/Resources/views/admin/client/new.html.twig', [
             'form' => $form->createView(),
@@ -183,7 +160,6 @@ class ClientController extends Controller
             // Always catch exact exception for which flash message or logger is needed,
             // otherwise catch block will not get executed on higher or lower ranked exceptions.
             } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-                  $this->logMessage(400, $e->getMessage());
                   $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
                   $this->logMessageAndFlash(400, 'danger', $e->getMessage(), $flashMsg);
                   return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);

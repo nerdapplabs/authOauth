@@ -60,6 +60,7 @@ label:
   client_allowedgranttypes: Types de subventions autorisées
   client_name: Nom du client
   admin_password: Mot de passe administrateur
+  admin_redirecturl: URL de redirection
   delete_it: "Supprime-le!"
 menu:
   toggle_nav: Activer ou désactiver la navigation
