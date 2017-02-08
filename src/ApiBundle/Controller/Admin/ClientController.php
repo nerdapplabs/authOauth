@@ -49,9 +49,14 @@ class ClientController extends Controller
      */
     public function newAction(Request $request)
     {
-        $defaultData = array('message' => 'Create a new Client');
-        $form = $this->createFormBuilder($defaultData)
-                ->add('name', 'text', array('label' => 'label.client_name' ))
+        $data = $request->request->all();
+        $clientName = array_key_exists('name', $data) ? $data['name'] : '';
+        $adminPassword = '';
+
+        $defaultData = array('message' => 'Create a new Client', 'name' => $clientName, 'password' => $adminPassword );
+
+        $form = $this->createFormBuilder()
+                ->add('name', 'text', array('label' => 'label.client_name', 'data' => $clientName ))
                 ->add('password', 'password', array('label' => 'label.admin_password' ))
                 ->add('send', 'submit', array('label' => 'label.create_client' ))
                 ->getForm();
@@ -118,6 +123,7 @@ class ClientController extends Controller
             } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
                   $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
                   $this->logMessageAndFlash(400, 'danger', $e->getMessage(), $flashMsg);
+                  return $this->redirectToRoute('admin_client_new');
             }
 
             return $this->redirectToRoute('admin_client_index');
@@ -180,9 +186,10 @@ class ClientController extends Controller
                   $this->logMessage(400, $e->getMessage());
                   $flashMsg = $this->get('translator')->trans('flash.client_already_exists');
                   $this->logMessageAndFlash(400, 'danger', $e->getMessage(), $flashMsg);
+                  return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
             }
 
-            return $this->redirectToRoute('admin_client_edit', ['id' => $client->getId()]);
+            return $this->redirectToRoute('admin_client_index');
         }
 
         return $this->render('@ApiBundle/Resources/views/admin/client/edit.html.twig', [
