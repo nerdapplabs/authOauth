@@ -83,7 +83,7 @@ label:
   delete_it: "इसे मिटाओ!"
 menu:
   toggle_nav: Toggle navigation
-  choose_language: Choose language
+  choose_language: भाषा चुनें
   client_list: Client list
   back_to_blog: Back to blog
   homepage: Homepage

@@ -63,6 +63,7 @@ label:
   delete_it: "Supprime-le!"
 menu:
   toggle_nav: Activer ou désactiver la navigation
+  choose_language: Choisissez la langue
   client_list: Liste des articles
   back_to_blog: Retour au blog
   homepage: Accueil
