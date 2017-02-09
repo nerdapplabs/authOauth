@@ -1,0 +1,100 @@
+project_name: Nerds' OAuth2 Project
+welcome_title:  Welcome!
+note: NOTE
+tip: ASTUCE
+not_available: Indisponible
+mit_license: Licence MIT
+title:
+  homepage: "Bienvenue sur l'application <strong>Symfony Demo</strong>"
+  source_code: Le code source utilisé pour afficher cette page
+  controller_code: Code du contrôleur
+  twig_template_code: Code du template Twig
+  login_help: Try either of the following users
+  login: Connexion sécurisée
+  client_list: Liste des articles
+  edit_client: "Modifier l'article #%id%"
+  add_comment: Laisser un commentaire
+  client_new: Ajouter un nouvel article
+action:
+  show: Voir
+  show_code: Voir le code
+  edit: Editer
+  edit_client: "Modifier l'article"
+  save: Enregistrer
+  delete_client: "Supprimer l'article"
+  create_client: Créer un nouvel article
+  back_to_list: Retour à la liste des articles
+  publish_comment: Publier
+  sign_in: Connectez-vous
+  sign_out: Déconnexion
+  sign_up: "S'inscrire"
+  logged_in_as: connecté en tant que
+  settings: Paramètres
+  reset_password: réinitialiser le mot de passe
+  change_password: Changer le mot de passe
+  profile: Profil
+  show_profile: Afficher le profil
+  edit_profile: Editer le profil
+  admin_menu: Admin
+  role_management: Gestion des rôles
+  user_management: Gestion des utilisateurs
+  client_management: La gestion des clients
+  create_new_client: Créer un nouveau client
+  browse_app: "Naviguer sur l'application"
+  browse_admin: "Naviguer sur l'admin"
+  edit_contents: Modifier le contenu
+  client_not_empty: Le nom du client ne peut pas être vide
+  client_invalid_password: Mot de passe administrateur non valide
+  client_redirect_not_empty: L'URL de redirection ne peut pas être vide
+label:
+  create_client: Créer un article
+  title: Titre
+  author: Auteur
+  author_email: "Mail de l'auteur"
+  username: Identifiant
+  password: Mot de passe
+  role: Rôle
+  content: Contenu
+  summary: Résumé
+  published_at: Publié le
+  actions: actes
+  client_id: Id
+  client_randomid: Id aléatoire
+  client_secret: Secret du client
+  client_redirecturis: Redirection des URI
+  client_allowedgranttypes: Types de subventions autorisées
+  client_name: Nom du client
+  admin_password: Mot de passe administrateur
+  admin_redirecturl: URL de redirection
+  delete_it: "Supprime-le!"
+menu:
+  toggle_nav: Activer ou désactiver la navigation
+  choose_language: Choisissez la langue
+  client_list: Liste des articles
+  back_to_blog: Retour au blog
+  homepage: Accueil
+  admin: Admin
+  logout: Déconnexion
+client:
+  to_publish_a_comment: pour publier un commentaire
+  num_comments: "%count% commentaire|%count% commentaires"
+  commented_on: commenté le
+  no_comments: Soyez le premier à commenter cet article.
+help:
+  app_description: "Ceci est une <strong>application de démonstration</strong> construite avec le framework Symfony pour illustrer la façon recommandée de développer des applications Symfony."
+  show_code: "Cliquez sur ce bouton pour voir le code source du <strong>contrôleur</strong> et du <strong>template</strong> utilisé pour afficher cette page."
+  browse_app: "Parcourir la <strong>section publique</strong> de l'application de démonstration."
+  browse_admin: "Parcourir l'<strong>interface d'administration</strong> de l'application de démonstration."
+  login_users: "Essayez l'un des utilisateurs suivants"
+  role_user: utilisateur normal
+  role_admin: administrateur
+  reload_fixtures: "Si ces utilisateurs ne fonctionnent pas, rechargez les fixtures de l'application en exécutant cette commande depuis le terminal :"
+  add_user: "Si vous voulez créer de nouveaux utilisateurs, exécutez cette autre commande :"
+  more_information: "Pour plus d'informations, consultez la <a href=\"http://symfony.com/doc\">documentation de Symfony</a>."
+delete_post_modal:
+  title: Delete Client
+flash:
+  client_already_exists: Pardon! Ce nom de client a déjà été pris. Veuillez choisir un autre nom.
+  client_created_successfully: Client créé avec succès!
+  client_updated_successfully: Client mis à jour avec succès!
+  client_deleted_successfully: Client supprimé avec succès!

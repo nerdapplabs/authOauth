@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <!-- Basic Page Needs
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta charset="UTF-8" />
+        <title>{% block title %}{{ 'welcome_title'|trans }}{% endblock %}</title>
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Mobile Specific Metas
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- FONT
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+        <!-- CSS
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        {% block stylesheets %}
+          {% stylesheets '@ApiBundle/Resources/public/materialize/css/*' filter='cssrewrite' %}
+            <link rel="stylesheet" href="{{ asset_url }}"/>
+          {% endstylesheets %}
+        {% endblock %}
+        <!-- Favicon
+        –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+
+
+        <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  <div class="container">
+      {% include "nav_materialize.html.twig" %}
+      {% block body %}
+          <div class="row">
+              <div id="main" class="col s9">
+                  {{ include('_flash_messages.html.twig') }}
+
+                  {% block main %}{% endblock %}
+              </div>
+
+              <div id="sidebar" class="col s3">
+                  {% block sidebar %}{% endblock %}
+              </div>
+          </div>
+      {% endblock %}
+  </div>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+        {% block javascripts %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+            {% javascripts '@ApiBundle/Resources/public/materialize/js/*' %}
+                <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        {% endblock %}
+    </body>
+</html>

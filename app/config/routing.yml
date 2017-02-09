@@ -1,7 +1,3 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
-
 users_routing:
     resource: "@ApiBundle/Resources/config/routing.yml"
     defaults: { _format: json }
