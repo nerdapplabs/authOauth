@@ -23,7 +23,7 @@ homepage:
         _locale: '%app_locales%'
     defaults:
         _controller: FrameworkBundle:Template:template
-        template:    default/index.html.twig
+        template:    base.html.twig
         _locale:     '%locale%'
 
 fos_user_security:

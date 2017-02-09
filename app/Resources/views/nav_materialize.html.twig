@@ -2,7 +2,7 @@
     <nav class="nav-extended">
         <div class="nav-wrapper">
             <div>
-              <a href="/">Nerd Project</a>
+              <a href="/">{{ 'project_name'|trans }}</a>
             </div>
             <div id="navbar">
               <ul>
@@ -45,7 +45,7 @@
                     </a>
                     <ul>
                         {% for locale in locales() %}
-                            <li role="menuitem"><a href="{{ path(app.request.get('_route', 'admin_client_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
+                            <li><a href="{{ path(app.request.get('_route', 'admin_client_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
                         {% endfor %}
                     </ul>
                 </li>
