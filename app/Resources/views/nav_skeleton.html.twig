@@ -1,5 +1,6 @@
 {% block nav %}
-    <nav class="row">
+    <nav>
+        <div>
             <div>
               <a href="/">Nerd Project</a>
             </div>
@@ -8,7 +9,7 @@
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                     <li><a href="{{ path('fos_user_security_logout') }}">{{ 'action.logged_in_as'|trans }} {{ app.user.username }} | {{ 'action.sign_out'|trans }}</a></li>
                     <li>
-                  <a href="#">{{ 'action.settings'|trans }}<span class="caret"></span></a>
+                  <a href="#">{{ 'action.settings'|trans }}<span></span></a>
                   <ul>
                     <li><a href="{{ path('fos_user_resetting_request') }}">{{ 'action.reset_password'|trans }}</a></li>
 
@@ -16,7 +17,7 @@
                   </ul>
                 </li>
                 <li>
-                <a href="#">{{ 'action.profile'|trans }}<span class="caret"></span></a>
+                <a href="#">{{ 'action.profile'|trans }}<span></span></a>
                  <ul>
                     <li><a href="{{ path('fos_user_profile_show') }}">{{ 'action.show_profile'|trans }}</a></li>
                     <li><a href="{{ path('fos_user_profile_edit') }}">{{ 'action.edit_profile'|trans }}</a></li>
@@ -28,7 +29,7 @@
                 {% endif %}
                 {% if is_granted("ROLE_ADMIN") %}
                     <li>
-                      <a href="#">{{ 'action.admin_menu'|trans }}<span class="caret"></span></a>
+                      <a href="#">{{ 'action.admin_menu'|trans }}<span></span></a>
                       <ul>
                         <li><a href="#">{{ 'action.role_management'|trans }}</a></li>
                         <li><a href="#">{{ 'action.user_management'|trans }}</a></li>
@@ -42,13 +43,14 @@
                         <span></span>
                         <span>{{ 'menu.choose_language'|trans }}</span>
                     </a>
-                    <ul class="locales">
-                        {% for locale in locales() %}
-                            <li {% if app.request.locale == locale.code %}aria-checked="true" class="active"{%else%}aria-checked="false"{% endif %} role="menuitem"><a href="{{ path(app.request.get('_route', 'blog_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
-                        {% endfor %}
+                    <ul>
+                      {% for locale in locales() %}
+                          <li role="menuitem"><a href="{{ path(app.request.get('_route', 'admin_client_index'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
+                      {% endfor %}
                     </ul>
                 </li>
               </ul>
             </div>
+          </div>
         </nav>
  {% endblock %}
