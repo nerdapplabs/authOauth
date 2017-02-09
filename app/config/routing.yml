@@ -1,25 +1,50 @@
+# These first lines load the all routes defined as @Route() annotations in any
+# controller defined inside the src/AppBundle/Controller/ directory. Controllers
+# are loaded recursively, so you can separate them into subdirectories.
+# If you don't like to add annotations in your applications, you can also define
+# the routes in YAML, XML or PHP files.
+# See http://symfony.com/doc/current/book/routing.html
 app:
-    resource: "@AppBundle/Controller/"
+    resource: '@ApiBundle/Controller/'
     type:     annotation
+    prefix:   /{_locale}
+    requirements:
+        _locale: '%app_locales%'
+    defaults:
+        _locale: '%locale%'
+
+# These lines define a route using YAML configuration. The controller used by
+# the route (FrameworkBundle:Template:template) is a convenient shortcut when
+# the template can be rendered without executing any logic in your own controller.
+# See http://symfony.com/doc/current/cookbook/templating/render_without_controller.html
+homepage:
+    path: /{_locale}
+    requirements:
+        _locale: '%app_locales%'
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    base.html.twig
+        _locale:     '%locale%'
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+    prefix: /{_locale}
 
 fos_user_resetting:
     resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
-    prefix: /resetting
+    prefix: /{_locale}/resetting
 
 fos_user_profile:
     resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
-    prefix: /profile
+    prefix: /{_locale}/profile
 
 fos_user_register:
     resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
-    prefix: /register
+    prefix: /{_locale}/register
 
 fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
-    prefix: /profile
+    prefix: /{_locale}/profile
 
 users:
     resource: "@ApiBundle/Resources/config/user_routes.yml"
