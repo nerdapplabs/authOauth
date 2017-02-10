@@ -116,53 +116,18 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function getNewClientAction()
     {
-        $entityManager = $this->get('doctrine')->getManager();
+
         $request = $this->container->get('request');
 
-        $data = $request->request->all();
-        $username = $data['username'];
-        $password = $data['password'];
-        $clientName = $data['name'];
-        $redirectUrl = $data['redirect_url'];
-
-        $query = $entityManager->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
-        $query->setParameter('username', $username);
-        $user = $query->getOneOrNullResult();
-
-        // Check Client name is not empty
-        if (!$clientName) {
-            $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('api.show_error_client_name', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check Redirect URL is not empty
-        if (!$redirectUrl) {
-            $this->logAndThrowError(400, 'Redirect URL cannot be empty', $this->get('translator')->trans('api.show_error_url', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check for the valid Admin user
-        if ($user) {
-          // Get the encoder for the users password
-          $encoder_service = $this->get('security.encoder_factory');
-          $encoder = $encoder_service->getEncoder($user);
-
-          if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-            // Not an Admin
-            if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-              $this->logAndThrowError(400, 'User is not an Admin: ' . $username, $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
-            }
-          } else {
-              // Password bad
-              $this->logAndThrowError(400, 'Invalid password: '. $username, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
-          }
-        } else {
-          // Username bad
-          $this->logAndThrowError(400, 'Invalid username: ' . $username, $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
+        $this->validateClientName($request);
+        $this->validateUrl($request);
+        $this->validateAdminUser($request);
 
         // Everything ok, now proceed to create the client
         $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
         $client = $clientManager->createClient();
-        $client->setRedirectUris(array($redirectUrl));
+        $client->setName($request->request->get('name'));
+        $client->setRedirectUris(array($request->request->get('redirect_url')));
         $client->setAllowedGrantTypes(array("authorization_code",
                                             "password",
                                             "refresh_token",
@@ -180,6 +145,63 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           'client_id' => $client->getPublicId(),
           'client_secret' => $client->getSecret()
         ));
+    }
+
+    /**
+      * Validate Client name
+      */
+    private function validateClientName(Request $request) {
+      $clientName = $request->request->get('name');
+
+      // Check Client name is not empty
+      if (!$clientName) {
+          $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('api.show_error_client_name', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate Redirect URL
+      */
+    private function validateUrl(Request $request) {
+      $redirectUrl = $request->request->get('redirect_url');
+
+      // Check Redirect URL is not empty
+      if (!$redirectUrl) {
+          $this->logAndThrowError(400, 'Redirect URL cannot be empty', $this->get('translator')->trans('api.show_error_url', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate Admin User
+      */
+    private function validateAdminUser(Request $request) {
+      $username = $request->request->get('username');
+      $password = $request->request->get('password');
+
+      $entityManager = $this->get('doctrine')->getManager();
+      $query = $entityManager->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
+      $query->setParameter('username', $username);
+      $user = $query->getOneOrNullResult();
+
+      // Check for the valid Admin user
+      if ($user) {
+        // Get the encoder for the users password
+        $encoder_service = $this->get('security.encoder_factory');
+        $encoder = $encoder_service->getEncoder($user);
+
+        if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
+          // Not an Admin
+          if (!in_array('ROLE_ADMIN', $user->getRoles())) {
+            $this->logAndThrowError(400, 'User is not an Admin: ' . $username, $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
+          }
+        } else {
+            // Password bad
+            $this->logAndThrowError(400, 'Invalid password: '. $username, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+      } else {
+        // Username bad
+        $this->logAndThrowError(400, 'Invalid username: ' . $username, $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
     }
 
     /**
@@ -208,92 +230,26 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function getRegisterAction()
     {
-        $userManager = $this->get('fos_user.user_manager');
         $request = $this->container->get('request');
+        $userManager = $this->get('fos_user.user_manager');
 
-        $data = $request->request->all();
-
-        $clientId = $data['client_id'];
-        $clientSecret = $data['client_secret'];
-
-        // First check for valid Client Credentials
-        $pos = strpos($clientId, '_');
-        $id = substr($clientId, 0, $pos);
-        $randomId = substr($clientId, $pos + 1);
-
-        $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
-        $client = $clientManager->findClientBy(array(
-            'id'       => $id,
-            'randomId' => $randomId,
-            'secret'   => $clientSecret
-        ));
-
-        if (null == $client) {
-            $this->logAndThrowError(400, 'Invalid Client Credentials: ' . $clientId);
-        }
-
-        $username = $data['username'];
-        $password = $data['password'];
-        $email = $data['email'];
-        $confirmationEnabled = $data['email_confirmation'];
-
-        $firstname = $data['firstname'];
-        $lastname = $data['lastname'];
-        $dob = $data['dob'];
-        $scope = $data['scope'];
-
-        // Check if password is empty
-        if (null == $username) {
-            $this->logAndThrowError(400, 'Empty username', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Do a check for existing user with userManager->findByUsername
-        /** @var $user UserInterface */
-        $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
-        if (null != $user) {
-          $this->logAndThrowError(400, 'User already exists. Username: ' . $user->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check if password is empty
-        if (null == $password) {
-            $this->logAndThrowError(400, 'Invalid empty password', $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check if email is valid
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-          $this->logAndThrowError(400, 'Invalid email: ' . $email, $this->get('translator')->trans('api.show_error_email', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
-        if (null != $user) {
-          $this->logAndThrowError(400, 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check if dob is valid
-        list($mm,$dd,$yyyy) = explode('/',$dob);
-        if (!checkdate($mm,$dd,$yyyy)) {
-            $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $dob, $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check if scope is set to API
-        if ('API' != $scope) {
-            $this->logAndThrowError(400, 'Invalid scope: ' . $scope, $this->get('translator')->trans('api.show_error_scope', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Check if firstname is empty. At least firstname is required.
-        if (null == $firstname) {
-            $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
+        $this->validateClient($request);
+        $this->validateUsername($request);
+        $this->validatePassword($request);
+        $this->validateEmail($request);
+        $this->validateFirstname($request);
+        $this->validateDob($request);
+        $this->validateScope($request);
 
         $user = $userManager->createUser();
 
-        $user->setUsername($username);
-        $user->setPlainPassword($password);
-        $user->setEmail($email);
-        $user->setFirstname($firstname);
-        $user->setLastname($lastname);
-        $user->setDob($dob);
-        $user->setRoles(array('ROLE_'.$scope));
+        $user->setUsername($request->request->get('username'));
+        $user->setPlainPassword($request->request->get('password'));
+        $user->setEmail($request->request->get('email'));
+        $user->setFirstname($request->request->get('firstname'));
+        $user->setLastname($request->request->get('lastname'));
+        $user->setDob($request->request->get('dob'));
+        $user->setRoles(array('ROLE_'. $request->request->get('scope')));
         $user->setEnabled(true);
 
         $userManager->updateUser($user);
@@ -302,22 +258,137 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $msg = 'N.A.';
         $grantType = 'password';
 
-        if ('1' == $confirmationEnabled) {
+        if ('1' == $request->request->get('email_confirmation')) {
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
-            $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret,
-                                                $grantType, null, $username, $password, $scope);
+            $oAuthRtn = $this->fetchAccessToken($request->request->get('client_id'),
+                                                $request->request->get('client_secret'),
+                                                $grantType,
+                                                null,
+                                                $request->request->get('username'),
+                                                $request->request->get('password'),
+                                                $request->request->get('scope') );
         }
 
-        $this->logMessage(201, 'User successfully created ' . $username);
+        $this->logMessage(201, 'User successfully created ' . $request->request->get('username') );
 
         return new JsonResponse(array(
                 'code' => 201,
                 'show_message' => $msg,
-                'username' => $username,
+                'username' => $request->request->get('username'),
                 'oauth' => $oAuthRtn
         ));
+    }
+
+    /**
+      * Validate Client Credentials
+      */
+    private function validateClient(Request $request) {
+      $clientId = $request->request->get('client_id');
+      $clientSecret = $request->request->get('client_secret');
+
+      // First check for valid Client Credentials
+      $pos = strpos($clientId, '_');
+      $id = substr($clientId, 0, $pos);
+      $randomId = substr($clientId, $pos + 1);
+
+      $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
+      $client = $clientManager->findClientBy(array(
+          'id'       => $id,
+          'randomId' => $randomId,
+          'secret'   => $clientSecret
+      ));
+
+      if (null == $client) {
+          $this->logAndThrowError(400, 'Invalid Client Credentials: ' . $clientId);
+      }
+    }
+
+    /**
+      * Validate username
+      */
+    private function validateUsername(Request $request) {
+      $username = $request->request->get('username');
+
+      // Check if username is empty
+      if (null == $username) {
+          $this->logAndThrowError(400, 'Empty username', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+
+      // Do a check for existing user with userManager->findByUsername
+      /** @var $user UserInterface */
+      $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
+      if (null != $user) {
+        $this->logAndThrowError(400, 'User already exists. Username: ' . $user->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate password
+      */
+    private function validatePassword(Request $request) {
+      $password = $request->request->get('password');
+
+      // Check if password is empty
+      if (null == $password) {
+          $this->logAndThrowError(400, 'Invalid empty password', $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate email
+      */
+    private function validateEmail(Request $request) {
+      $email = $request->request->get('email');
+
+      // Check if email is valid
+      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->logAndThrowError(400, 'Invalid email: ' . $email, $this->get('translator')->trans('api.show_error_email', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+
+      $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
+      if (null != $user) {
+        $this->logAndThrowError(400, 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate firstname
+      */
+    private function validateFirstname(Request $request) {
+      $firstname = $request->request->get('firstname');
+
+      // Check if firstname is empty. At least firstname is required.
+      if (null == $firstname) {
+          $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+
+    }
+
+    /**
+      * Validate dob
+      */
+    private function validateDob(Request $request) {
+      $dob = $request->request->get('dob');
+
+      // Check if dob is valid
+      list($mm,$dd,$yyyy) = explode('/',$dob);
+      if (!checkdate($mm,$dd,$yyyy)) {
+          $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $dob, $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate dob
+      */
+    private function validateScope(Request $request) {
+      $scope = $request->request->get('scope');
+
+      // Check if scope is set to API
+      if ('API' != $scope) {
+          $this->logAndThrowError(400, 'Invalid scope: ' . $scope, $this->get('translator')->trans('api.show_error_scope', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
     }
 
     /**
@@ -338,13 +409,14 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function getChangePasswordAction()
     {
+        $request = $this->container->get('request');
+
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             $this->logAndThrowError(400, 'Invalid User', 'You are not allowed to change password.');
         }
 
         $userManager = $this->get('fos_user.user_manager');
-        $request = $this->container->get('request');
 
         $data = $request->request->all();
         $oldPassword = $data['old_password'];
@@ -391,6 +463,8 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function getProfileShowAction()
     {
+        $request = $this->container->get('request');
+
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
@@ -438,64 +512,22 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function getProfileEditAction()
     {
+        $request = $this->container->get('request');
+
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_edit', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $userManager = $this->get('fos_user.user_manager');
-        $request = $this->container->get('request');
 
         $data = $request->request->all();
 
-        if (array_key_exists('username', $data)) {
-          // Change username only if username is changed
-          if ($data['username'] != $user->getUsername()) {
-            // Check if username is already taken
-            $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
-            if (null != $user1) {
-              $this->logAndThrowError(400, 'Already taken by Username: ' . $user1->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-            }
-            $user->setUsername($data['username']);
-          }
-        }
-
-        if (array_key_exists('email', $data)) {
-          // Check if email is valid
-          if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-              $this->logAndThrowError(400, 'Invalid email: ' . $data['email'], 'Invalid email: ' . $data['email']);
-          }
-          // Update email only if email is changed
-          if ($data['email'] != $user->getEmail()) {
-              // Check if email is already taken
-              $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
-              if (null != $user1) {
-                $this->logAndThrowError(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-              }
-              $user->setEmail($data['email']);
-          }
-        }
-
-        if (array_key_exists('firstname', $data)) {
-          // Check if firstname is empty. At least firstname is required.
-          if (null == $data['firstname']) {
-              $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
-          }
-          $user->setFirstname($data['firstname']);
-        }
-
-        if (array_key_exists('lastname', $data)) {
-          $user->setLastname($data['lastname']);
-        }
-
-        if (array_key_exists('dob', $data)) {
-          // Check if dob is valid
-          list($mm,$dd,$yyyy) = array_merge( explode('/',$data['dob']), array(0,0,0) );
-          if (!checkdate($mm,$dd,$yyyy)) {
-              $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $data['dob'], $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
-          }
-          $user->setDob($data['dob']);
-        }
+        $this->handleKeyUsername($user, $request);
+        $this->handleKeyEmail($user, $request);
+        $this->handleKeyFirstname($user, $request);
+        $this->handleKeyLastname($user, $request);
+        $this->handleKeyDob($user, $request);
 
         $userManager->updateUser($user);
 
@@ -509,6 +541,92 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           'code' => 201,
           'show_message' => $msg . ' for ' . $username
         ));
+    }
+
+    /**
+      * Checks $request if it contains a key - username
+      */
+    private function handleKeyUsername(UserInterface $user, Request $request) {
+      $data = $request->request->all();
+
+      if (array_key_exists('username', $data)) {
+        // Change username only if username is changed
+        if ($data['username'] != $user->getUsername()) {
+          // Check if username is already taken
+          $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
+          if (null != $user1) {
+            $this->logAndThrowError(400, 'Already taken by Username: ' . $user1->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
+          }
+          $user->setUsername($data['username']);
+        }
+      }
+    }
+
+    /**
+      * Checks $request if it contains a key - email
+      */
+    private function handleKeyEmail(UserInterface $user, Request $request) {
+      $data = $request->request->all();
+
+      if (array_key_exists('email', $data)) {
+        // Check if email is valid
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->logAndThrowError(400, 'Invalid email: ' . $data['email'], 'Invalid email: ' . $data['email']);
+        }
+        // Update email only if email is changed
+        if ($data['email'] != $user->getEmail()) {
+            // Check if email is already taken
+            $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
+            if (null != $user1) {
+              $this->logAndThrowError(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
+            }
+            $user->setEmail($data['email']);
+        }
+      }
+    }
+
+    /**
+      * Checks $request if it contains a key - firstname
+      */
+    private function handleKeyFirstname(UserInterface $user, Request $request) {
+      $data = $request->request->all();
+
+      if (array_key_exists('firstname', $data)) {
+        // Check if firstname is empty. At least firstname is required.
+        if (null == $data['firstname']) {
+            $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+        $user->setFirstname($data['firstname']);
+      }
+
+    }
+
+    /**
+      * Checks $request if it contains a key - lastname
+      */
+    private function handleKeyLastname(UserInterface $user, Request $request) {
+      $data = $request->request->all();
+
+      if (array_key_exists('lastname', $data)) {
+        $user->setLastname($data['lastname']);
+      }
+    }
+
+    /**
+      * Checks $request if it contains a key - dob
+      */
+    private function handleKeyDob(UserInterface $user, Request $request) {
+      $data = $request->request->all();
+
+      if (array_key_exists('dob', $data)) {
+        // Check if dob is valid
+        list($mm,$dd,$yyyy) = array_merge( explode('/',$data['dob']), array(0,0,0) );
+        if (!checkdate($mm,$dd,$yyyy)) {
+            $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $data['dob'], $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+        $user->setDob($data['dob']);
+      }
+
     }
 
     /**
@@ -528,7 +646,8 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function getResettingRequestEmailAction()
     {
-        $username = $this->container->get('request')->query->get('username');
+        $request = $this->container->get('request');
+        $username = $request->query->get('username');
 
         /** @var $user UserInterface */
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
@@ -619,7 +738,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret, $grantType, null, $username, $password, $scope);
+        $oAuthRtn = $this->fetchAccessToken($request, $clientId, $clientSecret, $grantType, null, $username, $password, $scope);
 
         $msg = 'Access Token successfully fetched for ' . $username;
         $this->logMessage(201, $msg);
@@ -662,7 +781,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing refresh_token/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken);
+        $oAuthRtn = $this->fetchAccessToken($request, $clientId, $clientSecret, $grantType, $refreshToken);
 
         $msg = 'Access Token successfully fetched on Refresh Token';
         $this->logMessage(201, $msg);
@@ -677,7 +796,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       * Fetch oAuth Access Token from oAuth engine.
       *
       */
-    private function fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken = null, $username = null, $password = null, $scope = null)
+    private function fetchAccessToken(Request $request, $clientId, $clientSecret, $grantType, $refreshToken = null, $username = null, $password = null, $scope = null)
     {
         $client = new OAuth2\Client($clientId, $clientSecret);
 
