@@ -114,7 +114,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getNewClientAction()
+    public function newClientAction()
     {
 
         $request = $this->container->get('request');
@@ -228,7 +228,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getRegisterAction()
+    public function postRegisterAction()
     {
         $request = $this->container->get('request');
         $userManager = $this->get('fos_user.user_manager');
@@ -389,7 +389,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       * Change Password request. Will return a JsonResponse(username, msg) upon success.
       *
       *
-      * @Post("/user/change/password")
+      * @Post("/user/profile/change-password")
       *
       * @ApiDoc(
       *  resource=true,
@@ -401,7 +401,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getChangePasswordAction()
+    public function editPasswordAction()
     {
         $request = $this->container->get('request');
 
@@ -455,7 +455,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getProfileShowAction()
+    public function getProfileAction()
     {
         $request = $this->container->get('request');
 
@@ -504,7 +504,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getProfileEditAction()
+    public function editProfileAction()
     {
         $request = $this->container->get('request');
 
@@ -627,7 +627,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       * Request reset user password. A mail will be sent, if not sent earlier else will return  error msg.
       *
       *
-      * @Get("/user/resetting/request/email")
+      * @Get("/user/resetting/request")
       *
       * @ApiDoc(
       *  resource=true,
@@ -638,7 +638,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getResettingRequestEmailAction()
+    public function getResettingRequestAction()
     {
         $request = $this->container->get('request');
         $username = $request->query->get('username');
@@ -715,7 +715,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getAccessTokenAction()
+    public function postAccessTokenAction()
     {
         $request = $this->container->get('request');
 
@@ -760,7 +760,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  },
       * )
       */
-    public function getRefreshTokenAction()
+    public function postRefreshTokenAction()
     {
         $request = $this->container->get('request');
 

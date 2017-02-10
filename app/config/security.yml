@@ -34,11 +34,7 @@ security:
             anonymous: true
             stateless: true
         request_password_email:
-            pattern: ^/api/user/resetting/request/email
-            anonymous: true
-            stateless: true
-        check_email:
-            pattern: ^/api/user/resetting/check/email
+            pattern: ^/api/user/resetting/request
             anonymous: true
             stateless: true
         register:
