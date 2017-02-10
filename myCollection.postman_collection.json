@@ -1,333 +1,66 @@
 {
-	"id": "68e49833-0673-1773-7fd9-0f71b9b358e0",
-	"name": "myCollection",
-	"description": null,
+	"id": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+	"name": "OAuth Postman Collection",
+	"description": "",
 	"order": [
-		"fcb900d6-8aad-46be-7d98-dbb4835b49df",
-		"9c0a3fa5-fc45-c873-ce95-b6048b2f1435",
-		"409f7dfa-fe26-1ea6-77e3-a452850b85aa",
-		"be1e3b9f-10da-ffd3-56bb-31a7c6ac1aed",
-		"ee55ee6b-bb9e-62ce-87b1-37bbe4613884",
-		"f8825096-707a-e75c-31f9-f6032a40cd6c",
-		"5bea2ef7-4b22-182c-3360-23682cd19e08",
-		"86372d09-b7b2-004f-aa9c-caf74be597e4",
-		"6498ddb9-e827-bc67-7dc3-1586dafeed4a",
-		"3782e057-0049-eef8-d9e7-310eb7a07f34"
+		"e5a58bb8-4aa9-c8c6-a116-6c183eeab3ad",
+		"aaba2cfe-d4f2-d05b-4b55-6128dd8e9d34",
+		"b95933e6-5cad-d133-c659-9907cc2f9f75",
+		"a25c53a6-84cf-c068-010e-3ad4e4de043a",
+		"a1c67116-71d0-9579-62ff-70307cedba19",
+		"c4012907-f1e0-7cd8-095b-fc7245f0cc7a",
+		"64c9f4f8-ea4d-4472-7342-30c7a1e1c354",
+		"09ed0222-309a-5015-dcd0-0a3e3abc5253",
+		"86afcb69-ba44-c8bd-dd41-c7e83dd53da1"
 	],
 	"folders": [],
-	"timestamp": 0,
-	"owner": "1510042",
+	"timestamp": 1485590996893,
+	"owner": 0,
 	"public": false,
 	"requests": [
 		{
-			"id": "3782e057-0049-eef8-d9e7-310eb7a07f34",
-			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
-			"url": "http://localhost/auth/web/api/v1.0/users",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "GET",
-			"data": [
-				{
-					"key": "access_token",
-					"value": "OGQ1NTQ4YjgyOTdjMjIzNmE0Zjk3M2U4MDk5YmIzMTQzY2NkYjRiMWE1MjdmNGNhMWNjMWVhNTBjMDc4ZDgxMg",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "version",
-					"value": "v1",
-					"type": "text",
-					"enabled": false
-				}
-			],
-			"dataMode": "urlencoded",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486033938299,
-			"name": "get all users",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
-			"id": "409f7dfa-fe26-1ea6-77e3-a452850b85aa",
-			"headers": "",
-			"url": "http://localhost/auth/web/api/v1.0/user/access/token",
+			"id": "09ed0222-309a-5015-dcd0-0a3e3abc5253",
+			"headers": "Authorization: Bearer {{access_token}}\nContent-Type: application/json\nX-Accept-Version: {{x-accept-version}}\n",
+			"url": "{{base_url}}/{{site_url}}/user/profile/edit",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
-			"data": [
-				{
-					"key": "client_id",
-					"value": "7_2uii6vkzzxusk0goc4wwckgcsg00ccc08008ww0scokog448gs",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "client_secret",
-					"value": "881tcyvdvnk040c4k4c88csgk0s0400oc8oook44kwc40w8cg",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "username",
-					"value": "a77778",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "password",
-					"value": "a77778",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "scope",
-					"value": "API",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486033286966,
-			"name": "get Access Token",
+			"time": 1486724875617,
+			"name": "Edit logged in user profile",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\"firstname\":\"Sunny\",\n\"lastname\":\"man\",\n\"username\":\"sunny11\",\n\"email\":\"aa@gm.com\",\n\"dob\":\"03/12/2012\"\n}"
 		},
 		{
-			"id": "5bea2ef7-4b22-182c-3360-23682cd19e08",
-			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
-			"url": "http://localhost/auth/web/api/v1.0/user/profile/showme",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "username",
-					"value": "a77",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486033894116,
-			"name": "error_route",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
-			"id": "6498ddb9-e827-bc67-7dc3-1586dafeed4a",
-			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
-			"url": "http://localhost/auth/web/api/v1.0/user/profile/edit",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "lastname",
-					"value": "lastofa7778",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "username",
-					"value": "",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "firstname",
-					"value": "",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "email",
-					"value": "",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "dob",
-					"value": "",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486033921003,
-			"name": "profile_edit",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
-			"id": "86372d09-b7b2-004f-aa9c-caf74be597e4",
-			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
-			"url": "http://192.168.1.204/auth/web/api/v1.0/user/profile/show",
+			"id": "64c9f4f8-ea4d-4472-7342-30c7a1e1c354",
+			"headers": "Authorization: Bearer {{access_token}}\nX-Accept-Version: {{x-accept-version}}\n",
+			"url": "{{base_url}}/{{site_url}}/user/profile/show",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
 			"data": [],
 			"dataMode": "params",
+			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486033903291,
-			"name": "profile_show",
+			"time": 1486724840392,
+			"name": "Show logged in user profile",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": []
 		},
 		{
-			"id": "9c0a3fa5-fc45-c873-ce95-b6048b2f1435",
-			"headers": "",
-			"url": "http://localhost/auth/web/api/v1.0/user/register",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "client_id",
-					"value": "7_2uii6vkzzxusk0goc4wwckgcsg00ccc08008ww0scokog448gs",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "client_secret",
-					"value": "881tcyvdvnk040c4k4c88csgk0s0400oc8oook44kwc40w8cg",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "username",
-					"value": "a77778",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "password",
-					"value": "a77778",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "email",
-					"value": "a77778@nerd.com",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "email_confirmation",
-					"value": "0",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "firstname",
-					"value": "first",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "lastname",
-					"value": "last",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "dob",
-					"value": "11/28/1976",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "scope",
-					"value": "API",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486033014369,
-			"name": "register",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
-			"id": "be1e3b9f-10da-ffd3-56bb-31a7c6ac1aed",
-			"headers": "",
-			"url": "http://localhost/auth/web/api/v1.0/user/refresh/token",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "client_id",
-					"value": "7_2uii6vkzzxusk0goc4wwckgcsg00ccc08008ww0scokog448gs",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "client_secret",
-					"value": "881tcyvdvnk040c4k4c88csgk0s0400oc8oook44kwc40w8cg",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "refresh_token",
-					"value": "OWNkMjU3MGFlZTgzY2MxNTU0NDMyYjNmZjFlMTAwNDc1MGYwNDk2MTRjZWViOGM1YTcwMzhkZDk4OTVjYzI1MA",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486033807403,
-			"name": "get Refresh Token ",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
-			"id": "ee55ee6b-bb9e-62ce-87b1-37bbe4613884",
-			"headers": "Authorization: Bearer MDljZmMzOWI1ZTJlNjFiODQxYjIzNDM1YzlmYmVkYjEwZDBkOWM2MTNmNzNhMTU3NzEzZmQ0MGM0ZjgyYTEwMA\n",
-			"url": "http://localhost/auth/web/api/v1.0/user/change/password",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "POST",
-			"data": [
-				{
-					"key": "password",
-					"value": "a77778",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1486033877795,
-			"name": "Password change",
-			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
-		},
-		{
-			"id": "f8825096-707a-e75c-31f9-f6032a40cd6c",
-			"headers": "",
-			"url": "http://localhost/auth/web/api/v1.0/user/resetting/request/email?username=a777",
+			"id": "86afcb69-ba44-c8bd-dd41-c7e83dd53da1",
+			"headers": "Authorization: Bearer {{access_token}}\nX-Accept-Version: {{x-accept-version}}\n",
+			"url": "{{base_url}}/{{site_url}}/users",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -346,43 +79,134 @@
 				}
 			],
 			"dataMode": "urlencoded",
+			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486035471042,
-			"name": "Resetting request email",
+			"time": 1486724868004,
+			"name": "Fetch all exist users",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": []
 		},
 		{
-			"id": "fcb900d6-8aad-46be-7d98-dbb4835b49df",
-			"headers": "",
-			"url": "http://localhost/auth/web/api/v1.0/user/new/client",
+			"id": "a1c67116-71d0-9579-62ff-70307cedba19",
+			"headers": "Authorization: Bearer {{access_token}}\nContent-Type: application/json\nX-Accept-Version: {{x-accept-version}}\n",
+			"url": "{{base_url}}/{{site_url}}/user/change/password",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
-			"data": [
-				{
-					"key": "username",
-					"value": "aUser",
-					"type": "text",
-					"enabled": true
-				},
-				{
-					"key": "password",
-					"value": "test1test1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "params",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1486032750325,
-			"name": "create_client",
+			"time": 1486724811366,
+			"name": "Password change ",
 			"description": "",
-			"collectionId": "68e49833-0673-1773-7fd9-0f71b9b358e0"
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\t\"old_password\":\"mshariq\",\n\t\"password\":\"mshariq1\",\n\t\"_locale\":\"{{locale}}\"\n}"
+		},
+		{
+			"id": "a25c53a6-84cf-c068-010e-3ad4e4de043a",
+			"headers": "Content-Type: application/json\nX-Accept-Version: {{x-accept-version}}\n",
+			"url": "{{base_url}}/{{site_url}}/user/refresh/token",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486724662100,
+			"name": "Get Refresh Token ",
+			"description": "",
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\"client_id\":\"{{client_id}}\",\n\"client_secret\":\"{{client_secret}}\",\n\"refresh_token\":\"{{refresh_token}}\"\n}"
+		},
+		{
+			"id": "aaba2cfe-d4f2-d05b-4b55-6128dd8e9d34",
+			"headers": "Content-Type: application/json\nX-Accept-Version: 1.0\n",
+			"url": "{{base_url}}/{{site_url}}/user/register",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486724332923,
+			"name": "Register",
+			"description": "",
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\"client_id\":\"{{client_id}}\",\n\"client_secret\":\"{{client_secret}}\",\n\"username\":\"msd\",\n\"password\":\"msd\",\n\"email\":\"msd1@nerd.com\",\n\"email_confirmation\":\"0\",\n\"firstname\":\"first\",\n\"lastname\":\"last\",\n\"dob\":\"11/28/1976\",\n\"scope\":\"{{scope}}\"\n}"
+		},
+		{
+			"id": "b95933e6-5cad-d133-c659-9907cc2f9f75",
+			"headers": "Content-Type: application/json\nX-Accept-Version: 1.0\n",
+			"url": "{{base_url}}/{{site_url}}/user/access/token",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486724384293,
+			"name": "Get Access Token",
+			"description": "",
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\"client_id\":\"{{client_id}}\",\n\"client_secret\":\"{{client_secret}}\",\n\"username\":\"msd\",\n\"password\":\"msd\",\n\"scope\":\"{{scope}}\"\n}"
+		},
+		{
+			"id": "c4012907-f1e0-7cd8-095b-fc7245f0cc7a",
+			"headers": "Content-Type: application/json\nX-Accept-Version: {{x-accept-version}}\n",
+			"url": "{{base_url}}/{{site_url}}/user/resetting/request/email?username=sunny11",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486723584259,
+			"name": "Send change password email",
+			"description": "",
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\t\"username\":\"sunny1\"\n}"
+		},
+		{
+			"id": "e5a58bb8-4aa9-c8c6-a116-6c183eeab3ad",
+			"headers": "Content-Type: application/json\nX-Accept-Version: 1.0\n",
+			"url": "{{base_url}}/{{site_url}}/user/new/client",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1486722773224,
+			"name": "Create new client",
+			"description": "",
+			"collectionId": "e3fe5d12-8980-670e-9c87-dc914fe4b0eb",
+			"responses": [],
+			"rawModeData": "{\n\"username\":\"mshariq\",\n\"password\":\"mshariq\",\n\"name\":\"auth\",\n\"redirect_url\":\"http://192.168.1.120/auth/web/\",\n\"_locale\":\"{{_locale}}\"\n}"
 		}
 	]
 }
