@@ -122,3 +122,24 @@ flash:
   client_created_successfully: Client created successfully!
   client_updated_successfully: Client updated successfully!
   client_deleted_successfully: Client deleted successfully!
+api:
+  show_error_client_name:  Sorry, Client Name cannot be empty!
+  show_error_url:  Sorry, Redirect URL cannot be empty!
+  show_error_non_admin:  Sorry, you are not an Admin!
+  show_error_password:  Sorry, Wrong/Missing Password!
+  show_error_username_missing:  Sorry, Wrong/Missing Username!
+  show_error_credentials:  Sorry, Invalid Client Credentials!
+  show_error_username_empty:  Sorry, Empty Username!
+  show_error_username_taken:  Sorry, Username already taken!
+  show_error_email:  Sorry, Wrong/Missing Email!
+  show_error_email_taken:  Sorry, Email already taken!
+  show_error_dob:  Sorry, Invalid date of birth!
+  show_error_scope:  Sorry, Invalid scope!
+  show_error_firstname:  Sorry, Firstname cannot be empty!
+  show_error_password_change:  Sorry, You are not allowed to change password!
+  show_error_password_old:  Sorry, Invalid old password!
+  show_error_perm_show:  Sorry, You are not permitted to view user profile!
+  show_error_perm_edit:  Sorry, You are not permitted to edit user profile!
+  show_error_password_reset:  Sorry, You are not permitted to request for password reset!
+  show_error_reset_req:  Password reset request already received
+  show_error_server_fault:  Server Error! Please try again after some time!!

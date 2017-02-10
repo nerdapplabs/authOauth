@@ -131,12 +131,12 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         // Check Client name is not empty
         if (!$clientName) {
-            $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('action.client_not_empty'), $request->getLocale());
+            $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('api.show_error_client_name', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check Redirect URL is not empty
         if (!$redirectUrl) {
-            $this->logAndThrowError(400, 'Redirect URL cannot be empty', $this->get('translator')->trans('action.client_redirect_not_empty'), $request->getLocale());
+            $this->logAndThrowError(400, 'Redirect URL cannot be empty', $this->get('translator')->trans('api.show_error_url', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check for the valid Admin user
@@ -148,15 +148,15 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
             // Not an Admin
             if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-              $this->logAndThrowError(400, 'User is not an Admin: ' . $username, 'Sorry, you are not an Admin!');
+              $this->logAndThrowError(400, 'User is not an Admin: ' . $username, $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
             }
           } else {
               // Password bad
-              $this->logAndThrowError(400, 'Invalid password: '. $username, 'Sorry, Wrong/Missing Password!');
+              $this->logAndThrowError(400, 'Invalid password: '. $username, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
           }
         } else {
           // Username bad
-          $this->logAndThrowError(400, 'Invalid username: ' . $username, 'Sorry, Wrong/Missing Username!');
+          $this->logAndThrowError(400, 'Invalid username: ' . $username, $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Everything ok, now proceed to create the client
@@ -244,45 +244,45 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         // Check if password is empty
         if (null == $username) {
-            $this->logAndThrowError(400, 'Empty username', 'Sorry, Empty Username!');
+            $this->logAndThrowError(400, 'Empty username', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Do a check for existing user with userManager->findByUsername
         /** @var $user UserInterface */
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
         if (null != $user) {
-          $this->logAndThrowError(400, 'User already exists. Username: ' . $user->getUsername(), 'Sorry, Username already taken!');
+          $this->logAndThrowError(400, 'User already exists. Username: ' . $user->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check if password is empty
         if (null == $password) {
-            $this->logAndThrowError(400, 'Invalid empty password', 'Sorry, Wrong/Missing Password!');
+            $this->logAndThrowError(400, 'Invalid empty password', $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check if email is valid
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-          $this->logAndThrowError(400, 'Invalid email: ' . $email, 'Sorry, Wrong/Missing Email! ');
+          $this->logAndThrowError(400, 'Invalid email: ' . $email, $this->get('translator')->trans('api.show_error_email', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
         if (null != $user) {
-          $this->logAndThrowError(400, 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername(), 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername());
+          $this->logAndThrowError(400, 'Email '  . $user->getEmail() . ' already taken by Username: ' . $user->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check if dob is valid
         list($mm,$dd,$yyyy) = explode('/',$dob);
         if (!checkdate($mm,$dd,$yyyy)) {
-            $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $dob, 'Invalid mm/dd/yyyy DOB: ' . $dob);
+            $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $dob, $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check if scope is set to API
         if ('API' != $scope) {
-            $this->logAndThrowError(400, 'Invalid scope: ' . $scope, 'Invalid scope: ' . $scope);
+            $this->logAndThrowError(400, 'Invalid scope: ' . $scope, $this->get('translator')->trans('api.show_error_scope', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check if firstname is empty. At least firstname is required.
         if (null == $firstname) {
-            $this->logAndThrowError(400, 'Invalid empty firstname', 'Invalid empty firstname');
+            $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $user = $userManager->createUser();
@@ -357,7 +357,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         if (!$encoder->isPasswordValid($user->getPassword(), $oldPassword, $user->getSalt()))
         {
             // Password bad
-            $this->logAndThrowError(400, 'Invalid old password: '.  $user->getUsername(), 'Sorry, Wrong Old Password!');
+            $this->logAndThrowError(400, 'Invalid old password: '.  $user->getUsername(), $this->get('translator')->trans('api.show_error_password_old', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $user->setPlainPassword($password);
@@ -393,7 +393,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     {
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
-            $this->logAndThrowError(400, 'Invalid User', 'You are not permitted to view user profile.');
+            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Check if dob is valid
@@ -440,7 +440,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     {
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
-            $this->logAndThrowError(400, 'Invalid User', 'You are not permitted to edit user profile.');
+            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_edit', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $userManager = $this->get('fos_user.user_manager');
@@ -454,7 +454,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             // Check if username is already taken
             $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
             if (null != $user1) {
-              $this->logAndThrowError(400, 'Already taken by Username: ' . $user1->getUsername(), 'Already taken by Username: ' . $user1->getUsername());
+              $this->logAndThrowError(400, 'Already taken by Username: ' . $user1->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
             }
             $user->setUsername($data['username']);
           }
@@ -470,7 +470,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
               // Check if email is already taken
               $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
               if (null != $user1) {
-                $this->logAndThrowError(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername(), 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername());
+                $this->logAndThrowError(400, 'Email '  . $user1->getEmail() . ' already taken by Username: ' . $user1->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
               }
               $user->setEmail($data['email']);
           }
@@ -479,7 +479,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         if (array_key_exists('firstname', $data)) {
           // Check if firstname is empty. At least firstname is required.
           if (null == $data['firstname']) {
-              $this->logAndThrowError(400, 'Invalid empty firstname', 'Invalid empty firstname');
+              $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
           }
           $user->setFirstname($data['firstname']);
         }
@@ -492,7 +492,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           // Check if dob is valid
           list($mm,$dd,$yyyy) = array_merge( explode('/',$data['dob']), array(0,0,0) );
           if (!checkdate($mm,$dd,$yyyy)) {
-              $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $data['dob'], 'Invalid mm/dd/yyyy DOB: ' . $data['dob']);
+              $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: ' . $data['dob'], $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
           }
           $user->setDob($data['dob']);
         }
@@ -534,11 +534,11 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
 
         if (null === $user) {
-            $this->logAndThrowError(400, 'Invalid User', 'You are not permitted to request for password reset.');
+            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_password_reset', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         if ($user->isPasswordRequestNonExpired($this->container->getParameter('fos_user.resetting.token_ttl'))) {
-            $this->logAndThrowError(400, 'Password reset request already received', 'Password reset request already received');
+            $this->logAndThrowError(400, 'Password reset request already received', $this->get('translator')->trans('api.show_error_reset_req', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         if (null === $user->getConfirmationToken()) {
@@ -616,7 +616,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $grantType = 'password';
 
         if (!$username || !$password || !$clientId || !$clientSecret || !$scope) {
-            $this->logAndThrowError(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.');
+            $this->logAndThrowError(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret, $grantType, null, $username, $password, $scope);
@@ -659,7 +659,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $grantType = 'refresh_token';
 
         if (!$refreshToken || !$clientId || !$clientSecret) {
-            $this->logAndThrowError(400, 'Unable to obtain Access Token for missing refresh_token/clientId/clientSecret.');
+            $this->logAndThrowError(400, 'Unable to obtain Access Token for missing refresh_token/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         $oAuthRtn = $this->fetchAccessToken($clientId, $clientSecret, $grantType, $refreshToken);
@@ -700,7 +700,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $accessToken = $response['result']['access_token'];
           } elseif (isset($response['result']['error'])) {
             // If error occurred, then throw an exception, else return the result
-            $this->logAndThrowError(400, $response['result']['error'].' - '.$response['result']['error_description'], $response['result']['error_description']);
+            $this->logAndThrowError(400, $response['result']['error'].' - '.$response['result']['error_description'], $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
           }
         }
 
@@ -709,7 +709,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
     private function logAndThrowError($errCode = 400, $errMsg = 'Bad Request', $showMsg = '', $locale = 'en') {
       $this->logMessage($errCode, $errMsg);
-      throw new HttpException($errCode, $errMsg . '#showme#' . '['. $locale . '] ' . $showMsg);
+      throw new HttpException($errCode, $errMsg . ($showMsg ? '#showme#' . '['. $locale . '] ' . $showMsg : '') );
     }
 
     private function logMessage($errCode = 200, $logMsg = 'Nil Log Message') {
