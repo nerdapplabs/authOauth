@@ -119,9 +119,9 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $request = $this->container->get('request');
 
+        $this->validateAdminUser($request);
         $this->validateClientName($request);
         $this->validateUrl($request);
-        $this->validateAdminUser($request);
 
         // Everything ok, now proceed to create the client
         $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
@@ -192,11 +192,11 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
           // Not an Admin
           if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-            $this->logAndThrowError(400, 'User is not an Admin: ' . $username, $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
+            $this->logAndThrowError(400, 'User ' . $username . ' is not an Admin. Role(s) assigned: ' . implode($user->getRoles(), ', '), $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
           }
         } else {
             // Password bad
-            $this->logAndThrowError(400, 'Invalid password: '. $username, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
+            $this->logAndThrowError(400, 'Password does not match: '. $password, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
       } else {
         // Username bad
@@ -262,13 +262,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
-            $oAuthRtn = $this->fetchAccessToken($request->request->get('client_id'),
-                                                $request->request->get('client_secret'),
-                                                $grantType,
-                                                null,
-                                                $request->request->get('username'),
-                                                $request->request->get('password'),
-                                                $request->request->get('scope') );
+            $oAuthRtn = $this->fetchAccessToken($request, $grantType);
         }
 
         $this->logMessage(201, 'User successfully created ' . $request->request->get('username') );
@@ -738,7 +732,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $oAuthRtn = $this->fetchAccessToken($request, $clientId, $clientSecret, $grantType, null, $username, $password, $scope);
+        $oAuthRtn = $this->fetchAccessToken($request, $grantType);
 
         $msg = 'Access Token successfully fetched for ' . $username;
         $this->logMessage(201, $msg);
@@ -781,7 +775,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing refresh_token/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $oAuthRtn = $this->fetchAccessToken($request, $clientId, $clientSecret, $grantType, $refreshToken);
+        $oAuthRtn = $this->fetchAccessToken($request, $grantType);
 
         $msg = 'Access Token successfully fetched on Refresh Token';
         $this->logMessage(201, $msg);
@@ -796,8 +790,20 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       * Fetch oAuth Access Token from oAuth engine.
       *
       */
-    private function fetchAccessToken(Request $request, $clientId, $clientSecret, $grantType, $refreshToken = null, $username = null, $password = null, $scope = null)
+    private function fetchAccessToken(Request $request, $grantType)
     {
+        $request = $this->container->get('request');
+
+        $data = $request->request->all();
+
+        $clientId = $data['client_id'];
+        $clientSecret = $data['client_secret'];
+
+        $refreshToken = array_key_exists('refresh_token', $data) ? $data['refresh_token'] : null;
+        $username = array_key_exists('username', $data) ? $data['username'] : null;
+        $password = array_key_exists('password', $data) ? $data['password'] : null;
+        $scope = array_key_exists('scope', $data) ? $data['scope'] : null;
+
         $client = new OAuth2\Client($clientId, $clientSecret);
 
         // This is a common function for both getAccessTokenAction() and getRefreshTokenAction().
