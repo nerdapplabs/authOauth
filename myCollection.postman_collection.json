@@ -92,7 +92,7 @@
 		{
 			"id": "a1c67116-71d0-9579-62ff-70307cedba19",
 			"headers": "Authorization: Bearer {{access_token}}\nContent-Type: application/json\nX-Accept-Version: {{x-accept-version}}\n",
-			"url": "{{base_url}}/{{site_url}}/user/change/password",
+			"url": "{{base_url}}/{{site_url}}/user/profile/change-password",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -172,7 +172,7 @@
 		{
 			"id": "c4012907-f1e0-7cd8-095b-fc7245f0cc7a",
 			"headers": "Content-Type: application/json\nX-Accept-Version: {{x-accept-version}}\n",
-			"url": "{{base_url}}/{{site_url}}/user/resetting/request/email?username=sunny11",
+			"url": "{{base_url}}/{{site_url}}/user/resetting/request?username=sunny11",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
