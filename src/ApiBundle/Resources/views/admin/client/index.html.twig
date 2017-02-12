@@ -8,6 +8,13 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <div class="item-actions">
+                    <a href="{{ path('admin_client_new') }}" class="btn btn-sm btn-default">
+                        {{ 'action.create_client'|trans }}
+                    </a>
+                </div>
+            </tr>
+            <tr>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_name'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_randomid'|trans }}</th>
                 <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_secret'|trans }}</th>

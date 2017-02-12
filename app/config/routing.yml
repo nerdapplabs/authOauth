@@ -46,11 +46,11 @@ fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /{_locale}/profile
 
-users:
-    resource: "@ApiBundle/Resources/config/user_routes.yml"
-    type:     rest
-    prefix: /api
-    methods: GET|POST
+# users:
+#     resource: "@ApiBundle/Resources/config/user_routes.yml"
+#     type:     rest
+#     prefix: /api
+#     methods: GET|POST
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"

@@ -1,4 +1,4 @@
-users_routes:
-    resource: "@ApiBundle/Controller/UserController.php"
-    type: rest
-    name_prefix: api_
+# # users_routes:
+#     resource: "@ApiBundle/Controller/UserController.php"
+#     type: rest
+#     name_prefix: api_

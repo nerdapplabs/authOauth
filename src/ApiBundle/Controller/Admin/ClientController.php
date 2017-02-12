@@ -3,7 +3,7 @@
 namespace ApiBundle\Controller\Admin;
 
 use ApiBundle\Entity\Client;
-use ApiBundle\Form\ClientType;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -60,7 +60,6 @@ class ClientController extends Controller
                 ->add('name', 'text', array('label' => 'label.client_name', 'data' => $clientName ))
                 ->add('redirect_url', 'text', array('label' => 'label.admin_redirecturl', 'data' => $redirectUrl ))
                 ->add('password', 'password', array('label' => 'label.admin_password' ))
-                ->add('send', 'submit', array('label' => 'label.create_client' ))
                 ->getForm();
         $form->handleRequest($request);
 

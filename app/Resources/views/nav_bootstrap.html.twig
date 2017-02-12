@@ -40,9 +40,8 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'action.admin_menu'|trans }}<span class="caret"></span></a>
               <ul class="dropdown-menu locales" role="menu" aria-labelledby="locales">
                 <li><a href="#">{{ 'action.role_management'|trans }}</a></li>
-                <li><a href="#">{{ 'action.user_management'|trans }}</a></li>
+                <li><a href="{{ path('admin_user_index') }}">{{ 'action.user_management'|trans }}</a></li>
                 <li><a href="{{ path('admin_client_index') }}">{{ 'action.client_management'|trans }}</a></li>
-                <li><a href="{{ path('admin_client_new') }}">{{ 'action.create_new_client'|trans }}</a></li>
               </ul>
             </li>
         {% endif %}
