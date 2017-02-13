@@ -825,7 +825,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $accessToken = $response['result']['access_token'];
           } elseif (isset($response['result']['error'])) {
             // If error occurred, then throw an exception, else return the result
-            $this->logAndThrowError(400, $response['result']['error'].' - '.$response['result']['error_description'], $response['result']['error'].' - '.$response['result']['error_description'] );
+            $this->logAndThrowError(400, $response['result']['error'].' - '.$response['result']['error_description'], $response['result']['error_description'] );
           }
         }
 
