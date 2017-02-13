@@ -89,11 +89,8 @@ class User extends BaseUser
 
     public function setDob($dob)
     {
-        if (is_string($dob)) { // from API
-          $this->dob = new \DateTime($dob);
-        } else { // From Web form
-          $this->dob = $dob;
-        }
+        // $dob is string from API and datetime object from web
+        $this->dob = is_string($dob) ?  new \DateTime($dob) : $dob;
 
         return $this;
     }
