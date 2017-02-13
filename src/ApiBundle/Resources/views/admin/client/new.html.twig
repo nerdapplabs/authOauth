@@ -5,15 +5,39 @@
 {% block main %}
     <h1>{{ 'title.client_new'|trans }}</h1>
 
-    {{ form_start(form) }}
-      {{ form_row(form.name) }}
-      {{ form_row(form.redirect_url) }}
-      {{ form_row(form.password) }}
-      {{ form_row(form.send) }}
+    {{ form_start(form, { attr: attr|default({}) }) }}
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row">{{ 'label.client_name'|trans }}</th>
+                    <td>
+                        {{ form_errors(form.name) }}
+                        {{ form_widget(form.name) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.client_redirecturis'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.redirect_url) }}
+                      {{ form_widget(form.redirect_url) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.admin_password'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.password) }}
+                      {{ form_widget(form.password) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="{{ button_label|default('action.save'|trans) }}"
+               class="{{ button_css|default("btn btn-primary") }}"
+         />
     {{ form_end(form) }}
 
     <a href="{{ path('admin_client_index') }}" class="btn btn-link">
-        {{ 'action.back_to_list'|trans }}
+        {{ 'action.back_to_client_list'|trans }}
     </a>
 {% endblock %}
 

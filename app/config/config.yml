@@ -44,7 +44,9 @@ assetic:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
-
+    globals:
+            frontend_theme: "%frontend_theme%"
+        
 # Doctrine Configuration
 doctrine:
     dbal:

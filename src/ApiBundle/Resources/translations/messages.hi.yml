@@ -4,41 +4,21 @@ note: NOTE
 tip: TIP
 not_available: Not available
 mit_license: MIT License
-http_error:
-  name: "Error %status_code%"
-  description: "There was an unknown error (HTTP %status_code%) that prevented to complete your request."
-  suggestion: "Try loading this page again in some minutes or <a href=\"%url%\">go back to the homepage</a>."
-http_error_403:
-  description: "You don't have permission to access to this resource."
-  suggestion: Ask your manager or system administrator to grant you access to this resource.
-http_error_404:
-  description: "We couldn't find the page you requested."
-  suggestion: "Check out any misspelling in the URL or <a href=\"%url%\">go back to the homepage</a>."
-http_error_500:
-  description: There was an internal server error.
-  suggestion: "Try loading this page again in some minutes or <a href=\"%url%\">go back to the homepage</a>."
 title:
-  homepage: "Welcome to the <strong>Symfony Demo</strong> application"
-  source_code: Source code used to render this page
-  controller_code: Controller code
-  twig_template_code: Twig template code
   login: Secure Sign in
   client_list: ग्राहक सूची
   edit_client: "ग्राहक संपादित करें #%id%"
-  add_comment: Add a comment
-  comment_error: There was an error publishing your comment
   client_new: हमारे ग्राहकों का सृजन
   client: ग्राहक
+  user_list: उपयोगकर्ता सूची
+  edit_user: "यूजर को संपादित करो #%id%"
+  user_new: उपयोगकर्ता निर्माण
+  user: उपयोगकर्ता
 action:
   show: दिखाना
   show_code: शो कोड
   edit: संपादित करें
-  edit_client: ग्राहक संपादित करें
   save: परिवर्तनों को सुरक्षित करें
-  delete_client: ग्राहक को हटाएँ
-  create_client: एक नए ग्राहक बनाएं
-  back_to_list: वापस ग्राहकों की सूची में
-  publish_comment: Publish comment
   sign_in: साइन इन करें
   sign_out: साइन आउट
   sign_up: साइन अप करें
@@ -57,16 +37,26 @@ action:
   browse_app: ब्राउज़ आवेदन
   browse_admin: ब्राउज़ बैकेंड
   edit_contents: सामग्री को संपादित
+  back_to_client_list: वापस ग्राहकों की सूची में
+  create_client: एक नए ग्राहक बनाएं
+  delete_client: ग्राहक को हटाएँ
+  edit_client: ग्राहक संपादित करें
   client_not_empty: क्लाइंट का नाम रिक्त नहीं हो सकता
   client_invalid_password: अमान्य व्यवस्थापक पासवर्ड
   client_redirect_not_empty: रीडायरेक्ट URL रिक्त नहीं हो सकता
+  back_to_user_list: उपयोगकर्ता सूची पर वापस
+  create_user: एक नया उपयोगकर्ता बनाएं
+  delete_user: उपयोगकर्ता हटाएं
+  edit_user: यूजर को संपादित करो
+  create_new_user: एक नया उपयोगकर्ता बनाएं
 delete_client_modal:
   title: आप इस ग्राहक को हटाना चाहते हैं आप सुनिश्चित हैं?
   body: इस क्रिया को पूर्ववत नहीं किया जा सकता है।
+delete_user_modal:
+  title: आप इस उपयोगकर्ता को नष्ट करना चाहते हैं आप सुनिश्चित हैं?
+  body: इस क्रिया को पूर्ववत नहीं किया जा सकता है।
 label:
-  delete_client: ग्राहक को हटाएँ
   cancel: रद्द करना
-  create_client: ग्राहक बनाएं
   save_and_create_new: सहेजें और नया बनाने
   title: शीर्षक
   author: लेखक
@@ -78,6 +68,8 @@ label:
   summary: सारांश
   published_at: पर प्रकाशित
   actions: प्रक्रिया
+  create_client: ग्राहक बनाएं
+  delete_client: ग्राहक को हटाएँ
   client_id: पहचान
   client_randomid: रैंडम पहचान पत्र
   client_secret: हमारे ग्राहकों का सीक्रेट
@@ -87,34 +79,35 @@ label:
   admin_password: व्यवस्थापक का पारण शब्द
   admin_redirecturl: यूआरएल पुनर्निर्देशन
   delete_it: "इसे मिटाओ!"
+  user_firstname: पहला नाम
+  user_lastname: अंतिम नाम
+  user_username: उपयोगकर्ता नाम
+  user_password: पासवर्ड
+  user_roles: भूमिकाओं
+  user_email: ईमेल
+  user_dob: जन्म की तारीख
 menu:
-  toggle_nav: Toggle navigation
   choose_language: भाषा चुनें
-  client_list: Client list
-  back_to_blog: Back to blog
-  homepage: Homepage
-  admin: Backend
-  logout: Logout
+  client_list: ग्राहक सूची
+  homepage: मुखपृष्ठ
+  admin: बैकएण्ड
+  logout: लोग आउट
 client:
-  no_clients_found: No clients found.
-  created_successfully: "Client created successfully!"
-  updated_successfully: "Client updated successfully!"
-  deleted_successfully: "Client deleted successfully!"
-help:
-  app_description: "This is a <strong>demo application</strong> built in the Symfony Framework to illustrate the recommended way of developing Symfony applications."
-  show_code: "Click on this button to show the source code of the <strong>Controller</strong> and <strong>template</strong> used to render this page."
-  browse_app: "Browse the <strong>public section</strong> of the demo application."
-  browse_admin: "Browse the <strong>admin backend</strong> of the demo application."
-  login_users: Try either of the following users
-  role_user: regular user
-  role_admin: administrator
-  reload_fixtures: "If these users don't work, reload application fixtures by running this command from the terminal:"
-  add_user: "If you want to create new users, run this other command:"
-  more_information: "For more information, check out the <a href=\"http://symfony.com/doc\">Symfony doc</a>."
-delete_post_modal:
-  title: Delete Client
+  no_clients_found: कोई ग्राहकों पाया।
+  created_successfully: "हमारे ग्राहकों का सफलतापूर्वक बनाया!"
+  updated_successfully: "क्लाइंट सफलतापूर्वक अद्यतन!"
+  deleted_successfully: "हमारे ग्राहकों का सफलतापूर्वक नष्ट कर दिया!"
+user:
+  no_user_found: कोई उपयोग्कर्ता नहीं मिले।
+  created_successfully: "प्रयोक्ता सफलतापूर्वक बनाया!"
+  updated_successfully: "प्रयोक्ता को सफलतापूर्वक अद्यतन!"
+  deleted_successfully: "प्रयोक्ता को सफलतापूर्वक नष्ट कर दिया!"
 flash:
   client_already_exists: माफ़ कीजिये! यह ग्राहक का नाम पहले ही ले लिया गया है। कृपया किसी अन्य नाम चुनें।
   client_created_successfully: हमारे ग्राहकों का सफलतापूर्वक बनाया!
   client_updated_successfully: क्लाइंट सफलतापूर्वक अद्यतन!
   client_deleted_successfully: हमारे ग्राहकों का सफलतापूर्वक नष्ट कर दिया!
+  user_already_exists: माफ़ कीजिये! इस उपयोगकर्ता नाम पहले ही ले लिया गया है। कृपया किसी अन्य नाम चुनें।
+  user_created_successfully: प्रयोक्ता सफलतापूर्वक बनाया!
+  user_updated_successfully: प्रयोक्ता को सफलतापूर्वक अद्यतन!
+  user_deleted_successfully: प्रयोक्ता को सफलतापूर्वक नष्ट कर दिया!
