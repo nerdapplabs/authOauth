@@ -311,39 +311,6 @@ class UserController extends Controller
         ;
     }
 
-    /**
-      * Fetch all Users.
-      *
-      * @Route("/all", name="admin_users_all")
-      * @Method("GET")
-      */
-    public function cgetAction()
-    {
-      //security.yml is configured to allow anonymous access to controllers
-      //checking for authorization in each controller allows more flexibility
-      //to change this remove anonymous: true in security.yml on firewall
-      if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
-        throw $this->createAccessDeniedException();
-      }
-
-      /*$em = $this->getDoctrine()->getEntityManager();
-      $repository = $em->getRepository("ApiBundle:User");
-      $users = $repository->findAll();
-      */
-
-      $repository = $this->getDoctrine()->getRepository("ApiBundle:User");
-
-      // createQueryBuilder() automatically selects FROM ApiBundle:User
-      // and aliases it to "u"
-      $query = $repository->createQueryBuilder('u')->select('u.username', 'u.email')->getQuery();
-
-      $users = $query->getResult();
-
-      $this->logMessage(200, 'success', 'Users fetched');
-
-      return $this->render('@ApiBundle/Resources/views/default/users.html.twig', ['users' => $users]);
-    }
-
     private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '', $locale = 'en')
     {
         $this->logMessage($code, $type, $logMsg);
