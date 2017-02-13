@@ -55,26 +55,11 @@ This is an example project, ready to use.
 
     Make this user admin
 
-    cd /path/to/auth
     php app/console fos:user:create admin ROLE_ADMIN
-
-**Step 5 - Create an OAuth2 Client via command line**
-
-
-    cd /path/to/auth
-    php app/console aoa:oauth-server:client:create --redirect-uri="http://127.0.0.1:8000/" --grant-type="authorization_code" --grant-type="password" --grant-type="refresh_token" --grant-type="token" --grant-type="client_credentials"
-
-    You will get an output like this:
-
-    `{
-      "client_id": "1_1uilrhl1w2rokgg88kg8s0wswogwsggw0044cwc04k8s0oc4sg",
-      "client_secret": "4g723vbss7i8kc88swok0s4wk4ck4c0w8gc8g4gwwwowsc0owc"
-    }`
 
 Now you are ready to use the Package!
 
 ## Use this Package
-
 
 1. Test API
 2. Use API via a Mobile Client
@@ -107,5 +92,5 @@ In a browser, goto the package site by http://127.0.0.1:8000. This is the Backen
 
 The salient features of the Backend are:
 * The Backend is internationalization enabled. It currently supports English, French and Hindi.
-* Options have been provided to pick desired front-end theme for the Backend. The choices available are - Bootstrap, Materialize and Skeleton. However, the design is open-ended and you may add your preferred theme easily.
+* Options have been provided to pick desired front-end theme for the Backend. The choices available are - Bootstrap, Materialize and Skeleton. **To change the theme, modify key "fronend_theme" in parameters.yml accordingly.** However, the design is open-ended and you may add your preferred theme easily. Please also note that theming has only been provided for base and nav. Other top level stuff is using bootstrap, you can theme as per your choice using base theme.
 * The Web user management pages are coming directly from FOSUserBundle views. You may override these pages, per your need.
