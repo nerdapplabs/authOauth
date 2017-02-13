@@ -88,7 +88,8 @@ class User extends BaseUser
 
     public function setDob($dob)
     {
-        $this->dob = new \DateTime($dob);
+        // $dob is string from API and datetime object from web
+        $this->dob = is_string($dob) ?  new \DateTime($dob) : $dob;
 
         return $this;
     }

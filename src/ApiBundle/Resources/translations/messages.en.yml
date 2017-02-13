@@ -18,27 +18,20 @@ http_error_500:
   description: There was an internal server error.
   suggestion: "Try loading this page again in some minutes or <a href=\"%url%\">go back to the homepage</a>."
 title:
-  homepage: "Welcome to the <strong>Symfony Demo</strong> application"
-  source_code: Source code used to render this page
-  controller_code: Controller code
-  twig_template_code: Twig template code
   login: Secure Sign in
   client_list: Client List
   edit_client: "Edit client #%id%"
-  add_comment: Add a comment
-  comment_error: There was an error publishing your comment
   client_new: Client creation
   client: Client
+  user_list: User List
+  edit_user: "Edit User #%id%"
+  user_new: User creation
+  user: User
 action:
   show: Show
   show_code: Show code
   edit: Edit
-  edit_client: Edit client
   save: Save changes
-  delete_client: Delete client
-  create_client: Create a new client
-  back_to_list: Back to the client list
-  publish_comment: Publish comment
   sign_in: Sign in
   sign_out: Sign Out
   sign_up: Sign Up
@@ -53,20 +46,28 @@ action:
   role_management: Role Management
   user_management: User Management
   client_management: Client Management
-  create_new_client: Create a New Client
   browse_app: Browse application
   browse_admin: Browse backend
   edit_contents: Edit contents
+  back_to_client_list: Back to the client list
+  create_client: Create a new client
+  delete_client: Delete client
+  edit_client: Edit client
   client_not_empty: Client Name cannot be empty
   client_invalid_password: Invalid Admin password
   client_redirect_not_empty: Redirect URL cannot be empty
+  back_to_user_list: Back to the user list
+  create_user: Create a new user
+  delete_user: Delete user
+  edit_user: Edit user
 delete_client_modal:
   title: Are you sure you want to delete this client?
   body: This action cannot be undone.
+delete_user_modal:
+  title: Are you sure you want to delete this user?
+  body: This action cannot be undone.
 label:
-  delete_client: Delete client
   cancel: Cancel
-  create_client: Create client
   save_and_create_new: Save and create new
   title: Title
   author: Author
@@ -78,6 +79,8 @@ label:
   summary: Summary
   published_at: Published at
   actions: Actions
+  create_client: Create client
+  delete_client: Delete client
   client_id: Id
   client_randomid: Random Id
   client_secret: Client Secret
@@ -87,41 +90,39 @@ label:
   admin_password: Admin Password
   admin_redirecturl: Redirect URL
   delete_it: "Delete It!"
+  user_firstname: First name
+  user_lastname: Last name
+  user_username: Username
+  user_password: Password
+  user_roles: Roles
+  user_email: Email
+  user_dob: Date of Birth
 menu:
-  toggle_nav: Toggle navigation
   choose_language: Choose language
   client_list: Client list
-  back_to_blog: Back to blog
+  user_list: User list
   homepage: Homepage
   admin: Backend
   logout: Logout
 client:
-  to_publish_a_comment: to publish a comment
-  num_comments: "%count% comment|%count% comments"
-  commented_on: commented on
-  no_comments: Be the first to comment on this client.
   no_clients_found: No clients found.
   created_successfully: "Client created successfully!"
   updated_successfully: "Client updated successfully!"
   deleted_successfully: "Client deleted successfully!"
-help:
-  app_description: "This is a <strong>demo application</strong> built in the Symfony Framework to illustrate the recommended way of developing Symfony applications."
-  show_code: "Click on this button to show the source code of the <strong>Controller</strong> and <strong>template</strong> used to render this page."
-  browse_app: "Browse the <strong>public section</strong> of the demo application."
-  browse_admin: "Browse the <strong>admin backend</strong> of the demo application."
-  login_users: Try either of the following users
-  role_user: regular user
-  role_admin: administrator
-  reload_fixtures: "If these users don't work, reload application fixtures by running this command from the terminal:"
-  add_user: "If you want to create new users, run this other command:"
-  more_information: "For more information, check out the <a href=\"http://symfony.com/doc\">Symfony doc</a>."
-delete_post_modal:
-  title: Delete Client
+user:
+  no_user_found: No Users found.
+  created_successfully: "User created successfully!"
+  updated_successfully: "User updated successfully!"
+  deleted_successfully: "User deleted successfully!"
 flash:
   client_already_exists: Sorry! This client name has already been taken. Please choose another name.
   client_created_successfully: Client created successfully!
   client_updated_successfully: Client updated successfully!
   client_deleted_successfully: Client deleted successfully!
+  user_already_exists: Sorry! This username has already been taken. Please choose another name.
+  user_created_successfully: User created successfully!
+  user_updated_successfully: User updated successfully!
+  user_deleted_successfully: User deleted successfully!
 api:
   show_error_client_name:  Sorry, Client Name cannot be empty!
   show_error_url:  Sorry, Redirect URL cannot be empty!

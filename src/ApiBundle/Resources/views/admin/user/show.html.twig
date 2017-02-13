@@ -1,0 +1,56 @@
+{% extends 'ApiBundle:admin:layout.html.twig' %}
+
+{% block body_id 'admin_user_show' %}
+
+{% block main %}
+    <h1>{{ 'title.user'|trans }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">{{ 'label.user_firstname'|trans }}</th>
+                <td>{{ user.firstname }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_lastname'|trans }}</th>
+                <td>{{ user.lastname }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_dob'|trans }}</th>
+                <td>{{ user.dob|date('m/d/Y') }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_email'|trans }}</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_username'|trans }}</th>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_roles'|trans }}</th>
+                <td>{{ user.roles|join(',') }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="{{ path('admin_user_index') }}" class="btn btn-link">
+        {{ 'action.back_to_user_list'|trans }}
+    </a>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        <a href="{{ path('admin_user_edit', { id: user.id }) }}" class="btn btn-lg btn-block btn-success">
+            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+        </a>
+    </div>
+
+    <div class="section">
+        {{ include('ApiBundle:admin/user:_form.html.twig', {
+            form: delete_form,
+            button_label: 'action.delete_user'|trans,
+            button_css: 'btn btn-lg btn-block btn-danger',
+            show_confirmation: true,
+        }, with_context = false) }}
+    </div>
+{% endblock %}
