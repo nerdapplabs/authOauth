@@ -77,11 +77,13 @@ You will need to start the server before you can use this package:
     cd /path/to/auth
     php app/console server:run
 
+**Note: This project implements FOSRestBundle API versioing system via custom header "X-Accept-Version". Currently, the running API version is 1.0.**  
+
 #### 1. Test API
 
 You can test the provided API via curl or Postman. Here we provide as to how to use Postman.
 
-**API documentation is available, via NelmioApiDocBundle, at http://127.0.0.1:800/api/doc.**
+**API documentation is available, via NelmioApiDocBundle, at http://127.0.0.1:8000/api/doc.**
 
 * We have provide sample Postman Collections. Please import any of the Collection to Postman.
 * Open the imported Collection and start executing the contained links one by one. For your convenience, we have arranged the links in the preferred order of execution.
@@ -92,8 +94,8 @@ You can test the provided API via curl or Postman. Here we provide as to how to 
 
 Separate sample Github repos are available for iPhone and Android Mobile Clients which use APIs provided by this repo.
 
-    iPhone:
-    Android:
+    iPhone: https://github.com/ajabble/AJOAuth2
+    Android: https://github.com/mshariq-nerd/MSOAuth2
 
 #### 3. Backend Administration
 
