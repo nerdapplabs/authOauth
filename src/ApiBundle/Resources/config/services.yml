@@ -1,0 +1,6 @@
+services:
+    app.locale_listener:
+        class: ApiBundle\EventListener\LocaleListener
+        arguments: ["%locale%", "%app_locales%"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }

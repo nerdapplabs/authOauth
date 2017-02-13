@@ -1,1 +1,10 @@
+# Here we aggregate all custom routes. This, in turn, is supplied to
+# config.yml.
 
+users_1_0:
+    resource: "@ApiBundle/Controller/AuthController.php"
+    type:     rest
+
+users_2_0:
+    resource: "@ApiBundle/Controller/AuthController_v2_0.php"
+    type:     rest

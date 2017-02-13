@@ -29,12 +29,12 @@ security:
             pattern: ^/api/user/access/token
             anonymous: true
             stateless: true
-        request_password_email:
-            pattern: ^/api/user/resetting/request/email
+        refresh_token:
+            pattern: ^/api/user/refresh/token
             anonymous: true
             stateless: true
-        check_email:
-            pattern: ^/api/user/resetting/check/email
+        request_password_email:
+            pattern: ^/api/user/resetting/request
             anonymous: true
             stateless: true
         register:

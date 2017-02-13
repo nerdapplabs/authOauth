@@ -111,3 +111,24 @@ flash:
   user_created_successfully: प्रयोक्ता सफलतापूर्वक बनाया!
   user_updated_successfully: प्रयोक्ता को सफलतापूर्वक अद्यतन!
   user_deleted_successfully: प्रयोक्ता को सफलतापूर्वक नष्ट कर दिया!
+api:
+  show_error_client_name:  क्षमा करें, क्लाइंट का नाम रिक्त नहीं हो सकता!
+  show_error_url:  क्षमा करें, पुनर्निर्देशन यूआरएल खाली नहीं हो सकता!
+  show_error_non_admin:  क्षमा करें, आप एक व्यवस्थापक नहीं हैं!
+  show_error_password:  माफ करना, गलत / लापता पासवर्ड!
+  show_error_username_missing:  माफ करना, गलत / लापता यूजर का नाम!
+  show_error_credentials:  क्षमा करें, हमारे ग्राहकों का अवैध साख!
+  show_error_username_empty:  क्षमा करें, खाली यूजर का नाम!
+  show_error_username_taken:  क्षमा करें, प्रयोक्ता नाम पहले ही ले लिया!
+  show_error_email:  माफ करना, गलत / लापता ईमेल
+  show_error_email_taken:  क्षमा करें, ईमेल पहले ही ले लिया!
+  show_error_dob:  क्षमा करें, जन्म की तारीख गलत!
+  show_error_scope:  क्षमा करें, अमान्य दायरा!
+  show_error_firstname:  क्षमा करें, प्रथम खाली नहीं हो सकता!
+  show_error_password_change:  क्षमा करें, आप पासवर्ड बदलने की अनुमति नहीं कर रहे हैं!
+  show_error_password_old:  क्षमा करें, अमान्य पुराने पासवर्ड के लिए!
+  show_error_perm_show:  क्षमा करें, आप उपयोगकर्ता प्रोफ़ाइल देखने के लिए अनुमति नहीं है!
+  show_error_perm_edit:  क्षमा करें, आप उपयोगकर्ता के प्रोफ़ाइल को संपादित करने की अनुमति नहीं है!
+  show_error_password_reset:  क्षमा करें, आप पासवर्ड रीसेट के लिए अनुरोध करने के लिए अनुमति नहीं है!
+  show_error_reset_req:  पासवर्ड रीसेट अनुरोध पहले से ही प्राप्त
+  show_error_server_fault:  सर्वर त्रुटि! कुछ समय के बाद फिर से कोशिश करें !!

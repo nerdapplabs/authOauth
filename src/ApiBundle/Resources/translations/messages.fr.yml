@@ -111,3 +111,24 @@ flash:
   user_created_successfully: Utilisateur créé avec succès!
   user_updated_successfully: Utilisateur mis à jour avec succès!
   user_deleted_successfully: L'utilisateur a été supprimé avec succès!
+api:
+  show_error_client_name:  Désolé, le nom du client ne peut pas être vide!
+  show_error_url:  Désolé, l'URL de redirection ne peut pas être vide!
+  show_error_non_admin:  Désolé, vous n'êtes pas Admin!
+  show_error_password:  Désolé, mot de passe erroné / manquant!
+  show_error_username_missing:  Désolé, Nom d'utilisateur erroné / manquant!
+  show_error_credentials:  Désolé, Invalid Client Credentials!
+  show_error_username_empty:  Désolé, Nom d'utilisateur vide!
+  show_error_username_taken:  Désolé, Nom d'utilisateur déjà pris!
+  show_error_email:  Désolé, E-mail erroné / manquant!
+  show_error_email_taken:  Désolé, Courriel déjà pris!
+  show_error_dob:  Désolé, date de naissance non valide!
+  show_error_scope:  Désolé, champ non valide!
+  show_error_firstname:  Désolé, le prénom ne peut pas être vide!
+  show_error_password_change:  Désolé, Vous n'êtes pas autorisé à changer de mot de passe!
+  show_error_password_old:  Désolé, ancien mot de passe invalide!
+  show_error_perm_show:  Désolé, Vous n'êtes pas autorisé à voir le profil!
+  show_error_perm_edit:  Désolé, Vous n'êtes pas autorisé à modifier le profil de l'utilisateur!
+  show_error_password_reset:  Désolé, vous n'êtes pas autorisé à demander une réinitialisation du mot de passe!
+  show_error_reset_req:  Réinitialisation du mot de passe déjà reçue
+  show_error_server_fault:  Erreur du serveur! Veuillez réessayer après un certain temps !!
