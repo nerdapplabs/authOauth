@@ -1,6 +1,13 @@
 # A Sample Symfony 2 RESTful API Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients
 
-This is an example project, ready to use.
+This is an example project, ready to use. This project is using below Symfony Bundles:
+
+* [FOSUserBundle](https://github.com/FriendsOfSymfony/FOSUserBundle)
+* [FOSRestBundle](https://github.com/FriendsOfSymfony/FOSRestBundle)
+* [FOSOAuthServerBundle](https://github.com/FriendsOfSymfony/FOSOAuthServerBundle)
+* [JMSSerializerBundle](https://github.com/schmittjoh/JMSSerializerBundle)
+* [NelmioApiDocBundle](http://symfony.com/doc/current/bundles/NelmioApiDocBundle/index.html)
+* [AsseticBundle](https://github.com/symfony/assetic-bundle)
 
 ## Installation Steps:
 
@@ -73,6 +80,8 @@ You will need to start the server before you can use this package:
 #### 1. Test API
 
 You can test the provided API via curl or Postman. Here we provide as to how to use Postman.
+
+**API documentation is available, via NelmioApiDocBundle, at http://127.0.0.1:800/api/doc.**
 
 * We have provide sample Postman Collections. Please import any of the Collection to Postman.
 * Open the imported Collection and start executing the contained links one by one. For your convenience, we have arranged the links in the preferred order of execution.
