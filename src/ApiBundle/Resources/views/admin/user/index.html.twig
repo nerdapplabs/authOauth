@@ -15,12 +15,12 @@
                 </div>
             </tr>
             <tr>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.user_firstname'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.user_lastname'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.user_roles'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.user_username'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.user_email'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.user_dob'|trans }}</th>
+                <th>{{ 'label.user_firstname'|trans }}</th>
+                <th>{{ 'label.user_lastname'|trans }}</th>
+                <th>{{ 'label.user_roles'|trans }}</th>
+                <th>{{ 'label.user_username'|trans }}</th>
+                <th>{{ 'label.user_email'|trans }}</th>
+                <th>{{ 'label.user_dob'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +42,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4" align="center">{{ 'user.no_users_found'|trans }}</td>
+                <td>{{ 'user.no_users_found'|trans }}</td>
            </tr>
         {% endfor %}
         </tbody>

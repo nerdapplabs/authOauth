@@ -15,9 +15,9 @@
                 </div>
             </tr>
             <tr>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_name'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_randomid'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.client_secret'|trans }}</th>
+                <th scope="col">{{ 'label.client_name'|trans }}</th>
+                <th scope="col">{{ 'label.client_randomid'|trans }}</th>
+                <th scope="col">{{ 'label.client_secret'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +36,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="4" align="center">{{ 'client.no_clients_found'|trans }}</td>
+                <td>{{ 'client.no_clients_found'|trans }}</td>
            </tr>
         {% endfor %}
         </tbody>
