@@ -106,7 +106,7 @@ class UserController extends Controller
     /**
      * Finds and displays a User entity.
      *
-     * @Route("/{id}", name="admin_user_show")
+     * @Route("/{id}", name="admin_user_show", requirements={"id": "\d+"})
      * @Method("GET")
      */
     public function showAction(User $user)
@@ -314,7 +314,8 @@ class UserController extends Controller
     /**
       * Fetch all Users.
       *
-      * @Route("/users", name="admin_users")
+      * @Route("/all", name="admin_users_all")
+      * @Method("GET")
       */
     public function cgetAction()
     {
@@ -338,15 +339,9 @@ class UserController extends Controller
 
       $users = $query->getResult();
 
-      $logger = $this->get('logger');
-      $logger->critical('Users fetched', $users);
+      $this->logMessage(200, 'success', 'Users fetched');
 
-      $view = $this->view($users, 200)
-        ->setTemplate("default/users.html.twig")
-        ->setTemplateVar('users')
-        ;
-
-      return $this->handleView($view);
+      return $this->render('@ApiBundle/Resources/views/default/users.html.twig', ['users' => $users]);
     }
 
     private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '', $locale = 'en')
