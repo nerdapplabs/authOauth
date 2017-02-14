@@ -812,8 +812,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           $params = array('refresh_token' => $refreshToken);
         } else {
           $params = array('username' => $username,
-                          'password' => $password,
-                          'scope' => $scope
+                          'password' => $password
                         );
         }
         $response = $client->getAccessToken($this->container->getParameter('oauth2_token_endpoint'), $grantType, $params);
