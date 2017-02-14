@@ -223,7 +223,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
       *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"},
-      *      {"name"="scope", "dataType"="string", "required"=true, "description"="Fixed value - API"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
@@ -239,7 +238,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $this->validateEmail($request);
         $this->validateFirstname($request);
         $this->validateDob($request);
-        $this->validateScope($request);
 
         $user = $userManager->createUser();
 
@@ -249,7 +247,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $user->setFirstname($request->request->get('firstname'));
         $user->setLastname($request->request->get('lastname'));
         $user->setDob($request->request->get('dob'));
-        $user->setRoles(array('ROLE_'. $request->request->get('scope')));
+        $user->setRoles(array('ROLE_API'));
         $user->setEnabled(true);
 
         $userManager->updateUser($user);
@@ -370,18 +368,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       list($mm,$dd,$yyyy) = explode('/',$dob);
       if (!checkdate($mm,$dd,$yyyy)) {
           $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: '.$dob, $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
-      * Validate dob
-      */
-    private function validateScope(Request $request) {
-      $scope = $request->request->get('scope');
-
-      // Check if scope is set to API
-      if ('API' != $scope) {
-          $this->logAndThrowError(400, 'Invalid scope: '.$scope, $this->get('translator')->trans('api.show_error_scope', array(), 'messages', $request->getLocale()), $request->getLocale());
       }
     }
 
@@ -710,7 +696,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
       *      {"name"="username", "dataType"="string", "required"=true, "description"="username"},
       *      {"name"="password", "dataType"="string", "required"=true, "description"="password"},
-      *      {"name"="scope", "dataType"="string", "required"=true, "description"="Fixed value - API"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
@@ -723,12 +708,11 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $username = $data['username'];
         $password = $data['password'];
-        $scope = $data['scope'];
         $clientId = $data['client_id'];
         $clientSecret = $data['client_secret'];
         $grantType = 'password';
 
-        if (!$username || !$password || !$clientId || !$clientSecret || !$scope) {
+        if (!$username || !$password || !$clientId || !$clientSecret) {
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
@@ -802,7 +786,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $refreshToken = array_key_exists('refresh_token', $data) ? $data['refresh_token'] : null;
         $username = array_key_exists('username', $data) ? $data['username'] : null;
         $password = array_key_exists('password', $data) ? $data['password'] : null;
-        $scope = array_key_exists('scope', $data) ? $data['scope'] : null;
 
         $client = new OAuth2\Client($clientId, $clientSecret);
 
@@ -812,8 +795,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           $params = array('refresh_token' => $refreshToken);
         } else {
           $params = array('username' => $username,
-                          'password' => $password,
-                          'scope' => $scope
+                          'password' => $password
                         );
         }
         $response = $client->getAccessToken($this->container->getParameter('oauth2_token_endpoint'), $grantType, $params);
