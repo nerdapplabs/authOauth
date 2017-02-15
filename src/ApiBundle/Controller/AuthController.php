@@ -216,8 +216,8 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  parameters={
       *      {"name"="client_id", "dataType"="string", "required"=true, "description"="oAuth ClientId"},
       *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
-      *      {"name"="username", "dataType"="string", "required"=true, "description"="username"},
-      *      {"name"="password", "dataType"="string", "required"=true, "description"="password"},
+      *      {"name"="username", "dataType"="string", "required"=true, "description"="Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen"},
+      *      {"name"="password", "dataType"="string", "required"=true, "description"="Password should be 8-15 characters long and must contain alphanumeric and @*# characters"},
       *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname"},
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
@@ -314,6 +314,10 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       if (null != $user) {
         $this->logAndThrowError(400, 'User already exists. Username: '.$user->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
       }
+
+      if ( preg_match($this->container->getParameter('username_regex'), $username ) == false ) {
+        $this->logAndThrowError(400, 'Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen.', $this->get('translator')->trans('api.show_error_username_policy', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
     }
 
     /**
@@ -325,6 +329,10 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       // Check if password is empty
       if (null == $password) {
           $this->logAndThrowError(400, 'Invalid empty password', $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+
+      if ( preg_match($this->container->getParameter('password_regex'), $password ) == false ) {
+        $this->logAndThrowError(400, 'Password should be 8-15 characters long and must contain alphanumeric and @*# characters.', $this->get('translator')->trans('api.show_error_password_policy', array(), 'messages', $request->getLocale()), $request->getLocale());
       }
     }
 
@@ -382,7 +390,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  description="Change password of the user. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
       *      {"name"="old_password", "dataType"="string", "required"=true, "description"="Old password"},
-      *      {"name"="password", "dataType"="string", "required"=true, "description"="New password"},
+      *      {"name"="password", "dataType"="string", "required"=true, "description"="Password should be 8-15 characters long and must contain alphanumeric and @*# characters"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )

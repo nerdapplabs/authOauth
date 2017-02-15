@@ -143,4 +143,5 @@ api:
   show_error_perm_edit:  Sorry, You are not permitted to edit user profile!
   show_error_password_reset:  Sorry, You are not permitted to request for password reset!
   show_error_reset_req:  Password reset request already received
-  show_error_server_fault:  Server Error! Please try again after some time!!
+  show_error_username_policy:  Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen
+  show_error_password_policy:  Password should be 8-15 characters long and must contain alphanumeric and @*# characters

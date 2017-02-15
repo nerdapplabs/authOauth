@@ -3,6 +3,13 @@ parameters:
     # app_locales: en|fr|de|es|cs|nl|ru|uk|ro|pt_BR|pl|it|ja|id|ca|sl
     app_locales: en|fr|hi
 
+    # Password matching expression. Match all alphanumeric character and predefined wild characters.
+    # Password must consists of at least 8 characters and not more than 15 characters.
+    password_regex: '/^([a-zA-Z0-9@*#]{8,15})$/'
+
+    # username at least 3 of those characters, but no more than 16, any lowercase letter (a-z), number (0-9), an underscore, or a hyphen
+    username_regex: '/^[a-z0-9_-]{3,16}$/'
+
 # Assetic Configuration
 assetic:
     debug:          '%kernel.debug%'
