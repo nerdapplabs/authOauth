@@ -86,6 +86,8 @@ label:
   user_roles: भूमिकाओं
   user_email: ईमेल
   user_dob: जन्म की तारीख
+  user_image: प्रोफ़ाइल फोटो
+  user_image_not_found: छवि नहीं मिली
 menu:
   choose_language: भाषा चुनें
   client_list: ग्राहक सूची

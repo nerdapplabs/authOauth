@@ -12,6 +12,7 @@ use FOS\RestBundle\Controller\Annotations\RouteResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException as SecurityCoreExceptionAccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -32,6 +33,12 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Prefix;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
+
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * @Version({"1.0"})
@@ -55,7 +62,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     }
 
     /**
-      * Fetch all Users.
+      * Fetch all Users.use Symfony\Component\HttpFoundation\File\UploadedFile;
       *
       * @Get("/users")
       *
@@ -223,11 +230,12 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
       *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"},
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
       */
-    public function postRegisterAction()
+    public function postRegisterAction(Request $request)
     {
         $request = $this->container->get('request');
         $userManager = $this->get('fos_user.user_manager');
@@ -240,6 +248,28 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $this->validateDob($request);
 
         $user = $userManager->createUser();
+
+        try {
+            // $file stores the uploaded Image file
+            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+            $file = $request->files->get('image');
+
+            // If a file has been uploaded
+            if ( null != $file ) {
+
+                // Generate a unique name for the file before saving it
+                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+                // Move the file to the directory where images are stored
+                $file->move($this->getParameter('images_profile_directory'), $fileName );
+
+                // Update the 'image' property to store the Image file name
+                // instead of its contents
+                $user->setImage($fileName);
+            }
+        } catch(UploadException $e) {
+          $this->logAndThrowError(400, $e->getMessage(), $e->getMessage(), $request->getLocale());
+        }
 
         $user->setUsername($request->request->get('username'));
         $user->setPlainPassword($request->request->get('password'));
@@ -469,6 +499,36 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           'dob' => $dobString,
           'email' => $user->getEmail()
         ));
+    }
+
+    /**
+      * Fetch User profile picture.
+      *
+      * @Post("/user/profile/pic")
+      *
+      * @ApiDoc(
+      *  resource=true,
+      *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
+      *  parameters={
+      *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
+      *  },
+      * )
+      */
+    public function getProfilePicAction()
+    {
+        $request = $this->container->get('request');
+
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+
+        $file = $user->getImage() ? new File($this->getParameter('images_profile_directory').'/'.$user->getImage()) : null;
+
+        $response = new BinaryFileResponse($file);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+
+        return $response;
     }
 
     /**

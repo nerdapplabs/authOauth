@@ -97,6 +97,8 @@ label:
   user_roles: Roles
   user_email: Email
   user_dob: Date of Birth
+  user_image: Profile Picture
+  user_image_not_found: image not found
 menu:
   choose_language: Choose language
   client_list: Client list

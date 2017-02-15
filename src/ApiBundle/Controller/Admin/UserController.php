@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Controller used to manage user contents in the backend.
@@ -68,6 +71,22 @@ class UserController extends Controller
               $userManager = $this->container->get('fos_user.user_manager');
               $user = $userManager->createUser();
 
+              // $file stores the uploaded Image file
+              /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+              $file = $user->getImage();
+
+              // If a file has been uploaded
+              if ( null != $file ) {
+                  // Generate a unique name for the file before saving it
+                  $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+                  // Move the file to the directory where images are stored
+                  $file->move($this->getParameter('images_profile_directory'), $fileName );
+
+                  // Update the 'image' property to store the Image file name
+                  // instead of its contents
+                  $user->setImage($fileName);
+              }
               $user->setFirstname($form['firstname']->getData());
               $user->setLastname($form['lastname']->getData());
               $user->setDob($form['dob']->getData());
@@ -83,6 +102,10 @@ class UserController extends Controller
               $flashMsg = $this->get('translator')->trans('flash.user_created_successfully');
               $this->addFlash('success', $flashMsg);
 
+            } catch(UploadException $e) {
+              $this->logMessage(400, 'danger', $e->getMessage());
+              $this->addFlash('danger', $e->getMessage());
+              return $this->redirectToRoute('admin_user_new');
             } catch(HttpException $e) {
               // Error messages for this section will come from above validate methods
               return $this->redirectToRoute('admin_user_new');
@@ -101,6 +124,7 @@ class UserController extends Controller
 
         return $this->render('@ApiBundle/Resources/views/admin/user/new.html.twig', [
             'form' => $form->createView(),
+            'attr' =>  array('enctype' => 'multipart/form-data'),
         ]);
     }
 
@@ -130,6 +154,13 @@ class UserController extends Controller
     {
         $entityManager = $this->getDoctrine()->getManager();
 
+        $currentFilename = $user->getImage();
+        if ($user->getImage()) {
+          $user->setImage(
+              new File($this->getParameter('images_profile_directory').'/'.$user->getImage())
+          );
+        }
+
         $editForm = $this->createForm(UserType::class, $user);
         $deleteForm = $this->createDeleteForm($user);
         $locale = $request->getLocale();
@@ -144,6 +175,25 @@ class UserController extends Controller
                 $this->validateFirstname($editForm, $locale);
                 $this->validateDob($editForm, $locale);
                 $this->validateRoles($editForm, $locale);
+
+                // $file stores the uploaded Image file
+                /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+                $file = $user->getImage();
+
+                // If a file has been uploaded
+                if ( null != $file ) {
+                    // Generate a unique name for the file before saving it
+                    $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+                    // Move the file to the directory where images are stored
+                    $file->move($this->getParameter('images_profile_directory'), $fileName );
+
+                    // Update the 'image' property to store the Image file name
+                    // instead of its contents
+                    $user->setImage($fileName);
+                } else {
+                    $user->setImage($currentFilename);
+                }
 
                 $user->setFirstname($editForm['firstname']->getData());
                 $user->setLastname($editForm['lastname']->getData());
@@ -162,6 +212,10 @@ class UserController extends Controller
 
             // Always catch exact exception for which flash message or logger is needed,
             // otherwise catch block will not get executed on higher or lower ranked exceptions.
+            } catch(UploadException $e) {
+              $this->logMessage(400, 'danger', $e->getMessage());
+              $this->addFlash('danger', $e->getMessage());
+              return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
             } catch(HttpException $e) {
                 // Error messages for this section will come from above validate methods
                 return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
@@ -177,8 +231,10 @@ class UserController extends Controller
 
         return $this->render('@ApiBundle/Resources/views/admin/user/edit.html.twig', [
             'user' => $user,
+            'current_image' => $currentFilename,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'attr' =>  array('enctype' => 'multipart/form-data'),
         ]);
     }
 

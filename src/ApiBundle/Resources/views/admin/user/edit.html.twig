@@ -9,6 +9,18 @@
         <table class="table">
             <tbody>
                 <tr>
+                    <th scope="row">{{ 'label.user_image'|trans }}</th>
+                    <td>
+                      {% if current_image is not empty %}
+                        <img src="{{ asset(['images/profile/', current_image]|join) }}" alt="{{ 'title.user'|trans }} {{ 'label.user_image_not_found'|trans }}" class="large" />
+                      {% endif %}
+                    </td>
+                    <td>
+                        {{ form_errors(edit_form.image) }}
+                        {{ form_widget(edit_form.image) }}
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">{{ 'label.user_firstname'|trans }}</th>
                     <td>
                         {{ form_errors(edit_form.firstname) }}

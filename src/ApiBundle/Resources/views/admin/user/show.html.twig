@@ -8,6 +8,14 @@
     <table class="table">
         <tbody>
             <tr>
+                <th scope="row">{{ 'label.user_image'|trans }}</th>
+                <td>
+                  {% if user.image is not empty %}
+                    <img src="{{ asset(['images/profile/', user.image]|join) }}" alt="{{ 'title.user'|trans }} {{ 'label.user_image_not_found'|trans }}" class="large" />
+                  {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <th scope="row">{{ 'label.user_firstname'|trans }}</th>
                 <td>{{ user.firstname }}</td>
             </tr>

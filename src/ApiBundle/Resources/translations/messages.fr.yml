@@ -86,6 +86,8 @@ label:
   user_roles: Les rôles
   user_email: Email
   user_dob: Date de naissance
+  user_image: Image de profil
+  user_image_not_found: image non trouvée
 menu:
   choose_language: Choisissez la langue
   client_list: Liste des articles
