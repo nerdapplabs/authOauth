@@ -47,7 +47,7 @@ This is an example project, ready to use. This project is using below Symfony Bu
 
     cd /path/to/auth
     php app/console doctrine:database:create
-    php app/console doctrine:scheme:create
+    php app/console doctrine:schema:create
 
 **Step 3 - Create assets**
 
@@ -62,7 +62,7 @@ This is an example project, ready to use. This project is using below Symfony Bu
 
     Make this user admin
 
-    php app/console fos:user:create admin ROLE_ADMIN
+    php app/console fos:user:promote admin ROLE_ADMIN
 
 Now you are ready to use the Package!
 

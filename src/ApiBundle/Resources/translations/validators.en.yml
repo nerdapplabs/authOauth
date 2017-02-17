@@ -1,0 +1,24 @@
+client:
+  show_error_client_name:  Sorry, Client Name cannot be empty!
+  show_error_url:  Sorry, Redirect URL cannot be empty!
+  show_error_non_admin:  Sorry, you are not an Admin!
+user:
+  show_error_password:  Sorry, Wrong/Missing Password!
+  show_error_username_missing:  Sorry, Wrong/Missing Username!
+  show_error_credentials:  Sorry, Invalid Client Credentials!
+  show_error_username_empty:  Sorry, Empty Username!
+  show_error_username_taken:  Sorry, Username already taken!
+  show_error_email:  Sorry, Wrong/Missing Email!
+  show_error_email_taken:  Sorry, Email already taken!
+  show_error_dob:  Sorry, Invalid date of birth!
+  show_error_scope:  Sorry, Invalid scope!
+  show_error_firstname:  Sorry, Firstname cannot be empty!
+  show_error_password_change:  Sorry, You are not allowed to change password!
+  show_error_password_old:  Sorry, Invalid old password!
+  show_error_perm_show:  Sorry, You are not permitted to view user profile!
+  show_error_perm_edit:  Sorry, You are not permitted to edit user profile!
+  show_error_password_reset:  Sorry, You are not permitted to request for password reset!
+  show_error_reset_req:  Password reset request already received
+  show_error_username_policy:  Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen
+  show_error_password_policy:  Password should be 8-15 characters long and must contain alphanumeric and @*# characters
+  show_error_role: Sorry! Not a valid Role!
