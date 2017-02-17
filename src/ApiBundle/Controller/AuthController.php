@@ -248,23 +248,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $errors = $validator->validate($user);
 
         if (count($errors) > 0) {
-            $errorArray = [];
-            foreach ($errors as $error) {
-                $constraint = $error->getConstraint();
-                $errorItem = array(
-                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
-                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
-                                  );
-                array_push($errorArray, $errorItem);
-                $this->logMessage(400, $errorItem['error_description'] );
-            }
-            return new JsonResponse(array(
-                          "code" => 400,
-                          "error" =>  "Bad Request",
-                          "error_description" => $errorArray[0]['error_description'],
-                          "show_message" => $errorArray[0]['show_message'],
-                          'errors' => $errorArray
-                      ));
+           return $this->reportValidationErrors($request, $errors);
         }
 
         // Everything ok, now write the user record
@@ -457,24 +441,8 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $errors = $validator->validate($user, null, array('profile_edit'));
 
         if (count($errors) > 0) {
-            $errorArray = [];
-            foreach ($errors as $error) {
-                $constraint = $error->getConstraint();
-                $errorItem = array(
-                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
-                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
-                                  );
-                array_push($errorArray, $errorItem);
-                $this->logMessage(400, $errorItem['error_description'] );
-            }
-            return new JsonResponse(array(
-                          "code" => 400,
-                          "error" =>  "Bad Request",
-                          "error_description" => $errorArray[0]['error_description'],
-                          "show_message" => $errorArray[0]['show_message'],
-                          'errors' => $errorArray
-                      ));
-          }
+           return $this->reportValidationErrors($request, $errors);
+        }
 
         // Everything ok, now update the user record
         $userManager = $this->get('fos_user.user_manager');
@@ -695,6 +663,27 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         }
 
         return $response['result'];
+    }
+
+    private function reportValidationErrors(Request $request,  \Symfony\Component\Validator\ConstraintViolationList $errors)
+    {
+        $errorArray = [];
+        foreach ($errors as $error) {
+            $constraint = $error->getConstraint();
+            $errorItem = array(
+                                "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
+                                "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
+                              );
+            array_push($errorArray, $errorItem);
+            $this->logMessage(400, $errorItem['error_description'] );
+        }
+        return new JsonResponse(array(
+                      "code" => 400,
+                      "error" =>  "Bad Request",
+                      "error_description" => $errorArray[0]['error_description'],
+                      "show_message" => $errorArray[0]['show_message'],
+                      'errors' => $errorArray
+                  ));
     }
 
     private function logAndThrowError($errCode = 400, $errMsg = 'Bad Request', $showMsg = '', $locale = 'en') {
