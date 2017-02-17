@@ -232,13 +232,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $request = $this->container->get('request');
         $userManager = $this->get('fos_user.user_manager');
 
-        $this->validateClient($request);
-        $this->validateUsername($request);
-        $this->validatePassword($request);
-        $this->validateEmail($request);
-        $this->validateFirstname($request);
-        $this->validateDob($request);
-
         $user = $userManager->createUser();
 
         $user->setUsername($request->request->get('username'));
@@ -250,6 +243,26 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $user->setRoles(array('ROLE_API'));
         $user->setEnabled(true);
 
+        // Validate user data
+        $validator = $this->get('validator');
+        $errors = $validator->validate($user);
+
+        if (count($errors) > 0) {
+            $errorArray = [];
+            foreach ($errors as $error) {
+                $constraint = $error->getConstraint();
+                $errorItem = array(
+                                    "code" => 400,
+                                    "error" =>  "Bad Request",
+                                    "error_description" => $error->getMessage(),
+                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
+                                  );
+                array_push($errorArray, $errorItem);
+            }
+            return new JsonResponse($errorArray);
+        }
+
+        // Everything ok, now write the user record
         $userManager->updateUser($user);
 
         $oAuthRtn = 'Pending';
@@ -294,88 +307,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
       if (null == $client) {
           $this->logAndThrowError(400, 'Invalid Client Credentials: '.$clientId);
-      }
-    }
-
-    /**
-      * Validate username
-      */
-    private function validateUsername(Request $request) {
-      $username = $request->request->get('username');
-
-      // Check if username is empty
-      if (null == $username) {
-          $this->logAndThrowError(400, 'Empty username', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-
-      // Do a check for existing user with userManager->findByUsername
-      /** @var $user UserInterface */
-      $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
-      if (null != $user) {
-        $this->logAndThrowError(400, 'User already exists. Username: '.$user->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-
-      if ( preg_match($this->container->getParameter('username_regex'), $username ) == false ) {
-        $this->logAndThrowError(400, 'Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen.', $this->get('translator')->trans('api.show_error_username_policy', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
-      * Validate password
-      */
-    private function validatePassword(Request $request) {
-      $password = $request->request->get('password');
-
-      // Check if password is empty
-      if (null == $password) {
-          $this->logAndThrowError(400, 'Invalid empty password', $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-
-      if ( preg_match($this->container->getParameter('password_regex'), $password ) == false ) {
-        $this->logAndThrowError(400, 'Password should be 8-15 characters long and must contain alphanumeric and @*# characters.', $this->get('translator')->trans('api.show_error_password_policy', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
-      * Validate email
-      */
-    private function validateEmail(Request $request) {
-      $email = $request->request->get('email');
-
-      // Check if email is valid
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $this->logAndThrowError(400, 'Invalid email: '.$email, $this->get('translator')->trans('api.show_error_email', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-
-      $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
-      if (null != $user) {
-        $this->logAndThrowError(400, 'Email '.$user->getEmail().' already taken by Username: '.$user->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
-      * Validate firstname
-      */
-    private function validateFirstname(Request $request) {
-      $firstname = $request->request->get('firstname');
-
-      // Check if firstname is empty. At least firstname is required.
-      if (null == $firstname) {
-          $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-
-    }
-
-    /**
-      * Validate dob
-      */
-    private function validateDob(Request $request) {
-      $dob = $request->request->get('dob');
-
-      // Check if dob is valid
-      list($mm,$dd,$yyyy) = explode('/',$dob);
-      if (!checkdate($mm,$dd,$yyyy)) {
-          $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: '.$dob, $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
       }
     }
 
@@ -489,11 +420,9 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  resource=true,
       *  description="Update User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
-      *      {"name"="username", "dataType"="string", "required"=true, "description"="username, leave null if unchanged"},
       *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname, leave null if unchanged"},
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname, leave null if unchanged"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy, leave null if unchanged"},
-      *      {"name"="email", "dataType"="email", "required"=true, "description"="Email, leave null if unchanged"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
@@ -511,12 +440,30 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $data = $request->request->all();
 
-        $this->handleKeyUsername($user, $request);
-        $this->handleKeyEmail($user, $request);
-        $this->handleKeyFirstname($user, $request);
-        $this->handleKeyLastname($user, $request);
-        $this->handleKeyDob($user, $request);
+        $user->setFirstname(array_key_exists('firstname', $data) ? $data['firstname'] : $user->getFirstname() );
+        $user->setLastname(array_key_exists('lastname', $data) ? $data['lastname'] : $user->getLastname() );
+        $user->setDob( array_key_exists('dob', $data) ? $data['dob'] : $user->getDob() );
 
+        // Validate user data
+        $validator = $this->get('validator');
+        $errors = $validator->validate($user, null, array('profile_edit'));
+
+        if (count($errors) > 0) {
+            $errorArray = [];
+            foreach ($errors as $error) {
+                $constraint = $error->getConstraint();
+                $errorItem = array(
+                                    "code" => 400,
+                                    "error" =>  "Bad Request",
+                                    "error_description" => $error->getMessage(),
+                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
+                                  );
+                array_push($errorArray, $errorItem);
+            }
+            return new JsonResponse($errorArray);
+          }
+
+        // Everything ok, now update the user record
         $userManager->updateUser($user);
 
         $msg = 'Profile changed successfully';
@@ -529,92 +476,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           'code' => 201,
           'show_message' => $msg.' for '.$username
         ));
-    }
-
-    /**
-      * Checks $request if it contains a key - username
-      */
-    private function handleKeyUsername(UserInterface $user, Request $request) {
-      $data = $request->request->all();
-
-      if (array_key_exists('username', $data)) {
-        // Change username only if username is changed
-        if ($data['username'] != $user->getUsername()) {
-          // Check if username is already taken
-          $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['username']);
-          if (null != $user1) {
-            $this->logAndThrowError(400, 'Already taken by Username: '.$user1->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-          }
-          $user->setUsername($data['username']);
-        }
-      }
-    }
-
-    /**
-      * Checks $request if it contains a key - email
-      */
-    private function handleKeyEmail(UserInterface $user, Request $request) {
-      $data = $request->request->all();
-
-      if (array_key_exists('email', $data)) {
-        // Check if email is valid
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->logAndThrowError(400, 'Invalid email: '.$data['email'], 'Invalid email: '.$data['email']);
-        }
-        // Update email only if email is changed
-        if ($data['email'] != $user->getEmail()) {
-            // Check if email is already taken
-            $user1 = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($data['email']);
-            if (null != $user1) {
-              $this->logAndThrowError(400, 'Email ' .$user1->getEmail().' already taken by Username: '.$user1->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
-            }
-            $user->setEmail($data['email']);
-        }
-      }
-    }
-
-    /**
-      * Checks $request if it contains a key - firstname
-      */
-    private function handleKeyFirstname(UserInterface $user, Request $request) {
-      $data = $request->request->all();
-
-      if (array_key_exists('firstname', $data)) {
-        // Check if firstname is empty. At least firstname is required.
-        if (null == $data['firstname']) {
-            $this->logAndThrowError(400, 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-        $user->setFirstname($data['firstname']);
-      }
-
-    }
-
-    /**
-      * Checks $request if it contains a key - lastname
-      */
-    private function handleKeyLastname(UserInterface $user, Request $request) {
-      $data = $request->request->all();
-
-      if (array_key_exists('lastname', $data)) {
-        $user->setLastname($data['lastname']);
-      }
-    }
-
-    /**
-      * Checks $request if it contains a key - dob
-      */
-    private function handleKeyDob(UserInterface $user, Request $request) {
-      $data = $request->request->all();
-
-      if (array_key_exists('dob', $data)) {
-        // Check if dob is valid
-        list($mm,$dd,$yyyy) = array_merge( explode('/',$data['dob']), array(0,0,0) );
-        if (!checkdate($mm,$dd,$yyyy)) {
-            $this->logAndThrowError(400, 'Invalid mm/dd/yyyy DOB: '.$data['dob'], $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-        $user->setDob($data['dob']);
-      }
-
     }
 
     /**
