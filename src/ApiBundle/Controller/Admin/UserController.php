@@ -59,7 +59,7 @@ class UserController extends Controller
             $userManager = $this->container->get('fos_user.user_manager');
             $user = $userManager->createUser();
 
-            $this->setUserColumns($user, $form);
+            $this->setUserData($user, $form);
 
             $userManager->updateUser($user);
 
@@ -104,7 +104,7 @@ class UserController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->setUserColumns($user, $editForm);
+            $this->setUserData($user, $editForm);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
@@ -156,7 +156,7 @@ class UserController extends Controller
         ;
     }
 
-    private function setUserColumns(User $user, \Symfony\Component\Form\Form $form)
+    private function setUserData(User $user, \Symfony\Component\Form\Form $form)
     {
       $user->setFirstname($form['firstname']->getData());
       $user->setLastname($form['lastname']->getData());
