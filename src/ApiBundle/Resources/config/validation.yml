@@ -14,7 +14,7 @@ ApiBundle\Entity\User:
     properties:
         firstname:
             - NotBlank:
-                  groups: [profile_edit]
+                  groups: ['Default', 'profile_edit']
                   message: "user.show_error_firstname"
                   payload:
                       api_error: 'api.show_error_firstname'
@@ -40,7 +40,7 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_email'
         dob:
             - Date:
-                  groups: [profile_edit]
+                  groups: ['Default', 'profile_edit']
                   message: "user.show_error_dob"
                   payload:
                       api_error: 'api.show_error_dob'
@@ -51,3 +51,15 @@ ApiBundle\Entity\User:
                   message:  "user.show_error_role"
                   payload:
                       api_error: 'api.show_error_role'
+        image:
+            - Image:
+                  groups: ['Default', 'profile_pic']
+                  mimeTypes:  ["image/jpeg", "image/jpg", "image/gif", "image/png"]
+                  mimeTypesMessage: Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size
+                  maxSize: 1024k
+                  minWidth: 50
+                  maxWidth: 300
+                  minHeight: 50
+                  maxHeight: 300
+                  payload:
+                      api_error: 'api.show_error_image'

@@ -46,12 +46,7 @@ class User extends BaseUser
 
     /**
     * @var string $image
-    * @Assert\File(
-    *     maxSize = "1024k",
-    *     mimeTypes = {"image/jpeg", "image/jpg", "image/gif", "image/png"},
-    *     mimeTypesMessage = "Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size)"
-    * )
-    * @ORM\Column(name="image", type="string", length=255, nullable=true)
+    * @ORM\Column(name="image", nullable=true)
     */
     protected $image;
 
@@ -124,7 +119,7 @@ class User extends BaseUser
      *
      * @return Thread
      */
-    public function setImage($image)
+    public function setImage($image = null)
     {
         $this->image = $image;
 

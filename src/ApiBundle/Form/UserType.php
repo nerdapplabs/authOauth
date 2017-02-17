@@ -32,7 +32,7 @@ class UserType extends AbstractType
             ->add('email', EmailType::class)
             ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y'))
             ->add('username', TextType::class)
-            ->add('password', PasswordType::class, array('data' => ''))
+            ->add('password', TextType::class)
             ->add('roles', CollectionType::class, array(
                   'entry_type'   => ChoiceType::class,
                   'entry_options'  => array(

@@ -242,26 +242,21 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $user = $userManager->createUser();
 
-        try {
-            // $file stores the uploaded Image file
-            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-            $file = $request->files->get('image');
+        // $file stores the uploaded Image file
+        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+        $file = $request->files->get('image');
 
-            // If a file has been uploaded
-            if ( null != $file ) {
+        // If a file has been uploaded
+        if ( null != $file ) {
+            // Generate a unique name for the file before saving it
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
-                // Generate a unique name for the file before saving it
-                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+            // Move the file to the directory where images are stored
+            $file->move($this->getParameter('images_profile_directory'), $fileName );
 
-                // Move the file to the directory where images are stored
-                $file->move($this->getParameter('images_profile_directory'), $fileName );
-
-                // Update the 'image' property to store the Image file name
-                // instead of its contents
-                $user->setImage($fileName);
-            }
-        } catch(UploadException $e) {
-          $this->logAndThrowError(400, $e->getMessage(), $e->getMessage(), $request->getLocale());
+            // Update the 'image' property to store the Image file name
+            // instead of its contents
+            $user->setImage('/images/profile/'.$fileName);
         }
 
         $user->setUsername($request->request->get('username'));
@@ -432,7 +427,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     /**
       * Fetch User profile picture.
       *
-      * @Post("/user/profile/pic")
+      * @Post("/user/profile/get-pic")
       *
       * @ApiDoc(
       *  resource=true,
@@ -457,6 +452,68 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT);
 
         return $response;
+    }
+
+    /**
+      * Fetch User profile picture.
+      *
+      * @Post("/user/profile/edit-pic")
+      *
+      * @ApiDoc(
+      *  resource=true,
+      *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
+      *  parameters={
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
+      *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
+      *  },
+      * )
+      */
+    public function editProfilePicAction()
+    {
+      $request = $this->container->get('request');
+
+      $user = $this->container->get('security.context')->getToken()->getUser();
+      if (!is_object($user) || !$user instanceof UserInterface) {
+          $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+
+      $userManager = $this->get('fos_user.user_manager');
+
+      // $file stores the uploaded Image file
+      /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+      $file = $request->files->get('image');
+
+      // If a file has been uploaded
+      if ( null != $file ) {
+          // Generate a unique name for the file before saving it
+          $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+          // Move the file to the directory where images are stored
+          $file->move($this->getParameter('images_profile_directory'), $fileName );
+
+          // Update the 'image' property to store the Image file name
+          // instead of its contents
+          $user->setImage($fileName);
+      }
+
+      // Validate user data
+      $validator = $this->get('validator');
+      $errors = $validator->validate($user, null, array('profile_pic'));
+
+      if (count($errors) > 0) {
+         return $this->reportValidationErrors($errors, $request->getLocale());
+      }
+
+      // Everything ok, now update Profile Pic
+      $userManager->updateUser($user);
+
+      $msg = 'Profile Pic updated successfully'.$user->getUsername();
+      $this->logMessage(201, $msg);
+
+      return new JsonResponse(array(
+              'code' => 201,
+              'show_message' => $msg,
+      ));
     }
 
     /**
