@@ -24,14 +24,15 @@ class UserType extends AbstractType
     {
         $builder
             ->add('firstname',TextType::class)
-            ->add('lastname',TextType::class)
+            ->add('lastname',TextType::class, array('required' => false))
             ->add('email', EmailType::class)
-            ->add('dob', DateType::class)
+            ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y'))
             ->add('username', TextType::class)
-            ->add('password', TextType::class, array('data' => ''))
+            ->add('password', PasswordType::class, array('data' => ''))
             ->add('roles', CollectionType::class, array(
                   'entry_type'   => ChoiceType::class,
                   'entry_options'  => array(
+                      'label' => false,
                       'choices'  => array(
                           'ROLE_USER' => 'ROLE_USER',
                           'ROLE_API'  => 'ROLE_API',

@@ -1,0 +1,53 @@
+# src/ApiBundle/Resources/config/validation.yml
+ApiBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields: username
+              message: "user.show_error_username_taken"
+              payload:
+                  api_error: 'api.show_error_username_taken'
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields: email
+              message: "user.show_error_email_taken"
+              payload:
+                  api_error: 'api.show_error_email_taken'
+    properties:
+        firstname:
+            - NotBlank:
+                  groups: [profile_edit]
+                  message: "user.show_error_firstname"
+                  payload:
+                      api_error: 'api.show_error_firstname'
+        username:
+            - Regex:
+                  pattern: '/^[a-z0-9_-]{3,16}$/'
+                  match:   true
+                  message: "user.show_error_username_policy"
+                  payload:
+                      api_error: 'api.show_error_username_policy'
+        password:
+            - Regex:
+                  pattern: '/^([a-zA-Z0-9@*#]{8,15})$/'
+                  match:   true
+                  message: "user.show_error_password_policy"
+                  payload:
+                      api_error: 'api.show_error_password_policy'
+        email:
+            - Email:
+                  message: "user.show_error_email"
+                  checkMX: false
+                  payload:
+                      api_error: 'api.show_error_email'
+        dob:
+            - Date:
+                  groups: [profile_edit]
+                  message: "user.show_error_dob"
+                  payload:
+                      api_error: 'api.show_error_dob'
+        roles:
+            - Choice:
+                  choices:  ['ROLE_USER', 'ROLE_API']
+                  multiple: true
+                  message:  "user.show_error_role"
+                  payload:
+                      api_error: 'api.show_error_role'

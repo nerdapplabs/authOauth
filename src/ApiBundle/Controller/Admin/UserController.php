@@ -56,48 +56,17 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-          try {
-              $this->validateUsername($form, $locale, new User());
-              $this->validatePassword($form, $locale);
-              $this->validateEmail($form, $locale, new User());
-              $this->validateFirstname($form, $locale);
-              $this->validateDob($form, $locale);
-              $this->validateRoles($form, $locale);
+            $userManager = $this->container->get('fos_user.user_manager');
+            $user = $userManager->createUser();
 
-              // Everything ok, now proceed to create the user
-              $userManager = $this->container->get('fos_user.user_manager');
-              $user = $userManager->createUser();
+            $this->setUserData($user, $form);
 
-              $user->setFirstname($form['firstname']->getData());
-              $user->setLastname($form['lastname']->getData());
-              $user->setDob($form['dob']->getData());
-              $user->setEmail($form['email']->getData());
-              $user->setUsername($form['username']->getData());
-              $user->setPlainPassword($form['password']->getData());
-              $user->setRoles($form['roles']->getData());
-              $user->setConfirmationToken(null);
-              $user->setEnabled(true);
-              $user->setLastLogin(new \DateTime());
+            $userManager->updateUser($user);
 
-              $userManager->updateUser($user);
-              $flashMsg = $this->get('translator')->trans('flash.user_created_successfully');
-              $this->addFlash('success', $flashMsg);
-
-            } catch(HttpException $e) {
-              // Error messages for this section will come from above validate methods
-              return $this->redirectToRoute('admin_user_new');
-
-            // Always catch exact exception for which flash message or logger is needed,
-            // otherwise catch block will not get executed on higher or lower ranked exceptions.
-            } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-              $flashMsg = $this->get('translator')->trans('flash.user_already_exists');
-              $this->logMessage(400, 'danger', $e->getMessage());
-              $this->addFlash('danger', $flashMsg);
-              return $this->redirectToRoute('admin_user_new');
-            }
+            $this->logMessageAndFlash(200, 'success', 'User successfully created: ', $this->get('translator')->trans('flash.user_creatd_successfully'), $request->getLocale() );
 
             return $this->redirectToRoute('admin_user_index');
-        } // if form is valid
+        }
 
         return $this->render('@ApiBundle/Resources/views/admin/user/new.html.twig', [
             'form' => $form->createView(),
@@ -128,8 +97,6 @@ class UserController extends Controller
      */
     public function editAction(User $user, Request $request)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         $editForm = $this->createForm(UserType::class, $user);
         $deleteForm = $this->createDeleteForm($user);
         $locale = $request->getLocale();
@@ -137,40 +104,12 @@ class UserController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-          try {
-                $this->validateUsername($editForm, $locale, $user);
-                $this->validatePassword($editForm, $locale);
-                $this->validateEmail($editForm, $locale, $user);
-                $this->validateFirstname($editForm, $locale);
-                $this->validateDob($editForm, $locale);
-                $this->validateRoles($editForm, $locale);
+            $this->setUserData($user, $editForm);
 
-                $user->setFirstname($editForm['firstname']->getData());
-                $user->setLastname($editForm['lastname']->getData());
-                $user->setDob($editForm['dob']->getData());
-                $user->setEmail($editForm['email']->getData());
-                $user->setUsername($editForm['username']->getData());
-                $user->setPlainPassword($editForm['password']->getData());
-                $user->setRoles($editForm['roles']->getData());
-                $user->setConfirmationToken(null);
-                $user->setEnabled(true);
-                $user->setLastLogin(new \DateTime());
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
 
-                $entityManager->flush();
-                $flashMsg = $this->get('translator')->trans('flash.user_updated_successfully');
-                $this->addFlash('success', $flashMsg);
-
-            // Always catch exact exception for which flash message or logger is needed,
-            // otherwise catch block will not get executed on higher or lower ranked exceptions.
-            } catch(HttpException $e) {
-                // Error messages for this section will come from above validate methods
-                return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
-            } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-                $flashMsg = $this->get('translator')->trans('flash.user_already_exists');
-                $this->logMessage(400, 'danger', $e->getMessage());
-                $this->addFlash('danger', $flashMsg);
-                return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
-            }
+            $this->logMessageAndFlash(200, 'success', 'User successfully updated: ', $this->get('translator')->trans('flash.user_updated_successfully'), $request->getLocale() );
 
             return $this->redirectToRoute('admin_user_index');
         }
@@ -180,100 +119,6 @@ class UserController extends Controller
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ]);
-    }
-
-    /**
-      * Validate username
-      */
-    private function validateUsername(\Symfony\Component\Form\Form $form, $locale, User $user) {
-      $username = $form['username']->getData();
-
-      // Check if username is empty
-      if (null == $username) {
-          $this->logMessageAndFlash(400, 'danger', 'Empty username', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $locale), $locale);
-      }
-
-      // If the username belongs to same user, no need to further check
-      if (!($user->getUsername() == $username)) {
-        // Do a check for existing user with userManager->findByUsername
-        /** @var $user UserInterface */
-        $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
-        if (null != $user) {
-          $this->logMessageAndFlash(400, 'danger', 'User already exists. Username: '.$user->getUsername(), $this->get('translator')->trans('api.show_error_username_taken', array(), 'messages', $locale), $locale);
-        }
-      }
-    }
-
-    /**
-      * Validate password
-      */
-    private function validatePassword(\Symfony\Component\Form\Form $form, $locale) {
-      $password = $form['password']->getData();
-
-      // Check if password is empty
-      if (null == $password) {
-          $this->logMessageAndFlash(400, 'danger', 'Invalid empty password', $this->get('translator')->trans('api.show_error_password', array(), 'messages', $locale), $locale);
-      }
-    }
-
-    /**
-      * Validate email
-      */
-    private function validateEmail(\Symfony\Component\Form\Form $form, $locale, User $user) {
-      $email = $form['email']->getData();
-
-      // Check if email is valid
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $this->logMessageAndFlash(400, 'danger', 'Invalid email: '.$email, $this->get('translator')->trans('api.show_error_email', array(), 'messages', $locale), $locale);
-      }
-
-      // If the email belongs to same user, no need to further check
-      if (!($user->getEmail() == $email )) {
-        $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($email);
-        if (null != $user) {
-          $this->logMessageAndFlash(400, 'danger', 'Email '.$user->getEmail().' already taken by Username: '.$user->getUsername(), $this->get('translator')->trans('api.show_error_email_taken', array(), 'messages', $locale), $locale);
-        }
-      }
-    }
-
-    /**
-      * Validate firstname
-      */
-    private function validateFirstname(\Symfony\Component\Form\Form $form, $locale) {
-      $firstname = $form['firstname']->getData();
-
-      // Check if firstname is empty. At least firstname is required.
-      if (null == $firstname) {
-          $this->logMessageAndFlash(400, 'danger', 'Invalid empty firstname', $this->get('translator')->trans('api.show_error_firstname', array(), 'messages', $locale), $locale);
-      }
-
-    }
-
-    /**
-      * Validate dob
-      */
-    private function validateDob(\Symfony\Component\Form\Form $form, $locale) {
-      $dob = $form['dob']->getData();
-
-      // Check if dob is valid
-      list($mm,$dd,$yyyy) = explode('/', $dob->format('m/d/Y') );
-      if (!checkdate($mm,$dd,$yyyy)) {
-          $this->logMessageAndFlash(400, 'danger', 'Invalid mm/dd/yyyy DOB: '.$dob, $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $locale), $locale);
-      }
-    }
-
-    /**
-      * Validate roles
-      */
-    private function validateRoles(\Symfony\Component\Form\Form $form, $locale) {
-      $roles = $form['roles']->getData();
-      $permittedRoles = ['ROLE_API', "ROLE_USER"];
-
-      foreach ($roles as $role) {
-        // Check if role is valid
-        if (!in_array($role, $permittedRoles) )
-        $this->logMessageAndFlash(400, 'warning', 'Invalid role: '.$role, $this->get('translator')->trans('api.show_error_role'.' '.$role, array(), 'messages', $locale), $locale);
-      }
     }
 
     /**
@@ -290,9 +135,7 @@ class UserController extends Controller
 
         $entityManager->flush();
 
-        $flashMsg = $this->get('translator')->trans('flash.user_deleted_successfully');
-        $this->logMessage(200, 'success', 'User successfully deleted: ');
-        $this->addFlash('success', $flashMsg);
+        $this->logMessageAndFlash(200, 'success', 'User successfully deleted: ', $this->get('translator')->trans('flash.user_deleted_successfully'), $request->getLocale() );
 
         return $this->redirectToRoute('admin_user_index');
     }
@@ -313,11 +156,24 @@ class UserController extends Controller
         ;
     }
 
+    private function setUserData(User $user, \Symfony\Component\Form\Form $form)
+    {
+      $user->setFirstname($form['firstname']->getData());
+      $user->setLastname($form['lastname']->getData());
+      $user->setDob($form['dob']->getData());
+      $user->setEmail($form['email']->getData());
+      $user->setUsername($form['username']->getData());
+      $user->setPlainPassword($form['password']->getData());
+      $user->setRoles($form['roles']->getData());
+      $user->setConfirmationToken(null);
+      $user->setEnabled(true);
+      $user->setLastLogin(new \DateTime());
+    }
+
     private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '', $locale = 'en')
     {
         $this->logMessage($code, $type, $logMsg);
         $this->addFlash($type, $flashMsg);
-        throw new HttpException($code, $logMsg);
     }
 
     private function logMessage($code = 200, $type='success', $logMsg = '') {
