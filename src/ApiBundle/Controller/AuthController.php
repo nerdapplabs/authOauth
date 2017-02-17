@@ -252,14 +252,15 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             foreach ($errors as $error) {
                 $constraint = $error->getConstraint();
                 $errorItem = array(
-                                    "code" => 400,
-                                    "error" =>  "Bad Request",
                                     "error_description" => $error->getMessage(),
                                     "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
                                   );
                 array_push($errorArray, $errorItem);
             }
-            return new JsonResponse($errorArray);
+            return new JsonResponse(array(
+                                "code" => 400,
+                                "error" =>  "Bad Request",
+                                'errors' => $errorArray));
         }
 
         // Everything ok, now write the user record
@@ -436,13 +437,16 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_edit', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $userManager = $this->get('fos_user.user_manager');
-
         $data = $request->request->all();
 
-        $user->setFirstname(array_key_exists('firstname', $data) ? $data['firstname'] : $user->getFirstname() );
-        $user->setLastname(array_key_exists('lastname', $data) ? $data['lastname'] : $user->getLastname() );
-        $user->setDob( array_key_exists('dob', $data) ? $data['dob'] : $user->getDob() );
+        $firstname = array_key_exists('firstname', $data) ? $data['firstname'] : $user->getFirstname();
+        $user->setFirstname($firstname);
+
+        $lastname = array_key_exists('lastname', $data) ? $data['lastname'] : $user->getLastname();
+        $user->setLastname($lastname);
+
+        $dob = array_key_exists('dob', $data) ? $data['dob'] : $user->getDob();
+        $user->setDob($dob);
 
         // Validate user data
         $validator = $this->get('validator');
@@ -453,17 +457,19 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             foreach ($errors as $error) {
                 $constraint = $error->getConstraint();
                 $errorItem = array(
-                                    "code" => 400,
-                                    "error" =>  "Bad Request",
                                     "error_description" => $error->getMessage(),
                                     "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
                                   );
                 array_push($errorArray, $errorItem);
             }
-            return new JsonResponse($errorArray);
+            return new JsonResponse(array(
+                                "code" => 400,
+                                "error" =>  "Bad Request",
+                                'errors' => $errorArray));
           }
 
         // Everything ok, now update the user record
+        $userManager = $this->get('fos_user.user_manager');
         $userManager->updateUser($user);
 
         $msg = 'Profile changed successfully';
