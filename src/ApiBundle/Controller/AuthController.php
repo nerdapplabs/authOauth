@@ -252,15 +252,19 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             foreach ($errors as $error) {
                 $constraint = $error->getConstraint();
                 $errorItem = array(
-                                    "error_description" => $error->getMessage(),
+                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
                                     "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
                                   );
                 array_push($errorArray, $errorItem);
+                $this->logMessage(400, $errorItem['error_description'] );
             }
             return new JsonResponse(array(
-                                "code" => 400,
-                                "error" =>  "Bad Request",
-                                'errors' => $errorArray));
+                          "code" => 400,
+                          "error" =>  "Bad Request",
+                          "error_description" => $errorArray[0]['error_description'],
+                          "show_message" => $errorArray[0]['show_message'],
+                          'errors' => $errorArray
+                      ));
         }
 
         // Everything ok, now write the user record
@@ -457,15 +461,19 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             foreach ($errors as $error) {
                 $constraint = $error->getConstraint();
                 $errorItem = array(
-                                    "error_description" => $error->getMessage(),
+                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
                                     "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
                                   );
                 array_push($errorArray, $errorItem);
+                $this->logMessage(400, $errorItem['error_description'] );
             }
             return new JsonResponse(array(
-                                "code" => 400,
-                                "error" =>  "Bad Request",
-                                'errors' => $errorArray));
+                          "code" => 400,
+                          "error" =>  "Bad Request",
+                          "error_description" => $errorArray[0]['error_description'],
+                          "show_message" => $errorArray[0]['show_message'],
+                          'errors' => $errorArray
+                      ));
           }
 
         // Everything ok, now update the user record
