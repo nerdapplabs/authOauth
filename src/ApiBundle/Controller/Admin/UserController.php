@@ -56,39 +56,17 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-          try {
-              $userManager = $this->container->get('fos_user.user_manager');
-              $user = $userManager->createUser();
+            $userManager = $this->container->get('fos_user.user_manager');
+            $user = $userManager->createUser();
 
-              $user->setFirstname($form['firstname']->getData());
-              $user->setLastname($form['lastname']->getData());
-              $user->setDob($form['dob']->getData());
-              $user->setEmail($form['email']->getData());
-              $user->setUsername($form['username']->getData());
-              $user->setPlainPassword($form['password']->getData());
-              $user->setRoles($form['roles']->getData());
-              $user->setConfirmationToken(null);
-              $user->setEnabled(true);
-              $user->setLastLogin(new \DateTime());
+            $this->setUserColumns($user, $form);
 
-              $userManager->updateUser($user);
-              $flashMsg = $this->get('translator')->trans('flash.user_created_successfully');
-              $this->addFlash('success', $flashMsg);
+            $userManager->updateUser($user);
 
-            } catch(HttpException $e) {
-              return $this->redirectToRoute('admin_user_new');
-
-            // Always catch exact exception for which flash message or logger is needed,
-            // otherwise catch block will not get executed on higher or lower ranked exceptions.
-            } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-              $flashMsg = $this->get('translator')->trans('flash.user_already_exists');
-              $this->logMessage(400, 'danger', $e->getMessage());
-              $this->addFlash('danger', $flashMsg);
-              return $this->redirectToRoute('admin_user_new');
-            }
+            $this->logMessageAndFlash(200, 'success', 'User successfully created: ', $this->get('translator')->trans('flash.user_creatd_successfully'), $request->getLocale() );
 
             return $this->redirectToRoute('admin_user_index');
-        } // if form is valid
+        }
 
         return $this->render('@ApiBundle/Resources/views/admin/user/new.html.twig', [
             'form' => $form->createView(),
@@ -119,8 +97,6 @@ class UserController extends Controller
      */
     public function editAction(User $user, Request $request)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         $editForm = $this->createForm(UserType::class, $user);
         $deleteForm = $this->createDeleteForm($user);
         $locale = $request->getLocale();
@@ -128,32 +104,12 @@ class UserController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-          try {
-                $user->setFirstname($editForm['firstname']->getData());
-                $user->setLastname($editForm['lastname']->getData());
-                $user->setDob($editForm['dob']->getData());
-                $user->setEmail($editForm['email']->getData());
-                $user->setUsername($editForm['username']->getData());
-                $user->setPlainPassword($editForm['password']->getData());
-                $user->setRoles($editForm['roles']->getData());
-                $user->setConfirmationToken(null);
-                $user->setEnabled(true);
-                $user->setLastLogin(new \DateTime());
+            $this->setUserColumns($user, $editForm);
 
-                $entityManager->flush();
-                $flashMsg = $this->get('translator')->trans('flash.user_updated_successfully');
-                $this->addFlash('success', $flashMsg);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
 
-            // Always catch exact exception for which flash message or logger is needed,
-            // otherwise catch block will not get executed on higher or lower ranked exceptions.
-            } catch(HttpException $e) {
-                return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
-            } catch(\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-                $flashMsg = $this->get('translator')->trans('flash.user_already_exists');
-                $this->logMessage(400, 'danger', $e->getMessage());
-                $this->addFlash('danger', $flashMsg);
-                return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
-            }
+            $this->logMessageAndFlash(200, 'success', 'User successfully updated: ', $this->get('translator')->trans('flash.user_updated_successfully'), $request->getLocale() );
 
             return $this->redirectToRoute('admin_user_index');
         }
@@ -179,9 +135,7 @@ class UserController extends Controller
 
         $entityManager->flush();
 
-        $flashMsg = $this->get('translator')->trans('flash.user_deleted_successfully');
-        $this->logMessage(200, 'success', 'User successfully deleted: ');
-        $this->addFlash('success', $flashMsg);
+        $this->logMessageAndFlash(200, 'success', 'User successfully deleted: ', $this->get('translator')->trans('flash.user_deleted_successfully'), $request->getLocale() );
 
         return $this->redirectToRoute('admin_user_index');
     }
@@ -202,11 +156,24 @@ class UserController extends Controller
         ;
     }
 
+    private function setUserColumns(User $user, \Symfony\Component\Form\Form $form)
+    {
+      $user->setFirstname($form['firstname']->getData());
+      $user->setLastname($form['lastname']->getData());
+      $user->setDob($form['dob']->getData());
+      $user->setEmail($form['email']->getData());
+      $user->setUsername($form['username']->getData());
+      $user->setPlainPassword($form['password']->getData());
+      $user->setRoles($form['roles']->getData());
+      $user->setConfirmationToken(null);
+      $user->setEnabled(true);
+      $user->setLastLogin(new \DateTime());
+    }
+
     private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '', $locale = 'en')
     {
         $this->logMessage($code, $type, $logMsg);
         $this->addFlash($type, $flashMsg);
-        throw new HttpException($code, $logMsg);
     }
 
     private function logMessage($code = 200, $type='success', $logMsg = '') {
