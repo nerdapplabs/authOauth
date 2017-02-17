@@ -248,7 +248,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $errors = $validator->validate($user);
 
         if (count($errors) > 0) {
-           return $this->reportValidationErrors($request, $errors);
+           return $this->reportValidationErrors($errors, $request->getLocale());
         }
 
         // Everything ok, now write the user record
@@ -441,7 +441,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $errors = $validator->validate($user, null, array('profile_edit'));
 
         if (count($errors) > 0) {
-           return $this->reportValidationErrors($request, $errors);
+           return $this->reportValidationErrors($errors, $request->getLocale());
         }
 
         // Everything ok, now update the user record
@@ -665,14 +665,14 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         return $response['result'];
     }
 
-    private function reportValidationErrors(Request $request,  \Symfony\Component\Validator\ConstraintViolationList $errors)
+    private function reportValidationErrors(\Symfony\Component\Validator\ConstraintViolationList $errors, $locale)
     {
         $errorArray = [];
         foreach ($errors as $error) {
             $constraint = $error->getConstraint();
             $errorItem = array(
                                 "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
-                                "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $request->getLocale())
+                                "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $locale)
                               );
             array_push($errorArray, $errorItem);
             $this->logMessage(400, $errorItem['error_description'] );
