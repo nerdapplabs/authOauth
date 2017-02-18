@@ -238,7 +238,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="lastname", "dataType"="string", "required"=false, "description"="lastname"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
-      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="jpeg/jpg/png/gif Pic Size: 1024k, Width: 50-300px, Height: 50-300px"},
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size and dimensions within 50-300px x 50-300px"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
@@ -272,7 +272,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $user->setPassword($request->request->get('password'));
         $user->setEmail($request->request->get('email'));
         $user->setFirstname($request->request->get('firstname'));
-        $user->setLastname($request->request->get('lastname') ? $request->request->get('lastname') : null);
+        $user->setLastname($request->request->get('lastname') ? $request->request->get('lastname') : "");
         $user->setDob($request->request->get('dob'));
         $user->setRoles(array('ROLE_API'));
 
@@ -291,9 +291,12 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $oAuthRtn = 'Pending';
         $msg = 'N.A.';
         $grantType = 'password';
+
+        // If Login confirmation is set, then upon successful registration, user will be logged in automatically,
+        // else user will be redirected to a login page to log in with the new credentials.
         $loginConfirmation = $this->container->getParameter('login_confirmation');
 
-        if (true == $this->container->getParameter('email_confirmation') ) {
+        if (true == $this->container->getParameter('registration_requires_email_confirmation') ) {
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
@@ -467,7 +470,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        // If no image file, then return empty response
+        // If no image file, then return empty response with HTTP 200 OK 
         if (!$user->getImage()) {
             return new Response();
         }
@@ -489,7 +492,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  resource=true,
       *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
-      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="jpeg/jpg/png/gif Pic Size: 1024k, Width: 50-300px, Height: 50-300px"},
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size and dimensions within 50-300px x 50-300px"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )

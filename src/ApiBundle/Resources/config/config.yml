@@ -3,7 +3,7 @@ parameters:
     # app_locales: en|fr|de|es|cs|nl|ru|uk|ro|pt_BR|pl|it|ja|id|ca|sl
     app_locales: en|fr|hi
     images_profile_directory: '%kernel.root_dir%/../web/images/profile'
-    email_confirmation: false
+    registration_requires_email_confirmation: false
     login_confirmation: false
 
 # Assetic Configuration
