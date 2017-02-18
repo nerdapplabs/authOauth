@@ -164,6 +164,15 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       if (!$clientName) {
           $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('api.show_error_client_name', array(), 'messages', $request->getLocale()), $request->getLocale());
       }
+
+      $entityManager = $this->get('doctrine')->getManager();
+      $query = $entityManager->createQuery("SELECT u FROM \ApiBundle\Entity\Client u WHERE u.name = :clientname");
+      $query->setParameter('clientname', $clientName);
+      $client = $query->getOneOrNullResult();
+
+      if (null != $client) {
+          $this->logAndThrowError(400, 'Client Name already exists: '.$clientName, $this->get('translator')->trans('api.show_error_client_name_taken', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
     }
 
     /**
@@ -226,11 +235,10 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="username", "dataType"="string", "required"=true, "description"="Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen"},
       *      {"name"="password", "dataType"="string", "required"=true, "description"="Password should be 8-15 characters long and must contain alphanumeric and @*# characters"},
       *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname"},
-      *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname"},
+      *      {"name"="lastname", "dataType"="string", "required"=false, "description"="lastname"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
-      *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"},
-      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="jpeg/jpg/png/gif Pic Size: 1024k, Width: 50-300px, Height: 50-300px"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
@@ -252,22 +260,23 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
             // Move the file to the directory where images are stored
-            $file->move($this->getParameter('images_profile_directory'), $fileName );
+            $newFile = $file->move($this->getParameter('images_profile_directory'), $fileName );
 
             // Update the 'image' property to store the Image file name
             // instead of its contents
-            $user->setImage('/images/profile/'.$fileName);
+            $user->setImage($newFile);
         }
 
         $user->setUsername($request->request->get('username'));
         $user->setPlainPassword($request->request->get('password'));
+        $user->setPassword($request->request->get('password'));
         $user->setEmail($request->request->get('email'));
         $user->setFirstname($request->request->get('firstname'));
-        $user->setLastname($request->request->get('lastname'));
+        $user->setLastname($request->request->get('lastname') ? $request->request->get('lastname') : null);
         $user->setDob($request->request->get('dob'));
         $user->setRoles(array('ROLE_API'));
-        $user->setEnabled(true);
 
+        $user->setEnabled(true);
         // Validate user data
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
@@ -282,8 +291,9 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $oAuthRtn = 'Pending';
         $msg = 'N.A.';
         $grantType = 'password';
+        $loginConfirmation = $this->container->getParameter('login_confirmation');
 
-        if ('1' == $request->request->get('email_confirmation')) {
+        if (true == $this->container->getParameter('email_confirmation') ) {
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
@@ -296,7 +306,8 @@ class AuthController extends FOSRestController implements ClassResourceInterface
                 'code' => 201,
                 'show_message' => $msg,
                 'username' => $request->request->get('username'),
-                'oauth' => $oAuthRtn
+                'oauth' => $oAuthRtn,
+                'login_confirmation' => $loginConfirmation
         ));
     }
 
@@ -366,6 +377,16 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         }
 
         $user->setPlainPassword($password);
+        $user->setPassword($password);
+
+        // Validate user data
+        $validator = $this->get('validator');
+        $errors = $validator->validate($user, null, array('profile_password_edit'));
+
+        if (count($errors) > 0) {
+           return $this->reportValidationErrors($errors, $request->getLocale());
+        }
+
         $msg = 'Password changed successfully';
 
         $userManager->updateUser($user);
@@ -446,6 +467,11 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
+        // If no image file, then return empty response
+        if (!$user->getImage()) {
+            return new Response();
+        }
+
         $file = $user->getImage() ? new File($this->getParameter('images_profile_directory').'/'.$user->getImage()) : null;
 
         $response = new BinaryFileResponse($file);
@@ -463,7 +489,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  resource=true,
       *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
-      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="jpeg/jpg/png/gif Pic Size: 1024k, Width: 50-300px, Height: 50-300px"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
@@ -489,25 +515,27 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
           // Move the file to the directory where images are stored
-          $file->move($this->getParameter('images_profile_directory'), $fileName );
+          $newFile = $file->move($this->getParameter('images_profile_directory'), $fileName );
 
           // Update the 'image' property to store the Image file name
           // instead of its contents
-          $user->setImage($fileName);
+          $user->setImage($newFile);
+
+          // Validate user data
+          $validator = $this->get('validator');
+          $errors = $validator->validate($user, null, array('profile_pic'));
+
+          if (count($errors) > 0) {
+             return $this->reportValidationErrors($errors, $request->getLocale());
+          }
+      } else {
+        // Remove image
+        $user->setImage(null);
       }
-
-      // Validate user data
-      $validator = $this->get('validator');
-      $errors = $validator->validate($user, null, array('profile_pic'));
-
-      if (count($errors) > 0) {
-         return $this->reportValidationErrors($errors, $request->getLocale());
-      }
-
       // Everything ok, now update Profile Pic
       $userManager->updateUser($user);
 
-      $msg = 'Profile Pic updated successfully'.$user->getUsername();
+      $msg = 'Profile Pic updated successfully: '.$user->getUsername();
       $this->logMessage(201, $msg);
 
       return new JsonResponse(array(

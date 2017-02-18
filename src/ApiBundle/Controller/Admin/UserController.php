@@ -51,17 +51,17 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        $user = new User();
-        $user->setRoles(['ROLE_USER', 'ROLE_API']);
+        $userManager = $this->container->get('fos_user.user_manager');
+        $user = $userManager->createUser();
+
+        $user->setRoles(['ROLE_USER']);
+
         $form = $this->createForm(UserType::class, $user);
         $locale = $request->getLocale();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userManager = $this->container->get('fos_user.user_manager');
-            $user = $userManager->createUser();
-
             // $file stores the uploaded Image file
             /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
             $file = $user->getImage();
@@ -124,7 +124,7 @@ class UserController extends Controller
         $currentFilename = $user->getImage();
         if ($user->getImage()) {
           $user->setImage(
-              new File($this->getParameter('images_profile_directory').'/'.$user->getImage())
+              new File($this->getParameter('images_profile_directory').'/'.$currentFilename)
           );
         }
 

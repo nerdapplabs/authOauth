@@ -27,6 +27,7 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_username_policy'
         password:
             - Regex:
+                  groups: ['Default', 'profile_password_edit']
                   pattern: '/^([a-zA-Z0-9@*#]{8,15})$/'
                   match:   true
                   message: "user.show_error_password_policy"
