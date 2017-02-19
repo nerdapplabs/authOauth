@@ -232,6 +232,12 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $request = $this->container->get('request');
         $userManager = $this->get('fos_user.user_manager');
 
+        // TODO: Why this validation is not working in Validation.yml for dob
+        $timestamp = strtotime($request->request->get('dob'));
+        if (!$timestamp) {
+          $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+
         $user = $userManager->createUser();
 
         $user->setUsername($request->request->get('username'));
@@ -245,7 +251,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         // Validate user data
         $validator = $this->get('validator');
-        $errors = $validator->validate($user);
+        $errors = $validator->validate($user, null, array('Default', 'Registration', 'profile_edit'));
 
         if (count($errors) > 0) {
            return $this->reportValidationErrors($errors, $request->getLocale());
@@ -341,9 +347,17 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         }
 
         $user->setPlainPassword($password);
-        $msg = 'Password changed successfully';
+
+        // Validate user data
+        $validator = $this->get('validator');
+        $errors = $validator->validate($user, null, array('profile_edit_password'));
+
+        if (count($errors) > 0) {
+           return $this->reportValidationErrors($errors, $request->getLocale());
+        }
 
         $userManager->updateUser($user);
+        $msg = 'Password changed successfully';
 
         $this->logMessage(200, $msg.' for '.$user->getUsername());
 
@@ -435,6 +449,12 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $dob = array_key_exists('dob', $data) ? $data['dob'] : $user->getDob();
         $user->setDob($dob);
+
+        // TODO: Why this validation is not working in Validation.yml for dob
+        $timestamp = strtotime($dob);
+        if ($dob && !$timestamp) {
+          $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
 
         // Validate user data
         $validator = $this->get('validator');
