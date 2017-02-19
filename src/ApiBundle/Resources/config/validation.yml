@@ -14,24 +14,24 @@ ApiBundle\Entity\User:
     properties:
         firstname:
             - NotBlank:
-                  groups: [profile_edit, Default]
+                  groups: [profile_edit]
                   message: "user.show_error_firstname"
                   payload:
                       api_error: 'api.show_error_firstname'
         dob:
             - Date:
-                  groups: [profile_edit, Default]
+                  groups: [profile_edit]
                   message: "user.show_error_dob"
                   payload:
                       api_error: 'api.show_error_dob'
         username:
             - NotBlank:
-                  groups: [Registration, Profile, Default]
+                  groups: [Registration, Profile]
                   message: "user.show_error_username_policy"
                   payload:
                       api_error: 'api.show_error_username_policy'
             - Regex:
-                  groups: [Registration, Profile, Default]
+                  groups: [Registration, Profile]
                   pattern: '/^[a-z0-9_-]{3,16}$/'
                   match:   true
                   message: "user.show_error_username_policy"
@@ -39,24 +39,24 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_username_policy'
         email:
             - NotBlank:
-                  groups: [Registration, Profile, Default]
+                  groups: [Registration, Profile]
                   message: "user.show_error_email"
                   payload:
                       api_error: 'api.show_error_email'
             - Email:
-                  groups: [Registration, Profile, Default]
+                  groups: [Registration, Profile]
                   checkMX: false
                   message: "user.show_error_email"
                   payload:
                       api_error: 'api.show_error_email'
         plainPassword:
             - NotBlank:
-                  groups: [profile_edit_password, Registration, Default]
+                  groups: [profile_edit_password, Registration]
                   message: "user.show_error_password_policy"
                   payload:
                       api_error: 'api.show_error_password_policy'
             - Regex:
-                  groups: [profile_edit_password, Registration, Profile, Default]
+                  groups: [profile_edit_password, Registration, Profile]
                   pattern: '/^([a-zA-Z0-9@*#]{8,15})$/'
                   match:   true
                   message: "user.show_error_password_policy"
@@ -64,6 +64,7 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_password_policy'
         roles:
             - Choice:
+                  groups: [profile_roles]
                   choices:  ['ROLE_USER', 'ROLE_API']
                   multiple: true
                   message:  "user.show_error_role"

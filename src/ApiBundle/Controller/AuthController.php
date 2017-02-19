@@ -251,7 +251,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         // Validate user data
         $validator = $this->get('validator');
-        $errors = $validator->validate($user, null, array('Default', 'Registration', 'profile_edit'));
+        $errors = $validator->validate($user, null, array('Registration', 'profile_edit'));
 
         if (count($errors) > 0) {
            return $this->reportValidationErrors($errors, $request->getLocale());

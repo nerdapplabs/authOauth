@@ -28,7 +28,7 @@ class UserType extends AbstractType
             ->add('email', EmailType::class)
             ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y'))
             ->add('username', TextType::class)
-            ->add('password', PasswordType::class, array('data' => ''))
+            ->add('plainPassword', PasswordType::class, array('data' => ''))
             ->add('roles', CollectionType::class, array(
                   'entry_type'   => ChoiceType::class,
                   'entry_options'  => array(
@@ -48,7 +48,8 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'ApiBundle\Entity\User',
-            'csrf_protection' => true
+            'csrf_protection' => true,
+            'validation_groups' => array('Registration', 'profile_edit')
         ));
     }
 
