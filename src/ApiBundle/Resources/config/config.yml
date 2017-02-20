@@ -43,9 +43,7 @@ fos_rest:
 
 fos_user:
     db_driver: orm
-    firewall_name: main                                 # Seems to be used when registering user/reseting password,
-                                                        # but since there is no "login", as so it seems to be useless in
-                                                        # our particular context, but still required by "FOSUserBundle"
+    firewall_name: main
     user_class: ApiBundle\Entity\User
 
 fos_oauth_server:

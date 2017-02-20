@@ -6,6 +6,7 @@
     <h1>{{ 'title.user_new'|trans }}</h1>
 
     {{ form_start(form, { attr: attr|default({}) }) }}
+        {{ form_errors(form) }}
         <table class="table">
             <tbody>
                 <tr>
@@ -53,8 +54,8 @@
                 <tr>
                     <th scope="row">{{ 'label.user_password'|trans }}</th>
                     <td>
-                      {{ form_errors(form.password) }}
-                      {{ form_widget(form.password) }}
+                      {{ form_errors(form.plainPassword) }}
+                      {{ form_widget(form.plainPassword) }}
                     </td>
                 </tr>
                 <tr>

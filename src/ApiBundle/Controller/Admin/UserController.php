@@ -51,17 +51,17 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        $user = new User();
+        $userManager = $this->container->get('fos_user.user_manager');
+        $user = $userManager->createUser();
         $user->setRoles(['ROLE_USER', 'ROLE_API']);
+
         $form = $this->createForm(UserType::class, $user);
+
         $locale = $request->getLocale();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userManager = $this->container->get('fos_user.user_manager');
-            $user = $userManager->createUser();
-
             // $file stores the uploaded Image file
             /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
             $file = $user->getImage();
@@ -84,7 +84,6 @@ class UserController extends Controller
             $userManager->updateUser($user);
 
             $this->logMessageAndFlash(200, 'success', 'User successfully created: ', $this->get('translator')->trans('flash.user_creatd_successfully'), $request->getLocale() );
-
 
             return $this->redirectToRoute('admin_user_index');
         }
@@ -215,7 +214,7 @@ class UserController extends Controller
       $user->setDob($form['dob']->getData());
       $user->setEmail($form['email']->getData());
       $user->setUsername($form['username']->getData());
-      $user->setPlainPassword($form['password']->getData());
+      $user->setPlainPassword($form['plainPassword']->getData());
       $user->setRoles($form['roles']->getData());
       $user->setConfirmationToken(null);
       $user->setEnabled(true);
