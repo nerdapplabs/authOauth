@@ -6,6 +6,7 @@
     <h1>{{ 'title.edit_user'|trans({'%id%': user.id}) }}</h1>
 
     {{ form_start(edit_form, { attr: attr|default({}) }) }}
+        {{ form_errors(edit_form) }}
         <table class="table">
             <tbody>
                 <tr>
@@ -33,21 +34,21 @@
                     <th scope="row">{{ 'label.user_email'|trans }}</th>
                     <td>
                       {{ form_errors(edit_form.email) }}
-                      {{ form_widget(edit_form.email) }}
+                      {{ form_widget(edit_form.email, { 'attr':{'readonly':'readonly'} }) }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">{{ 'label.user_username'|trans }}</th>
                     <td>
                       {{ form_errors(edit_form.username) }}
-                      {{ form_widget(edit_form.username) }}
+                      {{ form_widget(edit_form.username, { 'attr':{'readonly':'readonly'} }) }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">{{ 'label.user_password'|trans }}</th>
                     <td>
-                      {{ form_errors(edit_form.password) }}
-                      {{ form_widget(edit_form.password) }}
+                      {{ form_errors(edit_form.plainPassword) }}
+                      {{ form_widget(edit_form.plainPassword) }}
                     </td>
                 </tr>
                 <tr>

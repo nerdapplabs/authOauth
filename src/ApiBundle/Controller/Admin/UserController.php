@@ -48,17 +48,17 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        $user = new User();
+        $userManager = $this->container->get('fos_user.user_manager');
+        $user = $userManager->createUser();
         $user->setRoles(['ROLE_USER', 'ROLE_API']);
+
         $form = $this->createForm(UserType::class, $user);
+
         $locale = $request->getLocale();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userManager = $this->container->get('fos_user.user_manager');
-            $user = $userManager->createUser();
-
             $this->setUserData($user, $form);
 
             $userManager->updateUser($user);
@@ -163,7 +163,7 @@ class UserController extends Controller
       $user->setDob($form['dob']->getData());
       $user->setEmail($form['email']->getData());
       $user->setUsername($form['username']->getData());
-      $user->setPlainPassword($form['password']->getData());
+      $user->setPlainPassword($form['plainPassword']->getData());
       $user->setRoles($form['roles']->getData());
       $user->setConfirmationToken(null);
       $user->setEnabled(true);
