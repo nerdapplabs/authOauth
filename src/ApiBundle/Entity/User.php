@@ -133,6 +133,10 @@ class User extends BaseUser
      */
     public function getImage()
     {
+        if (strpos($this->image, '/images/profile/') !== false) {
+          return explode('/images/profile/', $this->image)[1];
+        }
+
         return $this->image;
     }
 }

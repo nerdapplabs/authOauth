@@ -127,6 +127,7 @@ flash:
   user_deleted_successfully: User deleted successfully!
 api:
   show_error_client_name:  Sorry, Client Name cannot be empty!
+  show_error_client_name_taken:  Sorry, Client Name already taken!
   show_error_url:  Sorry, Redirect URL cannot be empty!
   show_error_non_admin:  Sorry, you are not an Admin!
   show_error_password:  Sorry, Wrong/Missing Password!
@@ -148,3 +149,4 @@ api:
   show_error_username_policy:  Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen
   show_error_password_policy:  Password should be 8-15 characters long and must contain alphanumeric and @*# characters
   show_error_role:  Sorry! Wrong Role!
+  show_error_image: Sorry! Some problem with image uploading!

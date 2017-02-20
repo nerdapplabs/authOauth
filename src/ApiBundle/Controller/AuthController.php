@@ -155,63 +155,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     }
 
     /**
-      * Validate Client name
-      */
-    private function validateClientName(Request $request) {
-      $clientName = $request->request->get('name');
-
-      // Check Client name is not empty
-      if (!$clientName) {
-          $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('api.show_error_client_name', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
-      * Validate Redirect URL
-      */
-    private function validateUrl(Request $request) {
-      $redirectUrl = $request->request->get('redirect_url');
-
-      // Check Redirect URL is not empty
-      if (!$redirectUrl) {
-          $this->logAndThrowError(400, 'Redirect URL cannot be empty', $this->get('translator')->trans('api.show_error_url', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
-      * Validate Admin User
-      */
-    private function validateAdminUser(Request $request) {
-      $username = $request->request->get('username');
-      $password = $request->request->get('password');
-
-      $entityManager = $this->get('doctrine')->getManager();
-      $query = $entityManager->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
-      $query->setParameter('username', $username);
-      $user = $query->getOneOrNullResult();
-
-      // Check for the valid Admin user
-      if ($user) {
-        // Get the encoder for the users password
-        $encoder_service = $this->get('security.encoder_factory');
-        $encoder = $encoder_service->getEncoder($user);
-
-        if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-          // Not an Admin
-          if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-            $this->logAndThrowError(400, 'User '.$username.' is not an Admin. Role(s) assigned: '.implode($user->getRoles(), ', '), $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
-          }
-        } else {
-            // Password bad
-            $this->logAndThrowError(400, 'Password does not match: '. $password, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-      } else {
-        // Username bad
-        $this->logAndThrowError(400, 'Invalid username: '.$username, $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-    }
-
-    /**
       * Register a new user. Will return a JsonResponse(username, msg, oAuthRtn, code) upon success.
       *
       *
@@ -238,53 +181,29 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     public function postRegisterAction(Request $request)
     {
         $request = $this->container->get('request');
+
         $userManager = $this->get('fos_user.user_manager');
-
-        // TODO: Why this validation is not working in Validation.yml for dob
-        $timestamp = strtotime($request->request->get('dob'));
-        if (!$timestamp) {
-          $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
         $user = $userManager->createUser();
 
-        // $file stores the uploaded Image file
-        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-        $file = $request->files->get('image');
+        // Validate Client credentials
+        $this->validateClient($request);
 
-        // If a file has been uploaded
-        if ( null != $file ) {
-            // Generate a unique name for the file before saving it
-            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+        // Set User data to ve validated next
+        $this->setUserData($request, $user);
 
-            // Move the file to the directory where images are stored
-            $file->move($this->getParameter('images_profile_directory'), $fileName );
+        // Validate
+        $validationGroups = array('Registration', 'profile_edit');
+        $validationErrors = $this->reportValidationErrors($user, $validationGroups, $request->getLocale());
 
-            // Update the 'image' property to store the Image file name
-            // instead of its contents
-            $user->setImage('/images/profile/'.$fileName);
-        }
-
-        $user->setUsername($request->request->get('username'));
-        $user->setPlainPassword($request->request->get('password'));
-        $user->setEmail($request->request->get('email'));
-        $user->setFirstname($request->request->get('firstname'));
-        $user->setLastname($request->request->get('lastname'));
-        $user->setDob($request->request->get('dob'));
-        $user->setRoles(array('ROLE_API'));
-        $user->setEnabled(true);
-
-        // Validate user data
-        $validator = $this->get('validator');
-        $errors = $validator->validate($user, null, array('Registration', 'profile_edit'));
-
-        if (count($errors) > 0) {
-           return $this->reportValidationErrors($errors, $request->getLocale());
+        // If Validtion returns error, then return errors
+        if ( $validationErrors ) {
+           return $validationErrors;
         }
 
         // Everything ok, now write the user record
         $userManager->updateUser($user);
 
+        // Now fetch Access Token
         $oAuthRtn = 'Pending';
         $msg = 'N.A.';
         $grantType = 'password';
@@ -304,30 +223,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
                 'username' => $request->request->get('username'),
                 'oauth' => $oAuthRtn
         ));
-    }
-
-    /**
-      * Validate Client Credentials
-      */
-    private function validateClient(Request $request) {
-      $clientId = $request->request->get('client_id');
-      $clientSecret = $request->request->get('client_secret');
-
-      // First check for valid Client Credentials
-      $pos = strpos($clientId, '_');
-      $id = substr($clientId, 0, $pos);
-      $randomId = substr($clientId, $pos + 1);
-
-      $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
-      $client = $clientManager->findClientBy(array(
-          'id'       => $id,
-          'randomId' => $randomId,
-          'secret'   => $clientSecret
-      ));
-
-      if (null == $client) {
-          $this->logAndThrowError(400, 'Invalid Client Credentials: '.$clientId);
-      }
     }
 
     /**
@@ -355,32 +250,27 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', 'You are not allowed to change password.');
         }
 
-        $userManager = $this->get('fos_user.user_manager');
-
         $data = $request->request->all();
         $oldPassword = $data['old_password'];
         $password = $data['password'];
 
-        // Check if old password is valid
-        // Get the encoder for the users password
-        $encoder_service = $this->get('security.encoder_factory');
-        $encoder = $encoder_service->getEncoder($user);
-        if (!$encoder->isPasswordValid($user->getPassword(), $oldPassword, $user->getSalt()))
-        {
-            // Password bad
-            $this->logAndThrowError(400, 'Invalid old password: '.  $user->getUsername(), $this->get('translator')->trans('api.show_error_password_old', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
+        // First validate old password. If found invalid, return from point with error message
+        $this->validateOldPassword($user, $oldPassword, $request->getLocale());
 
+        // Set data for next validation
         $user->setPlainPassword($password);
 
-        // Validate user data
-        $validator = $this->get('validator');
-        $errors = $validator->validate($user, null, array('profile_edit_password'));
+        // Validate
+        $validationGroups = array('profile_edit_password');
+        $validationErrors = $this->reportValidationErrors($user, $validationGroups, $request->getLocale());
 
-        if (count($errors) > 0) {
-           return $this->reportValidationErrors($errors, $request->getLocale());
+        // If Validtion returns error, then return errors
+        if ( $validationErrors ) {
+           return $validationErrors;
         }
 
+        // Now all ok
+        $userManager = $this->get('fos_user.user_manager');
         $userManager->updateUser($user);
         $msg = 'Password changed successfully';
 
@@ -469,68 +359,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     }
 
     /**
-      * Fetch User profile picture.
-      *
-      * @Post("/user/profile/edit-pic")
-      *
-      * @ApiDoc(
-      *  resource=true,
-      *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
-      *  parameters={
-      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
-      *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
-      *  },
-      * )
-      */
-    public function editProfilePicAction()
-    {
-      $request = $this->container->get('request');
-
-      $user = $this->container->get('security.context')->getToken()->getUser();
-      if (!is_object($user) || !$user instanceof UserInterface) {
-          $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
-      }
-
-      $userManager = $this->get('fos_user.user_manager');
-
-      // $file stores the uploaded Image file
-      /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-      $file = $request->files->get('image');
-
-      // If a file has been uploaded
-      if ( null != $file ) {
-          // Generate a unique name for the file before saving it
-          $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-          // Move the file to the directory where images are stored
-          $file->move($this->getParameter('images_profile_directory'), $fileName );
-
-          // Update the 'image' property to store the Image file name
-          // instead of its contents
-          $user->setImage($fileName);
-      }
-
-      // Validate user data
-      $validator = $this->get('validator');
-      $errors = $validator->validate($user, null, array('profile_pic'));
-
-      if (count($errors) > 0) {
-         return $this->reportValidationErrors($errors, $request->getLocale());
-      }
-
-      // Everything ok, now update Profile Pic
-      $userManager->updateUser($user);
-
-      $msg = 'Profile Pic updated successfully'.$user->getUsername();
-      $this->logMessage(201, $msg);
-
-      return new JsonResponse(array(
-              'code' => 201,
-              'show_message' => $msg,
-      ));
-    }
-
-    /**
       * Update User profile detail. Will return a JsonResponse(username, msg) upon success. Since existing
       * user is verified by access_token, username + old password is not needed.
       *
@@ -556,29 +384,16 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_edit', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $data = $request->request->all();
+        // Set User data to ve validated next
+        $this->setUserProfileData($request, $user);
 
-        $firstname = array_key_exists('firstname', $data) ? $data['firstname'] : $user->getFirstname();
-        $user->setFirstname($firstname);
+        // Validate
+        $validationGroups = array('profile_edit');
+        $validationErrors = $this->reportValidationErrors($user, $validationGroups, $request->getLocale());
 
-        $lastname = array_key_exists('lastname', $data) ? $data['lastname'] : $user->getLastname();
-        $user->setLastname($lastname);
-
-        $dob = array_key_exists('dob', $data) ? $data['dob'] : $user->getDob();
-        $user->setDob($dob);
-
-        // TODO: Why this validation is not working in Validation.yml for dob
-        $timestamp = strtotime($dob);
-        if ($dob && !$timestamp) {
-          $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
-        }
-
-        // Validate user data
-        $validator = $this->get('validator');
-        $errors = $validator->validate($user, null, array('profile_edit'));
-
-        if (count($errors) > 0) {
-           return $this->reportValidationErrors($errors, $request->getLocale());
+        // If Validtion returns error, then return errors
+        if ( $validationErrors ) {
+           return $validationErrors;
         }
 
         // Everything ok, now update the user record
@@ -594,6 +409,54 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         return new JsonResponse(array(
           'code' => 201,
           'show_message' => $msg.' for '.$username
+        ));
+    }
+
+    /**
+      * Fetch User profile picture.
+      *
+      * @Post("/user/profile/edit-pic")
+      *
+      * @ApiDoc(
+      *  resource=true,
+      *  description="Fetch User profile detail. Access token to be provided in header (Authorization = Bearer <access token>)",
+      *  parameters={
+      *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
+      *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
+      *  },
+      * )
+      */
+    public function editProfilePicAction()
+    {
+        $request = $this->container->get('request');
+
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+
+        // Set User data to ve validated next
+        $this->setUserPicData($request, $user);
+
+        // Validate
+        $validationGroups = array('profile_pic');
+        $validationErrors = $this->reportValidationErrors($user, $validationGroups, $request->getLocale());
+
+        // If Validtion returns error, then return errors
+        if ( $validationErrors ) {
+           return $validationErrors;
+        }
+
+        // Everything ok, now update Profile Pic
+        $userManager = $this->get('fos_user.user_manager');
+        $userManager->updateUser($user);
+
+        $msg = 'Profile Pic updated successfully'.$user->getUsername();
+        $this->logMessage(201, $msg);
+
+        return new JsonResponse(array(
+                'code' => 201,
+                'show_message' => $msg,
         ));
     }
 
@@ -650,27 +513,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     }
 
     /**
-     * Get the truncated email displayed when requesting the resetting.
-     *
-     * The default implementation only keeps the part following @ in the address.
-     *
-     * @param \FOS\UserBundle\Model\UserInterface $user
-     *
-     * @return string
-     */
-    protected function getObfuscatedEmail(UserInterface $user)
-    {
-        $email = $user->getEmail();
-        if (false !== $pos = strpos($email, '@')) {
-            $email = '...'.substr($email, $pos);
-        }
-
-        $this->logMessage(200, $email);
-
-        return $email;
-    }
-
-    /**
       * Get Access Token. Will return a JsonResponse from oAuth upon success.
       *
       *
@@ -694,13 +536,9 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $data = $request->request->all();
 
-        $username = $data['username'];
-        $password = $data['password'];
-        $clientId = $data['client_id'];
-        $clientSecret = $data['client_secret'];
         $grantType = 'password';
 
-        if (!$username || !$password || !$clientId || !$clientSecret) {
+        if (!$data['username'] || !$data['password'] || !$data['client_id'] || !$data['client_secret']) {
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing username/password/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
@@ -738,12 +576,9 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $data = $request->request->all();
 
-        $clientId = $data['client_id'];
-        $clientSecret = $data['client_secret'];
-        $refreshToken = $data['refresh_token'];
         $grantType = 'refresh_token';
 
-        if (!$refreshToken || !$clientId || !$clientSecret) {
+        if (!$data['refresh_token'] || !$data['client_id'] || !$data['client_secret']) {
             $this->logAndThrowError(400, 'Unable to obtain Access Token for missing refresh_token/clientId/clientSecret.', $this->get('translator')->trans('api.show_error_server_fault', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
@@ -802,8 +637,187 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         return $response['result'];
     }
 
-    private function reportValidationErrors(\Symfony\Component\Validator\ConstraintViolationList $errors, $locale)
+    /**
+      * Validate Client Credentials
+      */
+    private function validateClient(Request $request) {
+        $clientId = $request->request->get('client_id');
+        $clientSecret = $request->request->get('client_secret');
+
+        // First check for valid Client Credentials
+        $pos = strpos($clientId, '_');
+        $id = substr($clientId, 0, $pos);
+        $randomId = substr($clientId, $pos + 1);
+
+        $clientManager = $this->container->get('fos_oauth_server.client_manager.default');
+        $client = $clientManager->findClientBy(array(
+            'id'       => $id,
+            'randomId' => $randomId,
+            'secret'   => $clientSecret
+        ));
+
+        if (null == $client) {
+            $this->logAndThrowError(400, 'Invalid Client Credentials: '.$clientId);
+        }
+    }
+
+    /**
+      * Validate Client name
+      */
+    private function validateClientName(Request $request) {
+      $clientName = $request->request->get('name');
+
+      // Check Client name is not empty
+      if (!$clientName) {
+          $this->logAndThrowError(400, 'Client Name cannot be empty', $this->get('translator')->trans('api.show_error_client_name', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate Redirect URL
+      */
+    private function validateUrl(Request $request) {
+      $redirectUrl = $request->request->get('redirect_url');
+
+      // Check Redirect URL is not empty
+      if (!$redirectUrl) {
+          $this->logAndThrowError(400, 'Redirect URL cannot be empty', $this->get('translator')->trans('api.show_error_url', array(), 'messages', $request->getLocale()), $request->getLocale());
+      }
+    }
+
+    /**
+      * Validate Admin User
+      */
+    private function validateAdminUser(Request $request) {
+        $username = $request->request->get('username');
+        $password = $request->request->get('password');
+
+        $entityManager = $this->get('doctrine')->getManager();
+        $query = $entityManager->createQuery("SELECT u FROM \ApiBundle\Entity\User u WHERE u.username = :username");
+        $query->setParameter('username', $username);
+        $user = $query->getOneOrNullResult();
+
+        // Check for the valid Admin user
+        if ($user) {
+            // Get the encoder for the users password
+            $encoder_service = $this->get('security.encoder_factory');
+            $encoder = $encoder_service->getEncoder($user);
+
+            if ($encoder->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
+              // Not an Admin
+              if (!in_array('ROLE_ADMIN', $user->getRoles())) {
+                $this->logAndThrowError(400, 'User '.$username.' is not an Admin. Role(s) assigned: '.implode($user->getRoles(), ', '), $this->get('translator')->trans('api.show_error_non_admin', array(), 'messages', $request->getLocale()), $request->getLocale());
+              }
+            } else {
+                // Password bad
+                $this->logAndThrowError(400, 'Password does not match: '. $password, $this->get('translator')->trans('api.show_error_password', array(), 'messages', $request->getLocale()), $request->getLocale());
+            }
+        } else {
+            // Username bad
+            $this->logAndThrowError(400, 'Invalid username: '.$username, $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+    }
+
+    private function validateOldPassword(User $user, $oldPassword, $locale)
     {
+        // Check if old password is valid
+        // Get the encoder for the users password
+        $encoder_service = $this->get('security.encoder_factory');
+        $encoder = $encoder_service->getEncoder($user);
+        if (!$encoder->isPasswordValid($user->getPassword(), $oldPassword, $user->getSalt()))
+        {
+            // Password bad
+            $this->logAndThrowError(400, 'Invalid old password: '.  $user->getUsername(), $this->get('translator')->trans('api.show_error_password_old', array(), 'messages', $locale ), $locale );
+        }
+    }
+
+    private function setUserData(Request $request, User $user)
+    {
+        // $file stores the uploaded Image file
+        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+        $file = $request->files->get('image');
+
+        // If a file has been uploaded
+        if ( null != $file ) {
+            // Generate a unique name for the file before saving it
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+            // Move the file to the directory where images are stored
+            $file->move($this->getParameter('images_profile_directory'), $fileName );
+
+            // Update the 'image' property to store the Image file name
+            // instead of its contents
+            $user->setImage('/images/profile/'.$fileName);
+        }
+
+        $user->setUsername($request->request->get('username'));
+        $user->setPlainPassword($request->request->get('password'));
+        $user->setEmail($request->request->get('email'));
+        $user->setFirstname($request->request->get('firstname'));
+        $user->setLastname($request->request->get('lastname'));
+        $user->setDob($request->request->get('dob'));
+        $user->setRoles(array('ROLE_API'));
+        $user->setEnabled(true);
+
+        // TODO: Why this validation is not working in Validation.yml for dob
+        // This check has to be done here as invalid dob will throw error in setUserData()
+        $timestamp = strtotime($request->request->get('dob'));
+        if (!$timestamp) {
+            $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+    }
+
+    private function setUserPicData(Request $request, User $user)
+    {
+        // $file stores the uploaded Image file
+        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+        $file = $request->files->get('image');
+
+        // If a file has been uploaded
+        if ( null != $file ) {
+            // Generate a unique name for the file before saving it
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+            // Move the file to the directory where images are stored
+            $file->move($this->getParameter('images_profile_directory'), $fileName );
+
+            // Update the 'image' property to store the Image file name
+            // instead of its contents
+            $user->setImage($fileName);
+        }
+    }
+
+    private function setUserProfileData(Request $request, User $user)
+    {
+        $data = $request->request->all();
+
+        $firstname = array_key_exists('firstname', $data) ? $data['firstname'] : $user->getFirstname();
+        $user->setFirstname($firstname);
+
+        $lastname = array_key_exists('lastname', $data) ? $data['lastname'] : $user->getLastname();
+        $user->setLastname($lastname);
+
+        $dob = array_key_exists('dob', $data) ? $data['dob'] : $user->getDob();
+        $user->setDob($dob);
+
+        // TODO: Why this validation is not working in Validation.yml for dob
+        $timestamp = strtotime($dob);
+        if ($dob && !$timestamp) {
+          $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+    }
+
+    private function reportValidationErrors(User $user, $validationGroups, $locale)
+    {
+        // Validate user data
+        $validator = $this->get('validator');
+        $errors = $validator->validate($user, null, $validationGroups);
+
+        // If no errors, then return null
+        if (!count($errors)) {
+           return null;
+        }
+
         $errorArray = [];
         foreach ($errors as $error) {
             $constraint = $error->getConstraint();
@@ -823,13 +837,34 @@ class AuthController extends FOSRestController implements ClassResourceInterface
                   ));
     }
 
+    /**
+     * Get the truncated email displayed when requesting the resetting.
+     *
+     * The default implementation only keeps the part following @ in the address.
+     *
+     * @param \FOS\UserBundle\Model\UserInterface $user
+     *
+     * @return string
+     */
+    protected function getObfuscatedEmail(UserInterface $user)
+    {
+        $email = $user->getEmail();
+        if (false !== $pos = strpos($email, '@')) {
+            $email = '...'.substr($email, $pos);
+        }
+
+        $this->logMessage(200, $email);
+
+        return $email;
+    }
+
     private function logAndThrowError($errCode = 400, $errMsg = 'Bad Request', $showMsg = '', $locale = 'en') {
-      $this->logMessage($errCode, $errMsg);
-      throw new HttpException($errCode, $errMsg.($showMsg ? '#showme#'.$showMsg : '') );
+        $this->logMessage($errCode, $errMsg);
+        throw new HttpException($errCode, $errMsg.($showMsg ? '#showme#'.$showMsg : '') );
     }
 
     private function logMessage($errCode = 200, $logMsg = 'Nil Log Message') {
-      $logger = $this->get('logger');
-      $logger->info($errCode.' '.$logMsg);
+        $logger = $this->get('logger');
+        $logger->info($errCode.' '.$logMsg);
     }
 }

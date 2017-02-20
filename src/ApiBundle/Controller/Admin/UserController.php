@@ -53,7 +53,7 @@ class UserController extends Controller
     {
         $userManager = $this->container->get('fos_user.user_manager');
         $user = $userManager->createUser();
-        $user->setRoles(['ROLE_USER', 'ROLE_API']);
+        $user->setRoles(['ROLE_USER']);
 
         $form = $this->createForm(UserType::class, $user);
 
@@ -123,7 +123,7 @@ class UserController extends Controller
         $currentFilename = $user->getImage();
         if ($user->getImage()) {
           $user->setImage(
-              new File($this->getParameter('images_profile_directory').'/'.$user->getImage())
+              new File($this->getParameter('images_profile_directory').'/'.$currentFilename)
           );
         }
 
