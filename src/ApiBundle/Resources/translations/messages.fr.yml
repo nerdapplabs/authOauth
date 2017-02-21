@@ -142,3 +142,11 @@ api:
   show_error_password_policy:  Mot de passe 6 à 20 caractères, au moins 1 majuscule, 1 minuscule, 1 numéro et 1 caractère spécial
   show_error_role:  Pardon! Mauvais rôle!
   show_error_image: Pardon! Quelque problème avec le téléchargement d'image!
+  registration_check_mail: Veuillez vérifier votre courriel pour compléter l'inscription.
+  registration_complete: Inscription complète. Bienvenue!
+  password_changed: Le mot de passe a été changé avec succès!
+  profile_fetched: Profil extrait avec succès!
+  profile_edited: Profil modifié avec succès!
+  profile_pic_edited: Photo du profil éditée avec succès!
+  mail_send: Le courrier est déjà envoyé à% email%. Veuillez vérifier votre e-mail.
+  logged_in: Connecté avec succès!

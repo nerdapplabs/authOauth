@@ -216,9 +216,9 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $grantType = 'password';
 
         if (true == $confirmationEnabled ) {
-            $msg = 'Please check your email to complete the registration.';
+            $msg = 'api.registration_check_mail';
         } else {
-            $msg = 'Registration complete. Welcome!';
+            $msg = 'api.registration_complete';
             $oAuthRtn = $this->fetchAccessToken($request, $grantType);
         }
 
@@ -226,7 +226,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         return new JsonResponse(array(
                 'code' => 201,
-                'show_message' => $msg,
+                'show_message' => $this->get('translator')->trans($msg, array(), 'messages', $request->getLocale()),
                 'username' => $request->request->get('username'),
                 'oauth' => $oAuthRtn
         ));
@@ -279,13 +279,13 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         // Now all ok
         $userManager = $this->get('fos_user.user_manager');
         $userManager->updateUser($user);
-        $msg = 'Password changed successfully';
+        $msg = 'api.password_changed';
 
         $this->logMessage(200, $msg.' for '.$user->getUsername());
 
         return new JsonResponse(array(
                 'code' => 201,
-                'show_message' => $msg,
+                'show_message' => $this->get('translator')->trans($msg, array(), 'messages', $request->getLocale()),
                 'username' => $user->getUsername(),
         ));
     }
@@ -324,9 +324,11 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $this->logMessage(200, 'Profile fetched successfully for '.$user->getUsername());
 
+        $msg = 'api.profile_fetched';
+
         return new JsonResponse(array(
           'code' => 201,
-          'show_message' => 'Profile fetched successfully',
+          'show_message' => $this->get('translator')->trans($msg, array(), 'messages', $request->getLocale()),
           'username' => $user->getUsername(),
           'firstname' => $user->getFirstname(),
           'lastname' => $user->getLastname(),
@@ -408,7 +410,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $userManager = $this->get('fos_user.user_manager');
         $userManager->updateUser($user);
 
-        $msg = 'Profile changed successfully';
+        $msg = 'api.profile_edited';
 
         $username = $user->getUsername();
 
@@ -416,7 +418,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         return new JsonResponse(array(
           'code' => 201,
-          'show_message' => $msg.' for '.$username
+          'show_message' => $this->get('translator')->trans($msg, array(), 'messages', $request->getLocale()),
         ));
     }
 
@@ -455,12 +457,13 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $userManager = $this->get('fos_user.user_manager');
         $userManager->updateUser($user);
 
-        $msg = 'Profile Pic updated successfully. '.$user->getUsername();
+        $msg = 'api.profile_pic_edited';
+
         $this->logMessage(201, $msg);
 
         return new JsonResponse(array(
                 'code' => 201,
-                'show_message' => $msg,
+                'show_message' => $this->get('translator')->trans($msg, array(), 'messages', $request->getLocale()),
                 'image_url' => $this->getParameter('images_profile_dir').$user->getImage()
         ));
     }
@@ -511,9 +514,11 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $email = $session->get(static::SESSION_EMAIL);
         $session->remove(static::SESSION_EMAIL);
 
+        $msg = 'api.mail_send';
+
         return new JsonResponse(array(
             'code' => 201,
-            'show_message' => 'Mail already send to '.$email.'. Please check your mail.'
+            'show_message' => $this->get('translator')->trans($msg, array('email' => $email), 'messages', $request->getLocale()),
         ));
     }
 
@@ -553,7 +558,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $this->logMessage(201, $msg);
 
         $oAuthRtn['code'] = 201;
-        $oAuthRtn['show_message'] = 'Logged in successfully';
+        $oAuthRtn['show_message'] = $this->get('translator')->trans('api.logged_in', array(), 'messages', $request->getLocale());
 
         return new JsonResponse($oAuthRtn);
     }
@@ -593,7 +598,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $this->logMessage(201, $msg);
 
         $oAuthRtn['code'] = 201;
-        $oAuthRtn['show_message'] = 'Logged in successfully';
+        $oAuthRtn['show_message'] = $this->get('translator')->trans('api.logged_in', array(), 'messages', $request->getLocale());
 
         return new JsonResponse($oAuthRtn);
     }
