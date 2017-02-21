@@ -40,6 +40,8 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @Version({"1.0"})
  *
@@ -188,11 +190,16 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         // Validate Client credentials
         $this->validateClient($request);
 
-        // Set User data to ve validated next
-        $this->setUserData($request, $user);
+        // Set User data which will also return Image Validation errors, if any
+        $validationErrorsImage = $this->setUserData($request, $user);
 
-        // Validate
-        $validationGroups = array('Registration', 'profile_edit');
+        // If Image Validtion returns error, then return errors
+        if ( $validationErrorsImage ) {
+           return $validationErrorsImage;
+        }
+
+        // Validate rest of the input data
+        $validationGroups = array('Registration');
         $validationErrors = $this->reportValidationErrors($user, $validationGroups, $request->getLocale());
 
         // If Validtion returns error, then return errors
@@ -324,7 +331,8 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           'firstname' => $user->getFirstname(),
           'lastname' => $user->getLastname(),
           'dob' => $dobString,
-          'email' => $user->getEmail()
+          'email' => $user->getEmail(),
+          'image_url' => $this->getParameter('images_profile_dir').$user->getImage()
         ));
     }
 
@@ -350,7 +358,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        $file = $user->getImage() ? new File($this->getParameter('images_profile_directory').'/'.$user->getImage()) : null;
+        $file = $user->getImage() ? new File($this->getParameter('images_profile_path').$user->getImage()) : null;
 
         $response = new BinaryFileResponse($file);
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT);
@@ -435,14 +443,10 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
-        // Set User data to ve validated next
-        $this->setUserPicData($request, $user);
+        // Set User data which will also return Image Validation errors, if any
+        $validationErrors = $this->setUserPicData($request, $user);
 
-        // Validate
-        $validationGroups = array('profile_pic');
-        $validationErrors = $this->reportValidationErrors($user, $validationGroups, $request->getLocale());
-
-        // If Validtion returns error, then return errors
+        // If Image Validtion returns error, then return errors
         if ( $validationErrors ) {
            return $validationErrors;
         }
@@ -457,6 +461,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         return new JsonResponse(array(
                 'code' => 201,
                 'show_message' => $msg,
+                'image_url' => $this->getParameter('images_profile_dir').$user->getImage()
         ));
     }
 
@@ -733,21 +738,12 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
     private function setUserData(Request $request, User $user)
     {
-        // $file stores the uploaded Image file
-        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-        $file = $request->files->get('image');
+        // Set User data which will also return Validation errors, if any
+        $validationErrors = $this->setUserPicData($request, $user);
 
-        // If a file has been uploaded
-        if ( null != $file ) {
-            // Generate a unique name for the file before saving it
-            $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-            // Move the file to the directory where images are stored
-            $file->move($this->getParameter('images_profile_directory'), $fileName );
-
-            // Update the 'image' property to store the Image file name
-            // instead of its contents
-            $user->setImage($this->getParameter('images_profile_directory').$fileName);
+        // If Validtion returns error, then return errors
+        if ( $validationErrors ) {
+           return $validationErrors;
         }
 
         $user->setUsername($request->request->get('username'));
@@ -765,25 +761,86 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         if (!$timestamp) {
             $this->logAndThrowError(400, 'Date of Birth should be in MM/DD/YYYY format.', $this->get('translator')->trans('api.show_error_dob', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
+
+        // return null to indicate success
+        return null;
     }
 
     private function setUserPicData(Request $request, User $user)
     {
+        $locale = $request->getLocale();
+
         // $file stores the uploaded Image file
         /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
         $file = $request->files->get('image');
 
-        // If a file has been uploaded
+        // File is Valid. Now save it.
         if ( null != $file ) {
+            // First validate uploaded image. If errors found, return errors
+            $imageErrors = $this->validateImage($request);
+            if (!$imageErrors) {
+                return $imageErrors;
+            }
+
             // Generate a unique name for the file before saving it
             $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
             // Move the file to the directory where images are stored
-            $file->move($this->getParameter('images_profile_directory'), $fileName );
+            $file->move($this->getParameter('images_profile_path'), $fileName );
 
             // Update the 'image' property to store the Image file name
             // instead of its contents
-            $user->setImage($this->getParameter('images_profile_directory').$fileName);
+            $user->setImage($fileName);
+        }
+
+        // Null is returned to indicate no errors
+        return null;
+    }
+
+    private function validateImage(Request $request)
+    {
+        $locale = $request->getLocale();
+
+        // $file stores the uploaded Image file
+        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+        $file = $request->files->get('image');
+
+        $imageConstraint = new Assert\Image();
+
+        // all constraint "options" can be set this way
+        $imageConstraint->mimeTypes = ["image/jpeg", "image/jpg", "image/gif", "image/png"];
+        $imageConstraint->mimeTypesMessage = 'Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size';
+        $imageConstraint->maxSize = 1024*1024;
+        $imageConstraint->minWidth = 100;
+        $imageConstraint->minHeight = 100;
+        // $imageConstraint->payload->api_error = 'api.show_error_image';
+
+        // use the validator to validate the value
+        $errors = $this->get('validator')->validate($file, $imageConstraint );
+
+        if (0 != count($errors)) {
+            // this is *not* a valid image
+            $errorArray = [];
+            foreach ($errors as $error) {
+                $constraint = $error->getConstraint();
+                $errorItem = array(
+                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
+                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $locale)
+                                  );
+                array_push($errorArray, $errorItem);
+                $this->logMessage(400, $errorItem['error_description'] );
+            }
+
+            return new JsonResponse(array(
+                          "code" => 400,
+                          "error" =>  "Bad Request",
+                          "error_description" => $errorArray[0]['error_description'],
+                          "show_message" => $errorArray[0]['show_message'],
+                          'errors' => $errorArray
+                      ));
+        } else {
+          // Null is returned to indicate no errors
+          return null;
         }
     }
 

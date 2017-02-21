@@ -72,11 +72,20 @@ class UserController extends Controller
 
             // If a file has been uploaded
             if ( null != $file ) {
+                // First validate uploaded image. If errors found, return to same page with flash errors
+                $imageErrors = $this->validateImage($request);
+                if (!$imageErrors) {
+                    return $this->render('@ApiBundle/Resources/views/user/new.html.twig', [
+                        'form' => $form->createView(),
+                        'attr' =>  array('enctype' => 'multipart/form-data'),
+                    ]);
+                }
+
                 // Generate a unique name for the file before saving it
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
                 // Move the file to the directory where images are stored
-                $file->move($this->getParameter('images_profile_directory'), $fileName );
+                $file->move($this->getParameter('images_profile_path'), $fileName );
 
                 // Update the 'image' property to store the Image file name
                 // instead of its contents
@@ -159,7 +168,7 @@ class UserController extends Controller
         $currentFilename = $user->getImage();
         if ($user->getImage()) {
           $user->setImage(
-              new File($this->getParameter('images_profile_directory').'/'.$currentFilename)
+              new File($this->getParameter('images_profile_path').'/'.$currentFilename)
           );
         }
 
@@ -176,11 +185,22 @@ class UserController extends Controller
 
             // If a file has been uploaded
             if ( null != $file ) {
+                // First validate uploaded image. If errors found, return to same page with flash errors
+                $imageErrors = $this->validateImage($request);
+                if (!$imageErrors) {
+                    return $this->render('@ApiBundle/Resources/views/user/edit.html.twig', [
+                        'user' => $user,
+                        'current_image' => $currentFilename,
+                        'edit_form' => $editForm->createView(),
+                        'attr' =>  array('enctype' => 'multipart/form-data'),
+                    ]);
+                }
+
                 // Generate a unique name for the file before saving it
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
                 // Move the file to the directory where images are stored
-                $file->move($this->getParameter('images_profile_directory'), $fileName );
+                $file->move($this->getParameter('images_profile_path'), $fileName );
 
                 // Update the 'image' property to store the Image file name
                 // instead of its contents
@@ -237,6 +257,45 @@ class UserController extends Controller
       $user->setDob($form['dob']->getData());
       $user->setConfirmationToken(null);
       $user->setEnabled(true);
+    }
+
+    private function validateImage(Request $request)
+    {
+        $locale = $request->getLocale();
+
+        // $file stores the uploaded Image file
+        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+        $file = $request->files->get('image');
+
+        $imageConstraint = new Assert\Image();
+
+        // all constraint "options" can be set this way
+        $imageConstraint->mimeTypes = ["image/jpeg", "image/jpg", "image/gif", "image/png"];
+        $imageConstraint->mimeTypesMessage = 'Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size';
+        $imageConstraint->maxSize = 1024*1024;
+        $imageConstraint->minWidth = 100;
+        $imageConstraint->minHeight = 100;
+        // $imageConstraint->payload->api_error = 'api.show_error_image';
+
+        // use the validator to validate the value
+        $errors = $this->get('validator')->validate($file, $imageConstraint );
+
+        if (0 != count($errors)) {
+            // this is *not* a valid image
+            $errorArray = [];
+            foreach ($errors as $error) {
+                $constraint = $error->getConstraint();
+                $errorItem = array(
+                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
+                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $locale)
+                                  );
+                array_push($errorArray, $errorItem);
+                $this->logMessageAndFlash(400, 'warning', $errorItem['error_description'], $this->get('translator')->trans('flash.image_error').' '.$errorItem['error_description'], $request->getLocale() );
+            }
+            return false;
+        }
+
+        return true;
     }
 
     private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '', $locale = 'en')

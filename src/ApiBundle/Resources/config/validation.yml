@@ -73,14 +73,12 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_role'
         image:
             - Image:
-                  groups: [Registration, Profile, profile_pic]
+                  groups: [profile_pic]
                   mimeTypes:  ["image/jpeg", "image/jpg", "image/gif", "image/png"]
                   mimeTypesMessage: Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size
                   maxSize: 1024k
-                  minWidth: 50
-                  maxWidth: 300
-                  minHeight: 50
-                  maxHeight: 300
+                  minWidth: 100
+                  minHeight: 100
                   payload:
                       api_error: 'api.show_error_image'
 
