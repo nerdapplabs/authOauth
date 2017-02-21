@@ -778,7 +778,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         if ( null != $file ) {
             // First validate uploaded image. If errors found, return errors
             $imageErrors = $this->validateImage($request);
-            if (!$imageErrors) {
+            if ( $imageErrors ) {
                 return $imageErrors;
             }
 
@@ -813,35 +813,37 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $imageConstraint->maxSize = 1024*1024;
         $imageConstraint->minWidth = 100;
         $imageConstraint->minHeight = 100;
-        // $imageConstraint->payload->api_error = 'api.show_error_image';
+        $imageConstraint->payload['api_error'] = 'api.show_error_image';
 
         // use the validator to validate the value
         $errors = $this->get('validator')->validate($file, $imageConstraint );
 
-        if (0 != count($errors)) {
-            // this is *not* a valid image
-            $errorArray = [];
-            foreach ($errors as $error) {
-                $constraint = $error->getConstraint();
-                $errorItem = array(
-                                    "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
-                                    "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $locale)
-                                  );
-                array_push($errorArray, $errorItem);
-                $this->logMessage(400, $errorItem['error_description'] );
-            }
-
-            return new JsonResponse(array(
-                          "code" => 400,
-                          "error" =>  "Bad Request",
-                          "error_description" => $errorArray[0]['error_description'],
-                          "show_message" => $errorArray[0]['show_message'],
-                          'errors' => $errorArray
-                      ));
-        } else {
-          // Null is returned to indicate no errors
-          return null;
+        // If no errors, then return null
+        if (!count($errors)) {
+           return null;
         }
+
+        $this->logMessage(400, 'Error count '.count($errors) );
+
+        // this is *not* a valid image
+        $errorArray = [];
+        foreach ($errors as $error) {
+            $constraint = $error->getConstraint();
+            $errorItem = array(
+                                "error_description" => $error->getPropertyPath().': '.$error->getMessage().' '.$error->getInvalidValue(),
+                                "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $locale)
+                              );
+            array_push($errorArray, $errorItem);
+            $this->logMessage(400, $errorItem['error_description'] );
+        }
+
+        return new JsonResponse(array(
+                      "code" => 400,
+                      "error" =>  "Bad Request",
+                      "error_description" => $errorArray[0]['error_description'],
+                      "show_message" => $errorArray[0]['show_message'],
+                      'errors' => $errorArray
+        ));
     }
 
     private function setUserProfileData(Request $request, User $user)
@@ -891,7 +893,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
                       "error_description" => $errorArray[0]['error_description'],
                       "show_message" => $errorArray[0]['show_message'],
                       'errors' => $errorArray
-                  ));
+        ));
     }
 
     /**

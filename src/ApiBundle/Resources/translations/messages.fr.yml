@@ -115,6 +115,7 @@ flash:
   user_updated_successfully: Utilisateur mis à jour avec succès!
   user_deleted_successfully: L'utilisateur a été supprimé avec succès!
   user_authentication_failed: L'identification de l'utilisateur a échoué!
+  image_error: Erreur d'image!
 api:
   show_error_client_name:  Désolé, le nom du client ne peut pas être vide!
   show_error_client_name_taken:  Désolé, Nom du client déjà pris!

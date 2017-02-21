@@ -127,6 +127,7 @@ flash:
   user_updated_successfully: User updated successfully!
   user_deleted_successfully: User deleted successfully!
   user_authentication_failed: User Authentication failed!
+  image_error: Image Error!
 api:
   show_error_client_name:  Sorry, Client Name cannot be empty!
   show_error_client_name_taken:  Sorry, Client Name already taken!

@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Controller used to manage user contents in the backend.
@@ -84,7 +85,7 @@ class UserController extends Controller
             // If a file has been uploaded
             if ( null != $file ) {
                 // First validate uploaded image. If errors found, return to same page with flash errors
-                $imageErrors = $this->validateImage($request);
+                $imageErrors = $this->validateImage($file, $locale);
                 if (!$imageErrors) {
                     return $this->render('@ApiBundle/Resources/views/admin/user/new.html.twig', [
                         'form' => $form->createView(),
@@ -106,7 +107,7 @@ class UserController extends Controller
 
             $userManager->updateUser($user);
 
-            $this->logMessageAndFlash(200, 'success', 'User successfully created: ', $this->get('translator')->trans('flash.user_creatd_successfully'), $request->getLocale() );
+            $this->logMessageAndFlash(200, 'success', 'User successfully created: ', $this->get('translator')->trans('flash.user_created_successfully'), $request->getLocale() );
 
             return $this->redirectToRoute('admin_user_index');
         }
@@ -177,7 +178,7 @@ class UserController extends Controller
             // If a file has been uploaded
             if ( null != $file ) {
                 // First validate uploaded image. If errors found, return to same page with flash errors
-                $imageErrors = $this->validateImage($request);
+                $imageErrors = $this->validateImage($file, $locale);
                 if (!$imageErrors) {
                     return $this->render('@ApiBundle/Resources/views/admin/user/edit.html.twig', [
                         'user' => $user,
@@ -279,14 +280,8 @@ class UserController extends Controller
       $user->setRoles($form['roles']->getData());
     }
 
-    private function validateImage(Request $request)
+    private function validateImage(UploadedFile $file, $locale)
     {
-        $locale = $request->getLocale();
-
-        // $file stores the uploaded Image file
-        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-        $file = $request->files->get('image');
-
         $imageConstraint = new Assert\Image();
 
         // all constraint "options" can be set this way
@@ -295,12 +290,12 @@ class UserController extends Controller
         $imageConstraint->maxSize = 1024*1024;
         $imageConstraint->minWidth = 100;
         $imageConstraint->minHeight = 100;
-        // $imageConstraint->payload->api_error = 'api.show_error_image';
+        $imageConstraint->payload['api_error'] = 'api.show_error_image';
 
         // use the validator to validate the value
         $errors = $this->get('validator')->validate($file, $imageConstraint );
 
-        if (0 != count($errors)) {
+        if (count($errors)) {
             // this is *not* a valid image
             $errorArray = [];
             foreach ($errors as $error) {
@@ -310,7 +305,7 @@ class UserController extends Controller
                                     "show_message" => $this->get('translator')->trans($constraint->payload['api_error'], array(), 'messages', $locale)
                                   );
                 array_push($errorArray, $errorItem);
-                $this->logMessageAndFlash(400, 'warning', $errorItem['error_description'], $this->get('translator')->trans('flash.image_error').' '.$errorItem['error_description'], $request->getLocale() );
+                $this->logMessageAndFlash(400, 'warning', $errorItem['error_description'], $this->get('translator')->trans('flash.image_error').' '.$errorItem['error_description'], $locale );
             }
             return false;
         }
