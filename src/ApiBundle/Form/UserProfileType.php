@@ -28,7 +28,7 @@ class UserProfileType extends AbstractType
             ->add('image', FileType::class, array('data_class' => null,'label' => 'Image, if any ', 'required' => false) )
             ->add('firstname',TextType::class)
             ->add('lastname',TextType::class, array('required' => false))
-            ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y'))
+            ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y', 'html5' => false, 'attr' => array('class' => 'js-datepicker')))
             ->add('email', EmailType::class)
             ->add('username', TextType::class)
         ;
