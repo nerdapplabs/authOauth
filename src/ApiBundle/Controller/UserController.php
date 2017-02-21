@@ -53,7 +53,8 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        $confirmationEnabled = $this->container->getParameter('registration_requires_email_confirmation');        $userManager = $this->container->get('fos_user.user_manager');
+        $confirmationEnabled = $this->container->getParameter('registration_requires_email_confirmation');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         $user = $userManager->createUser();
         $user->setRoles(['ROLE_USER']);
@@ -128,6 +129,7 @@ class UserController extends Controller
         } catch (AccountStatusException $ex) {
             // We simply do not authenticate users which do not pass the user
             // checker (not enabled, expired, etc.).
+            $this->logMessageAndFlash(200, 'warning', 'User Authentication failed: '.$user->getUsername(), $this->get('translator')->trans('flash.user_authentication_failed'), $request->getLocale() );
         }
     }
 
@@ -217,7 +219,12 @@ class UserController extends Controller
       $user->setEmail($form['email']->getData());
       $user->setUsername($form['username']->getData());
       $user->setPlainPassword($form['plainPassword']->getData());
-      $user->setRoles($form['roles']->getData());
+
+      // If Roles exist in form as the form is common for both admin and user areas
+      // Only admin area is allowed to have roles
+      $roles = array_key_exists('roles', $form) ? $form['roles']->getData() : $user->getRoles();
+      $user->setRoles($roles);
+
       $user->setConfirmationToken(null);
       $user->setEnabled(true);
       $user->setLastLogin(new \DateTime());

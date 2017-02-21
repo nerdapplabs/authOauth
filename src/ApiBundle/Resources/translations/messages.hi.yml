@@ -114,6 +114,7 @@ flash:
   user_created_successfully: प्रयोक्ता सफलतापूर्वक बनाया!
   user_updated_successfully: प्रयोक्ता को सफलतापूर्वक अद्यतन!
   user_deleted_successfully: प्रयोक्ता को सफलतापूर्वक नष्ट कर दिया!
+  user_authentication_failed: उपयोगकर्ता प्रमाणीकरण विफल रहा!
 api:
   show_error_client_name:  क्षमा करें, क्लाइंट का नाम रिक्त नहीं हो सकता!
   show_error_client_name_taken:  क्षमा करें, क्लाइंट का नाम पहले ही ले लिया!

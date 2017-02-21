@@ -58,13 +58,6 @@
                       {{ form_widget(form.plainPassword) }}
                     </td>
                 </tr>
-                <tr>
-                    <th scope="row">{{ 'label.user_roles'|trans }}</th>
-                    <td>
-                      {{ form_errors(form.roles) }}
-                      {{ form_widget(form.roles) }}
-                    </td>
-                </tr>
             </tbody>
         </table>
         <input type="submit" value="{{ button_label|default('action.create_user'|trans) }}"

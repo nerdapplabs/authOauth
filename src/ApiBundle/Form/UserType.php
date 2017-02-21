@@ -39,17 +39,7 @@ class UserType extends AbstractType
                 'second_options' => array('label' => 'form.password_confirmation'),
                 'invalid_message' => 'fos_user.password.mismatch',
             ))
-            ->add('roles', CollectionType::class, array(
-                  'entry_type'   => ChoiceType::class,
-                  'entry_options'  => array(
-                      'label' => false,
-                      'choices'  => array(
-                          'ROLE_ADMIN' => 'ROLE_ADMIN',
-                          'ROLE_USER' => 'ROLE_USER',
-                          'ROLE_API'  => 'ROLE_API',
-                          ),
-                  ),
-            ));
+            ;
     }
 
     /**

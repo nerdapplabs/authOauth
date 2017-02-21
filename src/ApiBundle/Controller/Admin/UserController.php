@@ -4,6 +4,7 @@ namespace ApiBundle\Controller\Admin;
 
 use ApiBundle\Entity\User;
 use ApiBundle\Form\UserType;
+use ApiBundle\Form\UserProfileType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,6 +16,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 /**
  * Controller used to manage user contents in the backend.
@@ -53,9 +56,21 @@ class UserController extends Controller
     {
         $userManager = $this->container->get('fos_user.user_manager');
         $user = $userManager->createUser();
-        $user->setRoles(['ROLE_USER']);
 
         $form = $this->createForm(UserType::class, $user);
+
+        // Role added in admin area
+        $form->add('roles', CollectionType::class, array(
+                          'entry_type'   => ChoiceType::class,
+                          'entry_options'  => array(
+                              'label' => false,
+                              'choices'  => array(
+                                  'ROLE_ADMIN' => 'ROLE_ADMIN',
+                                  'ROLE_USER' => 'ROLE_USER',
+                                  'ROLE_API'  => 'ROLE_API',
+                                  ),
+                          ),
+        ));
 
         $locale = $request->getLocale();
 
@@ -127,9 +142,22 @@ class UserController extends Controller
           );
         }
 
-        $editForm = $this->createForm(UserType::class, $user);
+        $editForm = $this->createForm(UserProfileType::class, $user);
         $deleteForm = $this->createDeleteForm($user);
         $locale = $request->getLocale();
+
+        // Role added in admin area
+        $editForm->add('roles', CollectionType::class, array(
+                          'entry_type'   => ChoiceType::class,
+                          'entry_options'  => array(
+                              'label' => false,
+                              'choices'  => array(
+                                  'ROLE_ADMIN' => 'ROLE_ADMIN',
+                                  'ROLE_USER' => 'ROLE_USER',
+                                  'ROLE_API'  => 'ROLE_API',
+                                  ),
+                          ),
+        ));
 
         $editForm->handleRequest($request);
 
@@ -153,7 +181,7 @@ class UserController extends Controller
                 $user->setImage($currentFilename);
             }
 
-            $this->setUserData($user, $editForm);
+            $this->setUserProfileData($user, $editForm);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();
@@ -220,6 +248,17 @@ class UserController extends Controller
       $user->setEnabled(true);
       $user->setLastLogin(new \DateTime());
     }
+
+    private function setUserProfileData(User $user, \Symfony\Component\Form\Form $form)
+    {
+      $user->setFirstname($form['firstname']->getData());
+      $user->setLastname($form['lastname']->getData());
+      $user->setDob($form['dob']->getData());
+      $user->setEmail($form['email']->getData());
+      $user->setUsername($form['username']->getData());
+      $user->setRoles($form['roles']->getData());
+    }
+
 
     private function logMessageAndFlash($code = 200, $type = 'success', $logMsg = '', $flashMsg = '', $locale = 'en')
     {

@@ -2,9 +2,8 @@ parameters:
     # This parameter defines the codes of the locales (languages) enabled in the application
     # app_locales: en|fr|de|es|cs|nl|ru|uk|ro|pt_BR|pl|it|ja|id|ca|sl
     app_locales: en|fr|hi
-    images_profile_directory: '%kernel.root_dir%/../web/images/profile'
     registration_requires_email_confirmation: false
-    login_confirmation: false
+    images_profile_directory: '%kernel.root_dir%/../web/images/profile/'
 
 # Assetic Configuration
 assetic:
@@ -19,9 +18,9 @@ fos_rest:
     routing_loader:
         default_format: json                            # All responses should be JSON formated
         include_format: false                           # We do not include format in request, so that all responses
-    exception:
-        enabled: true
-        exception_controller: 'ApiBundle\Controller\ApiExceptionController::showAction'                                                        # will eventually be JSON formated
+    # exception:
+    #     enabled: true
+    #     exception_controller: 'ApiBundle\Controller\ApiExceptionController::showAction'                                                        # will eventually be JSON formated
     versioning:
         enabled: true
         resolvers:

@@ -172,7 +172,6 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
       *      {"name"="email", "dataType"="email", "required"=true, "description"="Email"},
-      *      {"name"="email_confirmation", "dataType"="integer", "required"=true, "description"="0-email confirmation not required, 1-required"},
       *      {"name"="image", "dataType"="image/jpeg, image/jpg, image/gif, image/png", "required"=false, "description"="Profile Picture within 1024k size"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
@@ -180,6 +179,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       */
     public function postRegisterAction(Request $request)
     {
+        $confirmationEnabled = $this->container->getParameter('registration_requires_email_confirmation');
         $request = $this->container->get('request');
 
         $userManager = $this->get('fos_user.user_manager');
@@ -208,7 +208,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $msg = 'N.A.';
         $grantType = 'password';
 
-        if ('1' == $request->request->get('email_confirmation')) {
+        if (true == $confirmationEnabled ) {
             $msg = 'Please check your email to complete the registration.';
         } else {
             $msg = 'Registration complete. Welcome!';
@@ -451,7 +451,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         $userManager = $this->get('fos_user.user_manager');
         $userManager->updateUser($user);
 
-        $msg = 'Profile Pic updated successfully'.$user->getUsername();
+        $msg = 'Profile Pic updated successfully. '.$user->getUsername();
         $this->logMessage(201, $msg);
 
         return new JsonResponse(array(
@@ -544,7 +544,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $oAuthRtn = $this->fetchAccessToken($request, $grantType);
 
-        $msg = 'Access Token successfully fetched for '.$username;
+        $msg = 'Access Token successfully fetched for '.$data['username'];
         $this->logMessage(201, $msg);
 
         $oAuthRtn['code'] = 201;
@@ -747,7 +747,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
             // Update the 'image' property to store the Image file name
             // instead of its contents
-            $user->setImage('/images/profile/'.$fileName);
+            $user->setImage($this->getParameter('images_profile_directory').$fileName);
         }
 
         $user->setUsername($request->request->get('username'));
@@ -783,7 +783,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
             // Update the 'image' property to store the Image file name
             // instead of its contents
-            $user->setImage($fileName);
+            $user->setImage($this->getParameter('images_profile_directory').$fileName);
         }
     }
 
