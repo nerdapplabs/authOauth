@@ -167,7 +167,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *      {"name"="client_id", "dataType"="string", "required"=true, "description"="oAuth ClientId"},
       *      {"name"="client_secret", "dataType"="string", "required"=true, "description"="oAuth ClientSecret"},
       *      {"name"="username", "dataType"="string", "required"=true, "description"="Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen"},
-      *      {"name"="password", "dataType"="string", "required"=true, "description"="Password should be 8-15 characters long and must contain alphanumeric and @*# characters"},
+      *      {"name"="password", "dataType"="string", "required"=true, "description"="Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character"},
       *      {"name"="firstname", "dataType"="string", "required"=true, "description"="firstname"},
       *      {"name"="lastname", "dataType"="string", "required"=true, "description"="lastname"},
       *      {"name"="dob", "dataType"="datetime", "required"=true, "description"="date of birth mm/dd/yyyy"},
@@ -236,7 +236,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
       *  description="Change password of the user. Access token to be provided in header (Authorization = Bearer <access token>)",
       *  parameters={
       *      {"name"="old_password", "dataType"="string", "required"=true, "description"="Old password"},
-      *      {"name"="password", "dataType"="string", "required"=true, "description"="Password should be 8-15 characters long and must contain alphanumeric and @*# characters"},
+      *      {"name"="password", "dataType"="string", "required"=true, "description"="Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character"},
       *      {"name"="_locale", "dataType"="string", "required"=false, "description"="User locale. Will default to en"}
       *  },
       * )
