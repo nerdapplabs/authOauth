@@ -1,0 +1,74 @@
+{% extends 'ApiBundle:user:layout.html.twig' %}
+
+{% block body_id 'user_new' %}
+
+{% block main %}
+    <h1>{{ 'action.sign_up'|trans }}</h1>
+
+    {{ form_start(form, { attr: attr|default({}) }) }}
+        {{ form_errors(form) }}
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row">{{ 'label.user_image'|trans }}</th>
+                    <td>
+                        {{ form_errors(form.image) }}
+                        {{ form_widget(form.image) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_firstname'|trans }}</th>
+                    <td>
+                        {{ form_errors(form.firstname) }}
+                        {{ form_widget(form.firstname) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_lastname'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.lastname) }}
+                      {{ form_widget(form.lastname) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_dob'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.dob) }}
+                      {{ form_widget(form.dob) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_email'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.email) }}
+                      {{ form_widget(form.email) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_username'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.username) }}
+                      {{ form_widget(form.username) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_password'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.plainPassword) }}
+                      {{ form_widget(form.plainPassword) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">{{ 'label.user_roles'|trans }}</th>
+                    <td>
+                      {{ form_errors(form.roles) }}
+                      {{ form_widget(form.roles) }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="{{ button_label|default('action.create_user'|trans) }}"
+               class="{{ button_css|default("btn btn-primary") }}"
+         />
+    {{ form_end(form) }}
+{% endblock %}

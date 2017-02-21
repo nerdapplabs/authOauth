@@ -83,6 +83,7 @@ label:
   user_lastname: अंतिम नाम
   user_username: उपयोगकर्ता नाम
   user_password: पासवर्ड
+  user_current_password: उपयोगकर्त पासवर्ड
   user_roles: भूमिकाओं
   user_email: ईमेल
   user_dob: जन्म की तारीख

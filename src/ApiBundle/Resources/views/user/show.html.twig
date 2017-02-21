@@ -1,0 +1,44 @@
+{% extends 'ApiBundle:user:layout.html.twig' %}
+
+{% block body_id 'user_show' %}
+
+{% block main %}
+    <h1>{{ 'title.user'|trans }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">{{ 'label.user_image'|trans }}</th>
+                <td>
+                  {% if user.image is not empty %}
+                    <img src="{{ asset(['images/profile/', user.image]|join) }}" alt="{{ 'title.user'|trans }} {{ 'label.user_image_not_found'|trans }}" class="large" />
+                  {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_firstname'|trans }}</th>
+                <td>{{ user.firstname }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_lastname'|trans }}</th>
+                <td>{{ user.lastname }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_dob'|trans }}</th>
+                <td>{{ user.dob|date('m/d/Y') }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_email'|trans }}</th>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_username'|trans }}</th>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <th scope="row">{{ 'label.user_roles'|trans }}</th>
+                <td>{{ user.roles|join(',') }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

@@ -94,6 +94,7 @@ label:
   user_lastname: Last name
   user_username: Username
   user_password: Password
+  user_current_password: Current Password
   user_roles: Roles
   user_email: Email
   user_dob: Date of Birth

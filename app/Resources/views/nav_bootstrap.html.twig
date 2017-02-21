@@ -27,13 +27,13 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ 'action.profile'|trans }}<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="{{ path('fos_user_profile_show') }}">{{ 'action.show_profile'|trans }}</a></li>
-                  <li><a href="{{ path('fos_user_profile_edit') }}">{{ 'action.edit_profile'|trans }}</a></li>
+                  <li><a href="{{ path('user_profile_show', {id: app.user.id }) }}">{{ 'action.show_profile'|trans }}</a></li>
+                  <li><a href="{{ path('user_profile_edit', {id: app.user.id }) }}">{{ 'action.edit_profile'|trans }}</a></li>
                 </ul>
             </li>
         {% else %}
             <li><a href="{{ path('fos_user_security_login') }}">{{ 'action.sign_in'|trans }}</a></li>
-            <li><a href="{{ path('fos_user_registration_register') }}">{{ 'action.sign_up'|trans }}</a></li>
+            <li><a href="{{ path('user_new') }}">{{ 'action.sign_up'|trans }}</a></li>
         {% endif %}
         {% if is_granted("ROLE_ADMIN") %}
             <li class="dropdown">

@@ -65,6 +65,7 @@ label:
   author_email: "Mail de l'auteur"
   username: Identifiant
   password: Mot de passe
+  user_current_password: Identifiant Mot de passe
   role: Rôle
   content: Contenu
   summary: Résumé
