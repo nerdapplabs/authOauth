@@ -850,7 +850,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     {
         $email = $user->getEmail();
         if (false !== $pos = strpos($email, '@')) {
-            $email = '...'.substr($email, $pos);
+            $email = substr($email, 0,1).'...'.substr($email, $pos-1);
         }
 
         $this->logMessage(200, $email);

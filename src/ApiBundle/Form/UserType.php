@@ -30,7 +30,7 @@ class UserType extends AbstractType
             ->add('firstname',TextType::class)
             ->add('lastname',TextType::class, array('required' => false))
             ->add('email', EmailType::class)
-            ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y'))
+            ->add('dob', DateType::class, array('widget' => 'single_text', 'format' => 'M/d/y', 'html5' => false, 'attr' => array('class' => 'js-datepicker')))
             ->add('username', TextType::class)
             ->add('plainPassword', 'repeated', array(
                 'type' => 'password',
