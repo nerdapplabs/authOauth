@@ -1,6 +1,6 @@
-{% extends 'ApiBundle:admin:layout.html.twig' %}
+{% extends 'ApiBundle:user:layout.html.twig' %}
 
-{% block body_id 'admin_user_edit' %}
+{% block body_id 'user_edit' %}
 
 {% block main %}
     <h1>{{ 'title.edit_user'|trans({'%id%': user.id}) }}</h1>
@@ -46,21 +46,14 @@
                     <th scope="row">{{ 'label.user_email'|trans }}</th>
                     <td>
                       {{ form_errors(edit_form.email) }}
-                      {{ form_widget(edit_form.email) }}
+                      {{ form_widget(edit_form.email, { 'attr':{'readonly':'readonly'} }) }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">{{ 'label.user_username'|trans }}</th>
                     <td>
                       {{ form_errors(edit_form.username) }}
-                      {{ form_widget(edit_form.username) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">{{ 'label.user_roles'|trans }}</th>
-                    <td>
-                      {{ form_errors(edit_form.roles) }}
-                      {{ form_widget(edit_form.roles) }}
+                      {{ form_widget(edit_form.username, { 'attr':{'readonly':'readonly'} }) }}
                     </td>
                 </tr>
             </tbody>
@@ -69,10 +62,6 @@
                class="{{ button_css|default("btn btn-primary") }}"
          />
     {{ form_end(edit_form) }}
-
-    <a href="{{ path('admin_user_index') }}" class="btn btn-link">
-        {{ 'action.back_to_user_list'|trans }}
-    </a>
 {% endblock %}
 
 {% block javascripts %}
@@ -83,17 +72,4 @@
             $('.js-datepicker').datepicker();
         });
     </script>
-{% endblock %}
-
-{% block sidebar %}
-    <div class="section actions">
-        {{ include('ApiBundle:admin/user:_form.html.twig', {
-            form: delete_form,
-            button_label: 'action.delete_user'|trans,
-            button_css: 'btn btn-lg btn-block btn-danger',
-            show_confirmation: true,
-        }, with_context = false) }}
-    </div>
-
-    {{ parent() }}
 {% endblock %}

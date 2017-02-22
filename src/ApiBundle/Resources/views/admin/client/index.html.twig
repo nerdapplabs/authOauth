@@ -16,7 +16,7 @@
             </tr>
             <tr>
                 <th scope="col">{{ 'label.client_name'|trans }}</th>
-                <th scope="col">{{ 'label.client_randomid'|trans }}</th>
+                <th scope="col">{{ 'label.client_id'|trans }}</th>
                 <th scope="col">{{ 'label.client_secret'|trans }}</th>
             </tr>
         </thead>
@@ -24,7 +24,7 @@
         {% for client in clients %}
             <tr>
                 <td>{{ client.name }}</td>
-                <td>{{ client.randomid }}</td>
+                <td>{{ client.id }}_{{ client.randomid }}</td>
                 <td>{{ client.secret }}</td>
                 <td>
                     <div class="item-actions">

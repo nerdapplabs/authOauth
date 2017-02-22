@@ -94,9 +94,12 @@ label:
   user_lastname: Last name
   user_username: Username
   user_password: Password
+  user_current_password: Current Password
   user_roles: Roles
   user_email: Email
   user_dob: Date of Birth
+  user_image: Profile Picture
+  user_image_not_found: image not found
 menu:
   choose_language: Choose language
   client_list: Client list
@@ -123,8 +126,13 @@ flash:
   user_created_successfully: User created successfully!
   user_updated_successfully: User updated successfully!
   user_deleted_successfully: User deleted successfully!
+  user_authentication_failed: User Authentication failed!
+  image_error: Image Error!
+  admin_deleted_denied1: Admin is not allowed to delete his own account!
+  admin_deleted_denied2: There must be 1 active admin account, hence promote/assign another user to admin role before deleting this account. 
 api:
   show_error_client_name:  Sorry, Client Name cannot be empty!
+  show_error_client_name_taken:  Sorry, Client Name already taken!
   show_error_url:  Sorry, Redirect URL cannot be empty!
   show_error_non_admin:  Sorry, you are not an Admin!
   show_error_password:  Sorry, Wrong/Missing Password!
@@ -144,5 +152,16 @@ api:
   show_error_password_reset:  Sorry, You are not permitted to request for password reset!
   show_error_reset_req:  Password reset request already received
   show_error_username_policy:  Username should be 3-16 characters long with any lowercase letter (a-z), number (0-9), an underscore, or a hyphen
-  show_error_password_policy:  Password should be 8-15 characters long and must contain alphanumeric and @*# characters
+  show_error_password_policy:  Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character
   show_error_role:  Sorry! Wrong Role!
+  show_error_image: Sorry! Some problem with image uploading!
+  show_error_image_uploaded: Sorry! No valid image uploaded!
+  registration_check_mail: Please check your email to complete the registration.
+  registration_complete: Registration complete. Welcome!
+  password_changed: Password changed successfully!
+  profile_fetched: Profile fetched successfully!
+  profile_edited: Profile edited successfully!
+  profile_pic_edited: Profile picture edited successfully!
+  mail_send: Mail already send to %email%. Please check your mail.
+  logged_in: Logged in successfully!
+  logged_out: Logged out successfully!

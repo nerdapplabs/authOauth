@@ -65,6 +65,7 @@ label:
   author_email: "Mail de l'auteur"
   username: Identifiant
   password: Mot de passe
+  user_current_password: Identifiant Mot de passe
   role: Rôle
   content: Contenu
   summary: Résumé
@@ -86,6 +87,8 @@ label:
   user_roles: Les rôles
   user_email: Email
   user_dob: Date de naissance
+  user_image: Image de profil
+  user_image_not_found: image non trouvée
 menu:
   choose_language: Choisissez la langue
   client_list: Liste des articles
@@ -111,8 +114,13 @@ flash:
   user_created_successfully: Utilisateur créé avec succès!
   user_updated_successfully: Utilisateur mis à jour avec succès!
   user_deleted_successfully: L'utilisateur a été supprimé avec succès!
+  user_authentication_failed: L'identification de l'utilisateur a échoué!
+  image_error: Erreur d'image!
+  admin_deleted_denied1: Admin n'est pas autorisé à supprimer son propre compte!
+  admin_deleted_denied2: Il doit y avoir 1 compte d'administrateur actif, donc promouvoir / affecter un autre utilisateur au rôle d'administrateur avant de supprimer ce compte.
 api:
   show_error_client_name:  Désolé, le nom du client ne peut pas être vide!
+  show_error_client_name_taken:  Désolé, Nom du client déjà pris!
   show_error_url:  Désolé, l'URL de redirection ne peut pas être vide!
   show_error_non_admin:  Désolé, vous n'êtes pas Admin!
   show_error_password:  Désolé, mot de passe erroné / manquant!
@@ -133,5 +141,16 @@ api:
   show_error_reset_req:  Réinitialisation du mot de passe déjà reçue
   show_error_server_fault:  Erreur du serveur! Veuillez réessayer après un certain temps !!
   show_error_username_policy:  Le nom d'utilisateur doit comporter entre 3 et 16 caractères avec une lettre minuscule (a-z), un chiffre (0-9), un trait de soulignement ou un tiret
-  show_error_password_policy:  Le mot de passe doit comporter entre 8 et 15 caractères et contenir des caractères alphanumériques et @*#
+  show_error_password_policy:  Mot de passe 6 à 20 caractères, au moins 1 majuscule, 1 minuscule, 1 numéro et 1 caractère spécial
   show_error_role:  Pardon! Mauvais rôle!
+  show_error_image: Pardon! Quelque problème avec le téléchargement d'image!
+  show_error_image_uploaded: Pardon! Aucune image valide n'a été téléchargée!
+  registration_check_mail: Veuillez vérifier votre courriel pour compléter l'inscription.
+  registration_complete: Inscription complète. Bienvenue!
+  password_changed: Le mot de passe a été changé avec succès!
+  profile_fetched: Profil extrait avec succès!
+  profile_edited: Profil modifié avec succès!
+  profile_pic_edited: Photo du profil éditée avec succès!
+  mail_send: Le courrier est déjà envoyé à% email%. Veuillez vérifier votre e-mail.
+  logged_in: Connecté avec succès!
+  logged_out: Déconnecté avec succès!

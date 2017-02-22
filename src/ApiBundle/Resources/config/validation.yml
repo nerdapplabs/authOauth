@@ -14,13 +14,13 @@ ApiBundle\Entity\User:
     properties:
         firstname:
             - NotBlank:
-                  groups: [profile_edit]
+                  groups: [Registration, Profile, profile_edit]
                   message: "user.show_error_firstname"
                   payload:
                       api_error: 'api.show_error_firstname'
         dob:
             - Date:
-                  groups: [profile_edit]
+                  groups: [Registration, Profile, profile_edit]
                   message: "user.show_error_dob"
                   payload:
                       api_error: 'api.show_error_dob'
@@ -57,7 +57,8 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_password_policy'
             - Regex:
                   groups: [profile_edit_password, Registration, Profile]
-                  pattern: '/^([a-zA-Z0-9@*#]{8,15})$/'
+                  # Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character
+                  pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w]))[A-Za-z\d$@$!%*?&]{6,20}$/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:
@@ -70,6 +71,16 @@ ApiBundle\Entity\User:
                   message:  "user.show_error_role"
                   payload:
                       api_error: 'api.show_error_role'
+        image:
+            - Image:
+                  groups: [profile_pic]
+                  mimeTypes:  ["image/jpeg", "image/jpg", "image/gif", "image/png"]
+                  mimeTypesMessage: Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size
+                  maxSize: 1024k
+                  minWidth: 100
+                  minHeight: 100
+                  payload:
+                      api_error: 'api.show_error_image'
 
 FOS\UserBundle\Form\Model\ChangePassword:
     properties:
@@ -79,7 +90,8 @@ FOS\UserBundle\Form\Model\ChangePassword:
                   payload:
                       api_error: 'api.show_error_password_policy'
             - Regex:
-                  pattern: '/^([a-zA-Z0-9@*#]{8,15})$/'
+                  # Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character
+                  pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w]))[A-Za-z\d$@$!%*?&]{6,20}$/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:

@@ -83,9 +83,12 @@ label:
   user_lastname: अंतिम नाम
   user_username: उपयोगकर्ता नाम
   user_password: पासवर्ड
+  user_current_password: उपयोगकर्त पासवर्ड
   user_roles: भूमिकाओं
   user_email: ईमेल
   user_dob: जन्म की तारीख
+  user_image: प्रोफ़ाइल फोटो
+  user_image_not_found: छवि नहीं मिली
 menu:
   choose_language: भाषा चुनें
   client_list: ग्राहक सूची
@@ -111,8 +114,13 @@ flash:
   user_created_successfully: प्रयोक्ता सफलतापूर्वक बनाया!
   user_updated_successfully: प्रयोक्ता को सफलतापूर्वक अद्यतन!
   user_deleted_successfully: प्रयोक्ता को सफलतापूर्वक नष्ट कर दिया!
+  user_authentication_failed: उपयोगकर्ता प्रमाणीकरण विफल रहा!
+  image_error: छवि त्रुटि!
+  admin_deleted_denied1: व्यवस्थापक अपने स्वयं के खाते को नष्ट करने की अनुमति नहीं है!
+  admin_deleted_denied2: वहाँ 1 सक्रिय व्यवस्थापक खाता होना चाहिए, इसलिए बढ़ावा देने के / इस खाते को हटाने से पहले व्यवस्थापक भूमिका के लिए किसी अन्य उपयोगकर्ता आवंटित। 
 api:
   show_error_client_name:  क्षमा करें, क्लाइंट का नाम रिक्त नहीं हो सकता!
+  show_error_client_name_taken:  क्षमा करें, क्लाइंट का नाम पहले ही ले लिया!
   show_error_url:  क्षमा करें, पुनर्निर्देशन यूआरएल खाली नहीं हो सकता!
   show_error_non_admin:  क्षमा करें, आप एक व्यवस्थापक नहीं हैं!
   show_error_password:  माफ करना, गलत / लापता पासवर्ड!
@@ -133,5 +141,16 @@ api:
   show_error_reset_req:  पासवर्ड रीसेट अनुरोध पहले से ही प्राप्त
   show_error_server_fault:  सर्वर त्रुटि! कुछ समय के बाद फिर से कोशिश करें !!
   show_error_username_policy:  यूजर का नाम किसी भी छोटा अक्षर (a-z), संख्या (0-9), एक अंडरस्कोर, या एक हाइफन के साथ 3-16 अक्षर का होना चाहिए
-  show_error_password_policy:  पासवर्ड 8-15 अक्षर का होना चाहिए और अल्फान्यूमेरिक और शामिल होना चाहिए @#* अक्षर
+  show_error_password_policy:  पासवर्ड 6-20 अक्षर, कम से कम 1 अपरकेस, 1 लोअरकेस, 1 संख्या और 1 विशेष अक्षर
   show_error_role:  माफ़ कीजिये! गलत भूमिका!
+  show_error_image: माफ़ कीजिये! छवि अपलोड करने के साथ कुछ समस्या!
+  show_error_image_uploaded: माफ़ कीजिये! कोई मान्य छवि अपलोड!
+  registration_check_mail: पंजीकरण पूरा करने के लिए अपने ईमेल की जाँच करें।
+  registration_complete: पंजीकरण पूर्ण। स्वागत हे!
+  password_changed: पासवर्ड सफलतापूर्वक बदला गया!
+  profile_fetched: प्रोफाइल सफलता पूर्वक दिलवाया!
+  profile_edited: प्रोफाइल सफलतापूर्वक संपादित!
+  profile_pic_edited: प्रोफ़ाइल चित्र सफलतापूर्वक संपादित!
+  mail_send: मेल पहले से ही% email% करने के लिए भेज देते हैं। कृपया अपने मेल की जाँच करें।
+  logged_in: सफलतापूर्वक लॉग इन हो चुका है!
+  logged_out: सफलतापूर्वक लॉग आउट!
