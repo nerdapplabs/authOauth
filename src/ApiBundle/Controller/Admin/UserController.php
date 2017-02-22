@@ -228,15 +228,18 @@ class UserController extends Controller
      */
     public function deleteAction(Request $request, User $user)
     {
-        $entityManager = $this->getDoctrine()->getManager();
+        $adminUser = $this->container->get('security.context')->getToken()->getUser();
 
-        $user->setEnabled(false);
-        // $user->setUpdatedAt(new \DateTime());
-
-        $entityManager->flush();
-
-        $this->logMessageAndFlash(200, 'success', 'User successfully deleted: ', $this->get('translator')->trans('flash.user_deleted_successfully'), $request->getLocale() );
-
+        if ($adminUser->getId() == $user->getId() ) {
+            // Admin is not allowed to delete his own account
+            $this->logMessageAndFlash(200, 'danger', 'Admin is not allowed to delete his own account', $this->get('translator')->trans('flash.admin_deleted_denied1'), $request->getLocale() );
+        } else {
+            $entityManager = $this->getDoctrine()->getManager();
+            $user->setEnabled(false);
+            // $user->setUpdatedAt(new \DateTime());
+            $entityManager->flush();
+            $this->logMessageAndFlash(200, 'success', 'User successfully deleted: ', $this->get('translator')->trans('flash.user_deleted_successfully'), $request->getLocale() );
+        }
         return $this->redirectToRoute('admin_user_index');
     }
 

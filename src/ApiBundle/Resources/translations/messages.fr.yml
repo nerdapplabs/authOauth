@@ -116,6 +116,8 @@ flash:
   user_deleted_successfully: L'utilisateur a été supprimé avec succès!
   user_authentication_failed: L'identification de l'utilisateur a échoué!
   image_error: Erreur d'image!
+  admin_deleted_denied1: Admin n'est pas autorisé à supprimer son propre compte!
+  admin_deleted_denied2: Il doit y avoir 1 compte d'administrateur actif, donc promouvoir / affecter un autre utilisateur au rôle d'administrateur avant de supprimer ce compte.
 api:
   show_error_client_name:  Désolé, le nom du client ne peut pas être vide!
   show_error_client_name_taken:  Désolé, Nom du client déjà pris!

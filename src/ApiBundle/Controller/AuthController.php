@@ -334,7 +334,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
           'lastname' => $user->getLastname(),
           'dob' => $dobString,
           'email' => $user->getEmail(),
-          'image_url' => $this->getParameter('images_profile_dir').$user->getImage()
+          'image_url' => $user->getImage() ? $this->getParameter('images_profile_dir').$user->getImage() : ''
         ));
     }
 

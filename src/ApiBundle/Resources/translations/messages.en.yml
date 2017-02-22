@@ -128,6 +128,8 @@ flash:
   user_deleted_successfully: User deleted successfully!
   user_authentication_failed: User Authentication failed!
   image_error: Image Error!
+  admin_deleted_denied1: Admin is not allowed to delete his own account!
+  admin_deleted_denied2: There must be 1 active admin account, hence promote/assign another user to admin role before deleting this account. 
 api:
   show_error_client_name:  Sorry, Client Name cannot be empty!
   show_error_client_name_taken:  Sorry, Client Name already taken!
