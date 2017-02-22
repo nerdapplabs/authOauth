@@ -471,7 +471,7 @@ class AuthController extends FOSRestController implements ClassResourceInterface
         return new JsonResponse(array(
                 'code' => 201,
                 'show_message' => $this->get('translator')->trans($msg, array(), 'messages', $request->getLocale()),
-                'image_url' => $this->getParameter('images_profile_dir').$user->getImage()
+                'image_url' => $user->getImage() ? $this->getParameter('images_profile_dir').$user->getImage() : ''
         ));
     }
 
