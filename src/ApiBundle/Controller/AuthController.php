@@ -442,7 +442,14 @@ class AuthController extends FOSRestController implements ClassResourceInterface
 
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
-            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_show', array(), 'messages', $request->getLocale()), $request->getLocale());
+            $this->logAndThrowError(400, 'Invalid User', $this->get('translator')->trans('api.show_error_perm_edit', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+
+        $file = $request->files->get('image');
+
+        // If no image, then exit here
+        if ( null == $file ) {
+          $this->logAndThrowError(400, 'No valid Image uploaded', $this->get('translator')->trans('api.show_error_image_uploaded', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
         // Set User data which will also return Image Validation errors, if any

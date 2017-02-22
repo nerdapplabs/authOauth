@@ -153,6 +153,7 @@ api:
   show_error_password_policy:  Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character
   show_error_role:  Sorry! Wrong Role!
   show_error_image: Sorry! Some problem with image uploading!
+  show_error_image_uploaded: Sorry! No valid image uploaded!
   registration_check_mail: Please check your email to complete the registration.
   registration_complete: Registration complete. Welcome!
   password_changed: Password changed successfully!
@@ -161,3 +162,4 @@ api:
   profile_pic_edited: Profile picture edited successfully!
   mail_send: Mail already send to %email%. Please check your mail.
   logged_in: Logged in successfully!
+  logged_out: Logged out successfully!
