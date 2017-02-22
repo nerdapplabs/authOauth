@@ -206,8 +206,9 @@ You can test the provided API via curl or Postman. Here we provide as to how to 
 
 Separate sample Github repos are available for iPhone and Android Mobile Clients which use APIs provided by this repo.
 
-    iPhone: https://github.com/ajabble/AJOAuth2
-    Android: https://github.com/mshariq-nerd/MSOAuth2
+iPhone: https://github.com/ajabble/AJOAuth2
+
+Android: https://github.com/mshariq-nerd/MSOAuth2
 
 #### 3. Backend Administration
 
