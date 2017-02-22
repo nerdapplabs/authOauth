@@ -530,6 +530,59 @@ class AuthController extends FOSRestController implements ClassResourceInterface
     }
 
     /**
+      * Invalidate Current Access Token
+      *
+      * @Post("/user/invalidate")
+      *
+      * @ApiDoc(
+      *  resource=true,
+      *  description="Invalidate current access token. Access token to be provided in header (Authorization = Bearer <access token>)",
+      * )
+      */
+    public function invalidateAction()
+    {
+        $request = $this->container->get('request');
+
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            $this->logAndThrowError(400, 'Invalid/Missing Access Token', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
+        }
+
+        // Fetch Access Token
+        $token = $this->container->get('security.context')->getToken()->getToken();
+
+        // Fetch Client Id
+        $em = $this->getDoctrine()->getManager();
+        $connection = $em->getConnection();
+        $statement = $connection->prepare("SELECT client_id FROM oauth2_access_tokens WHERE user_id = :id AND token = :token");
+        $statement->bindValue('id', $user->getId());
+        $statement->bindValue('token', $token);
+        $statement->execute();
+        $results = $statement->fetchAll();
+        $clientId = $results[0]['client_id'];
+
+        // Delete Access Token
+        $accessTokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
+        $accessToken = $accessTokenManager->findTokenBy(array('token' => $token));
+        $accessTokenManager->deleteToken($accessToken);
+
+        // Delete Refresh Token
+        $em = $this->getDoctrine()->getManager();
+        $connection = $em->getConnection();
+        $statement = $connection->prepare("DELETE FROM oauth2_refresh_tokens WHERE user_id = :id AND client_id = :client");
+        $statement->bindValue('id', $user->getId());
+        $statement->bindValue('client', $clientId);
+        $results = $statement->execute();
+
+        $this->logMessage(200, 'Token '.$token.' Invalidated for '.$user->getUsername().' '.$results);
+
+        return new JsonResponse(array(
+          'code' => 201,
+          'show_message' => 'User logged out successfully',
+        ));
+    }
+
+    /**
       * Get Access Token. Will return a JsonResponse from oAuth upon success.
       *
       *
