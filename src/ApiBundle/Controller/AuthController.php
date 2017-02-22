@@ -551,14 +551,33 @@ class AuthController extends FOSRestController implements ClassResourceInterface
             $this->logAndThrowError(400, 'Invalid/Missing Access Token', $this->get('translator')->trans('api.show_error_username_missing', array(), 'messages', $request->getLocale()), $request->getLocale());
         }
 
+        // Fetch Access Token
         $token = $this->container->get('security.context')->getToken()->getToken();
 
+        // Fetch Client Id
+        $em = $this->getDoctrine()->getManager();
+        $connection = $em->getConnection();
+        $statement = $connection->prepare("SELECT client_id FROM oauth2_access_tokens WHERE user_id = :id AND token = :token");
+        $statement->bindValue('id', $user->getId());
+        $statement->bindValue('token', $token);
+        $statement->execute();
+        $results = $statement->fetchAll();
+        $clientId = $results[0]['client_id'];
+
+        // Delete Access Token
         $accessTokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
         $accessToken = $accessTokenManager->findTokenBy(array('token' => $token));
-        $accessToken->setExpiresAt($accessToken->getExpiresAt() - (86400 * 30));
-        $accessTokenManager->updateToken($accessToken);
+        $accessTokenManager->deleteToken($accessToken);
 
-        $this->logMessage(200, 'Token '.$token.' Invalidated for '.$user->getUsername());
+        // Delete Refresh Token
+        $em = $this->getDoctrine()->getManager();
+        $connection = $em->getConnection();
+        $statement = $connection->prepare("DELETE FROM oauth2_refresh_tokens WHERE user_id = :id AND client_id = :client");
+        $statement->bindValue('id', $user->getId());
+        $statement->bindValue('client', $clientId);
+        $results = $statement->execute();
+
+        $this->logMessage(200, 'Token '.$token.' Invalidated for '.$user->getUsername().' '.$results);
 
         return new JsonResponse(array(
           'code' => 201,
