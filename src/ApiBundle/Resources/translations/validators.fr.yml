@@ -21,4 +21,4 @@ user:
   show_error_reset_req:  Réinitialisation du mot de passe déjà reçue
   show_error_server_fault:  Erreur du serveur! Veuillez réessayer après un certain temps !!
   show_error_username_policy:  Le nom d'utilisateur doit comporter entre 3 et 16 caractères avec une lettre minuscule (a-z), un chiffre (0-9), un trait de soulignement ou un tiret
-  show_error_password_policy:  Le mot de passe doit comporter entre 8 et 15 caractères et contenir des caractères alphanumériques et @*#
+  show_error_password_policy:  Mot de passe 6 à 20 caractères, au moins 1 majuscule, 1 minuscule, 1 numéro et 1 caractère spécial
