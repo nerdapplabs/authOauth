@@ -1,6 +1,8 @@
-# A Sample Symfony 2 RESTful API Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients
+# authOauth
 
-This is an example project, ready to use. This project is using below Symfony Bundles:
+**A Sample Symfony 2 RESTful API Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients.**
+
+This is an example project, ready to use, based upon **Symfony 2.8** but can be easily adapted to higher Symfony versions. This project is using below Symfony Bundles:
 
 * [FOSUserBundle](https://github.com/FriendsOfSymfony/FOSUserBundle)
 * [FOSRestBundle](https://github.com/FriendsOfSymfony/FOSRestBundle)
@@ -12,40 +14,45 @@ This is an example project, ready to use. This project is using below Symfony Bu
 The salient features of this Project are:
 * This project consists of **API (currently, user management only) for Frontend consumption, via iPhone and Android Mobiles**, and an **administrative web based Backend system**.
 * The APIs and the Backend system are **internationalization enabled**. Project currently supports English, French and Hindi but can be easily extended to include other languages.
-* This project implements FOSRestBundle **API versioing system** via custom header "X-Accept-Version". Currently, the running API version is 1.0.
+* This project implements FOSRestBundle **API versioing system** via custom header **"X-Accept-Version"**. Currently, the running API version is 1.0.
 * **Backend theming can easily be customized and extended**. Options have been provided to pick desired front-end theme for the Backend. The choices available are - Bootstrap, Materialize and Skeleton. **To change the theme, modify key "fronend_theme" in parameters.yml accordingly.** However, the design is open-ended and you may add your preferred theme easily. Please also note that theming has only been provided for base and nav. Other top level stuff is using bootstrap, you can theme as per your choice using base theme.
 * The Web user management pages are coming directly from FOSUserBundle views. You may override these pages, per your need.
 
-## Installation Steps:
+# Table of Contents
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Configuring Apache2](#configure-apache2)
+* [Using the Package](#using-this-package)
+* [Roadmap](#roadmap)
+* [Change Logs](#change-logs)
+* [Contribution Guidelines](#contribution-guidelines)
 
-**Step 0:**
+# <a name="requirements"></a>Requirements
 
-    Below environment is required:
-    Linux
-    =====
-      - PHP 5.6
-      - MySql (though other DB can also be used with a little change in the configuration)
-      - Apache2 (alternatively, local PHP dev server can also be used for testing purpose)
-      - Composer
-      - Chrome browser with Postman plugin or separate Postman installation to test the API (though API can also be  tested via "curl" command)
+Below environment is required:
 
-    Windows
-    =======
-      - MAMP
-      - Composer
-      - Chrome browser with Postman plugin or separate Postman installation to test the API (though API can also be  tested via "curl" command)
-
-    Mac
-    ===
-      - MAMP
-      - Composer
-      - Chrome browser with Postman plugin or separate Postman installation to test the API (though API can also be  tested via "curl" command)
+* Linux
+  - PHP 5.6
+  - MySql (though other DB can also be used with a little change in the configuration)
+  - Apache2 (alternatively, local PHP dev server can also be used for testing purpose)
+  - Composer
+  - Chrome browser with Postman plugin or separate Postman installation to test the API (though API can also be  tested via "curl" command)
+* Windows
+  - MAMP
+  - Composer
+  - Chrome browser with Postman plugin or separate Postman installation to test the API (though API can also be  tested via "curl" command)
+* Mac
+  - MAMP
+  - Composer
+  - Chrome browser with Postman plugin or separate Postman installation to test the API (though API can also be  tested via "curl" command)
 
 ***Note regarding Webserver:***
 
-As this project uses OAuth2 server, for smooth results, Apache webserver is highly recommended. You may want to create a site, say http://auth.dev, for it. Please refere to section **"Configuring Apache"** below for an example implementation.
+As this project uses OAuth2 server, for smooth results, Apache webserver is highly recommended. You may want to create a site, say http://auth.dev, for it. Please refere to section [Configuring Apache2](#configure-apache2) below for an example implementation.
 
-However, if you wish to use php local dev server, you will need to start two instances of php local dev server at two different ports (say 8000 and 8080) in two separate terminal windows/tabs,  section **"Use this Package"**, and replace oauth urls accordingly in Step 2 below. This is necessary as php local dev server is a simple single threaded web server and oAuth server needs to work on more than one process simultaneously. Using a single local dev server severly hampers this and blocks execution.
+*However, if you wish to use php local dev server, you will need to start two instances of php local dev server at __two different ports (say 8000 and 8080)__ in two separate terminal windows/tabs,  section [Using the Package](#using-this-package), and replace oauth urls accordingly in Step 2 below. This is necessary as php local dev server is a simple single threaded web server and oAuth server needs to work on more than one process simultaneously. Using a single local dev server severly hampers this and blocks execution.*
+
+# <a name="installation"></a>Installation
 
 **Step 1 - Clone the project:**
 
@@ -97,7 +104,7 @@ However, if you wish to use php local dev server, you will need to start two ins
 
 Now you are ready to use the Package!
 
-## Configure Apache2
+# <a name="configure-apache2"></a>Configuring Apache2
 
 Execute below commands which are specific to Apache2 configuration on Ubuntu 16.04. However, for rest of the env, the detail are quite similar.
 
@@ -168,14 +175,15 @@ $ sudo setfacl -dR -m u:www-data app/cache app/logs
 $ sudo chmod -R ogu+rwx app/cache app/logs web
 ```
 
-## Use this Package
+# <a name="using-the-package"></a>Use the Package
 
 1. Test API
 2. Use API via a Mobile Client
 3. Backend Administration
-4. Troubleshooting
 
-If you are using php local dev server, please start the server at two different ports (say 8000 and 8080) in two terminal windows as below:
+```
+
+Please refer to **Note regarding webserver** in [Requirements](#requirements) section. If you are using php local dev server, please start the server at two different ports (say 8000 and 8080) in two terminal windows as below:
 
 In first terminal window,
 
@@ -190,6 +198,8 @@ In second terminal window,
 You may also need to configure parameters.yml accordingly. Then in a browser, you may use http://127.0.0.1:8000 to run this package.
 
 Alternatively, if you have successfully configured Apache2, then modify parameters.yml accordingly can start using the package vide say, http://auth.dev.
+
+```
 
 #### 1. Test API
 
@@ -213,7 +223,7 @@ Separate sample Github repos are available for iPhone and Android Mobile Clients
 
 In a browser, goto the package site by http://127.0.0.1:8000. This is the Backend Administration tool and can be plugged into any User App easily. It is a simple page. The options are self explanatory.
 
-#### 4. Troubleshooting
+# <a name="troubleshooting"></a>Troubleshooting
 
 Sometimes, you may run into permission issues. You may try below commands, single or in combination:
 
@@ -226,3 +236,19 @@ $ sudo rm -rf app/cache/* app/logs/*
 
 $ sudo chmod -R ogu+rwx app/cache app/logs web
 ```
+
+# <a name="roadmap"></a>Roadmap
+
+Here's the TODO list for the next release (**2.0**).
+
+* [ ] Refactoring the UserController to have a single UserController instead of two separate UserControllers for admin and regular user.
+* [ ] Refactoring the UserController to use API from AuthController instead using FOSUserBundle so that CRUD comes from a single source.
+* [ ] Add provision for admin to reset password for a user.
+
+# <a name="change-logs"></a>Change Logs
+
+# <a name="contribution-guidelines"></a>Contribution Guidelines
+
+Support follows PSR-2 PHP coding standards, and semantic versioning.
+
+Please report any issue you find in the issues page.
