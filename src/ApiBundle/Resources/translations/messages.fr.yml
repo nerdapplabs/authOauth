@@ -154,3 +154,11 @@ api:
   mail_send: Le courrier est déjà envoyé à% email%. Veuillez vérifier votre e-mail.
   logged_in: Connecté avec succès!
   logged_out: Déconnecté avec succès!
+# Password change
+change_password:
+    flash:
+        success: Le mot de passe a été modifié
+# Password resetting
+resetting:
+    flash:
+        success: Le mot de passe a été réinitialisé avec succès
