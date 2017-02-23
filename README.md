@@ -57,11 +57,11 @@ As this project uses OAuth2 server, for smooth results, Apache webserver is high
 **Step 1 - Clone the project:**
 
     Git clone this project from Github to a web folder, say auth, via
-    git clone .... auth
+    $ git clone .... auth
 
     and run
-    cd /path/to/auth
-    composer install
+    $ cd /path/to/auth
+    $ composer install
 
 **Step 2 - Replace parameter values in parameters.yml**
 
@@ -83,24 +83,24 @@ As this project uses OAuth2 server, for smooth results, Apache webserver is high
 
 **Step 3 - Create Database tables**
 
-    cd /path/to/auth
-    php app/console doctrine:database:create
-    php app/console doctrine:schema:create
+    $ cd /path/to/auth
+    $ php app/console doctrine:database:create
+    $ php app/console doctrine:schema:create
 
 **Step 4 - Create assets**
 
-    cd /path/to/auth
-    php app/console assets:install
-    php app/console assetic:dump
+    $ cd /path/to/auth
+    $ php app/console assets:install
+    $ php app/console assetic:dump
 
 **Step 5 - Create an Admin user**
 
-    cd /path/to/auth
-    php app/console fos:user:create admin admin@example.com password
+    $ cd /path/to/auth
+    $ php app/console fos:user:create admin admin@example.com password
 
     Make this user admin
 
-    php app/console fos:user:promote admin ROLE_ADMIN
+    $ php app/console fos:user:promote admin ROLE_ADMIN
 
 Now you are ready to use the Package!
 
@@ -118,37 +118,37 @@ $ sudo cp sites-available/000-default.conf sites-available/auth.conf
 Via an editor, as superuser, copy/paste below section to sites-available/auth.conf:
 
 ```
-    <VirtualHost *:80>
-            # The ServerName directive sets the request scheme, hostname and port that
-            # the server uses to identify itself. This is used when creating
-            # redirection URLs. In the context of virtual hosts, the ServerName
-            # specifies what hostname must appear in the request's Host: header to
-            # match this virtual host. For the default virtual host (this file) this
-            # value is not decisive as it is used as a last resort host regardless.
-            # However, you must set it for any further virtual host explicitly.
-            ServerName auth.dev
+<VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        ServerName auth.dev
 
-            ServerAdmin webmaster@localhost
-            DocumentRoot /var/www/html/authOauth/web
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html/authOauth/web
 
-            # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
-            # error, crit, alert, emerg.
-            # It is also possible to configure the loglevel for particular
-            # modules, e.g.
-            #LogLevel info ssl:warn
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
 
-            ErrorLog ${APACHE_LOG_DIR}/error.log
-            CustomLog ${APACHE_LOG_DIR}/access.log combined
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-            # For most configuration files from conf-available/, which are
-            # enabled or disabled at a global level, it is possible to
-            # include a line for only one particular virtual host. For example the
-            # following line enables the CGI configuration for this host only
-            # after it has been globally disabled with "a2disconf".
-            #Include conf-available/serve-cgi-bin.conf
-    </VirtualHost>
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+</VirtualHost>
 
-    # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 ```
 
 Via an editor, as superuser, modify /etc/hosts to include below line:
@@ -182,8 +182,9 @@ $ sudo chmod -R ogu+rwx app/cache app/logs web
 3. Backend Administration
 
 ```
-
-Please refer to **Note regarding webserver** in [Requirements](#requirements) section. If you are using php local dev server, please start the server at two different ports (say 8000 and 8080) in two terminal windows as below:
+Please refer to **Note regarding webserver** in [Requirements](#requirements) section.
+If you are using php local dev server, please start the server at two different ports
+(say 8000 and 8080) in two terminal windows as below:
 
 In first terminal window,
 
@@ -195,10 +196,11 @@ In second terminal window,
     cd /path/to/auth
     php app/console server:run 127.0.0.1:8080
 
-You may also need to configure parameters.yml accordingly. Then in a browser, you may use http://127.0.0.1:8000 to run this package.
+You may also need to configure parameters.yml accordingly. Then in a browser, you may use
+http://127.0.0.1:8000 to run this package.
 
-Alternatively, if you have successfully configured Apache2, then modify parameters.yml accordingly can start using the package vide say, http://auth.dev.
-
+Alternatively, if you have successfully configured Apache2, then modify parameters.yml
+accordingly can start using the package vide say, http://auth.dev.
 ```
 
 #### 1. Test API
@@ -245,7 +247,10 @@ Here's the TODO list for the next release (**2.0**).
 * [ ] Refactoring the UserController to use API from AuthController instead using FOSUserBundle so that CRUD comes from a single source.
 * [ ] Add provision for admin to reset password for a user.
 
+
 # <a name="change-logs"></a>Change Logs
+
+
 
 # <a name="contribution-guidelines"></a>Contribution Guidelines
 
