@@ -32,8 +32,8 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_username_policy'
             - Regex:
                   groups: [Registration, Profile]
-                  # Username should be 2-50 characters long with any Uppercase/lowercase letter (A-Za-z), number (0-9), any special character other than [ and ]
-                  pattern: '/^[a-zA-Z0-9-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;]{2,50}$/'
+                  # Username should be 2-50 characters long with any Uppercase/lowercase letter (A-Za-z), number (0-9), any special character other than square brackets and quotes
+                  pattern: '/^[a-zA-Z0-9-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;]{2,50}$/'
                   match:   true
                   message: "user.show_error_username_policy"
                   payload:
