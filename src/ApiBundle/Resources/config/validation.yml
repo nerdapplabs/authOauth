@@ -59,7 +59,7 @@ ApiBundle\Entity\User:
             - Regex:
                   groups: [profile_edit_password, Registration, Profile]
                   # Password 6-50 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character other than [ and ]
-                  pattern: '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;])[A-Za-z\d][A-Za-z\d-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;]{6,50}$/'
+                  pattern: '/(?=^.{6,50}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w])).+/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:
@@ -92,7 +92,7 @@ FOS\UserBundle\Form\Model\ChangePassword:
                       api_error: 'api.show_error_password_policy'
             - Regex:
                   # Password 6-50 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character other than [ and ]
-                  pattern: '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;])[A-Za-z\d][A-Za-z\d-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;]{6,50}$/'
+                  pattern: '/(?=^.{6,50}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w])).+/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:
