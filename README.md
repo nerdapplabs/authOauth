@@ -1,4 +1,7 @@
-# A Sample Symfony 2 RESTful API Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients
+
+# actively maintained at https://github.com/aksinha-nerdapplabs/authOauth
+
+# A Symfony2 oAuth based RESTful API Project including Web UI with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients
 
 This is an example project, ready to use. This project is using below Symfony Bundles:
 
