@@ -32,7 +32,8 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_username_policy'
             - Regex:
                   groups: [Registration, Profile]
-                  pattern: '/^[a-z0-9_-]{3,16}$/'
+                  # Username should be 2-50 characters long with any Uppercase/lowercase letter (A-Za-z), number (0-9), any special character other than square brackets and quotes
+                  pattern: '/^[a-zA-Z0-9-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;]{2,50}$/'
                   match:   true
                   message: "user.show_error_username_policy"
                   payload:
@@ -57,8 +58,8 @@ ApiBundle\Entity\User:
                       api_error: 'api.show_error_password_policy'
             - Regex:
                   groups: [profile_edit_password, Registration, Profile]
-                  # Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character
-                  pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w]))[A-Za-z\d$@$!%*?&]{6,20}$/'
+                  # Password 6-50 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character other than [ and ]
+                  pattern: '/(?=^.{6,50}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;])(?!.*\s).*$/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:
@@ -90,8 +91,8 @@ FOS\UserBundle\Form\Model\ChangePassword:
                   payload:
                       api_error: 'api.show_error_password_policy'
             - Regex:
-                  # Password 6-20 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character
-                  pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w]))[A-Za-z\d$@$!%*?&]{6,20}$/'
+                  # Password 6-50 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character other than [ and ]
+                  pattern: '/(?=^.{6,50}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;&quot;&#39;])(?!.*\s).*$/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:

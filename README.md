@@ -1,5 +1,7 @@
 # authOauth
 
+### actively maintained at https://github.com/aksinha-nerdapplabs/authOauth
+
 **A Sample Symfony 2 RESTful API Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients.**
 
 This is an example project, ready to use, based upon **Symfony 2.8** but can be easily adapted to higher Symfony versions. This project is using below Symfony Bundles:
@@ -218,8 +220,9 @@ You can test the provided API via curl or Postman. Here we provide as to how to 
 
 Separate sample Github repos are available for iPhone and Android Mobile Clients which use APIs provided by this repo.
 
-    iPhone: https://github.com/ajabble/AJOAuth2
-    Android: https://github.com/mshariq-nerd/MSOAuth2
+iPhone: https://github.com/ajabble/AJOAuth2
+
+Android: https://github.com/mshariq-nerd/MSOAuth2
 
 #### 3. Backend Administration
 

@@ -129,7 +129,7 @@ flash:
   user_authentication_failed: User Authentication failed!
   image_error: Image Error!
   admin_deleted_denied1: Admin is not allowed to delete his own account!
-  admin_deleted_denied2: There must be 1 active admin account, hence promote/assign another user to admin role before deleting this account. 
+  admin_deleted_denied2: There must be 1 active admin account, hence promote/assign another user to admin role before deleting this account.
 api:
   show_error_client_name:  Sorry, Client Name cannot be empty!
   show_error_client_name_taken:  Sorry, Client Name already taken!
@@ -165,3 +165,11 @@ api:
   mail_send: Mail already send to %email%. Please check your mail.
   logged_in: Logged in successfully!
   logged_out: Logged out successfully!
+# Password change
+change_password:
+    flash:
+        success: The password has been changed
+# Password resetting Te1!@#
+resetting:
+    flash:
+        success: The password has been reset successfully
