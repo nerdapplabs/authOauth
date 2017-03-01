@@ -16,10 +16,8 @@ Here we specify this bundle's vendor and bundle name, separated by a forward sla
 
 **Step 3: How To Run Tests**
 
-To run test from project root, run PHPUnit: 
+To run all the tests from project root, run PHPUnit: 
 `$ vendor/phpunit/phpunit/phpunit -c app/`
-    
-It will run all the tests in the project. And then you should see the coveted green bar. Green means success of test and Red means failure.
 
 If you want to run any specific test, then run:
 `$ vendor/phpunit/phpunit/phpunit -c app/ path/to/your/test`
