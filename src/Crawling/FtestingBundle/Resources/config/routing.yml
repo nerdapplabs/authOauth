@@ -1,0 +1,11 @@
+crawling_ftesting_homepage:
+    path:     /
+    defaults: { _controller: CrawlingFtestingBundle:Default:index }
+
+crawling_home:
+    path: /crawling/home
+    defaults: { _controller: CrawlingFtestingBundle:Crawling:home }
+ 
+crawling_other:
+    path: /crawling/other
+    defaults: { _controller: CrawlingFtestingBundle:Crawling:other }

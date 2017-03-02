@@ -228,6 +228,11 @@ Android: https://github.com/mshariq-nerd/MSOAuth2
 
 In a browser, goto the package site by http://127.0.0.1:8000. This is the Backend Administration tool and can be plugged into any User App easily. It is a simple page. The options are self explanatory.
 
+The salient features of the Backend are:
+* The Backend is internationalization enabled. It currently supports English, French and Hindi.
+* Options have been provided to pick desired front-end theme for the Backend. The choices available are - Bootstrap, Materialize and Skeleton. **To change the theme, modify key "fronend_theme" in parameters.yml accordingly.** However, the design is open-ended and you may add your preferred theme easily. Please also note that theming has only been provided for base and nav. Other top level stuff is using bootstrap, you can theme as per your choice using base theme.
+* The Web user management pages are coming directly from FOSUserBundle views. You may override these pages, per your need.
+
 # <a name="troubleshooting"></a>Troubleshooting
 
 Sometimes, you may run into permission issues. You may try below commands, single or in combination:
@@ -253,10 +258,13 @@ Here's the TODO list for the next release (**2.0**).
 
 # <a name="change-logs"></a>Change Logs
 
-
-
 # <a name="contribution-guidelines"></a>Contribution Guidelines
 
 Support follows PSR-2 PHP coding standards, and semantic versioning.
 
 Please report any issue you find in the issues page.
+
+## Testing: 
+ [How to add test using Crawling](How_to_test_using_Crawling.md)
+ [Postman Collection with Env, for API Testing](PostmanCollection)
+
