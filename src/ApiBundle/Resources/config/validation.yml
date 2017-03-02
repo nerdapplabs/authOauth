@@ -14,40 +14,86 @@ ApiBundle\Entity\User:
     properties:
         firstname:
             - NotBlank:
-                  groups: [profile_edit]
+                  groups: [Registration, Profile, profile_edit]
                   message: "user.show_error_firstname"
                   payload:
                       api_error: 'api.show_error_firstname'
+        dob:
+            - Date:
+                  groups: [Registration, Profile, profile_edit]
+                  message: "user.show_error_dob"
+                  payload:
+                      api_error: 'api.show_error_dob'
         username:
+            - NotBlank:
+                  groups: [Registration, Profile]
+                  message: "user.show_error_username_policy"
+                  payload:
+                      api_error: 'api.show_error_username_policy'
             - Regex:
-                  pattern: '/^[a-z0-9_-]{3,16}$/'
+                  groups: [Registration, Profile]
+                  # Username should be 2-50 characters long with any Uppercase/lowercase letter (A-Za-z), number (0-9), any special character other than square brackets and quotes
+                  pattern: '/^[a-zA-Z0-9-_!@#$%&*+=()^{};:.,\\|\/?&gt;&lt;]{2,50}$/'
                   match:   true
                   message: "user.show_error_username_policy"
                   payload:
                       api_error: 'api.show_error_username_policy'
-        password:
+        email:
+            - NotBlank:
+                  groups: [Registration, Profile]
+                  message: "user.show_error_email"
+                  payload:
+                      api_error: 'api.show_error_email'
+            - Email:
+                  groups: [Registration, Profile]
+                  checkMX: false
+                  message: "user.show_error_email"
+                  payload:
+                      api_error: 'api.show_error_email'
+        plainPassword:
+            - NotBlank:
+                  groups: [profile_edit_password, Registration]
+                  message: "user.show_error_password_policy"
+                  payload:
+                      api_error: 'api.show_error_password_policy'
             - Regex:
-                  pattern: '/^([a-zA-Z0-9@*#]{8,15})$/'
+                  groups: [profile_edit_password, Registration, Profile]
+                  # Password 6-50 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character other than [ and ]
+                  pattern: '/(?=^.{6,50}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w])).+/'
                   match:   true
                   message: "user.show_error_password_policy"
                   payload:
                       api_error: 'api.show_error_password_policy'
-        email:
-            - Email:
-                  message: "user.show_error_email"
-                  checkMX: false
-                  payload:
-                      api_error: 'api.show_error_email'
-        dob:
-            - Date:
-                  groups: [profile_edit]
-                  message: "user.show_error_dob"
-                  payload:
-                      api_error: 'api.show_error_dob'
         roles:
             - Choice:
+                  groups: [profile_roles]
                   choices:  ['ROLE_USER', 'ROLE_API']
                   multiple: true
                   message:  "user.show_error_role"
                   payload:
                       api_error: 'api.show_error_role'
+        image:
+            - Image:
+                  groups: [profile_pic]
+                  mimeTypes:  ["image/jpeg", "image/jpg", "image/gif", "image/png"]
+                  mimeTypesMessage: Please upload a valid Image (jpeg/jpg/gif/png only within 1024k size
+                  maxSize: 1024k
+                  minWidth: 100
+                  minHeight: 100
+                  payload:
+                      api_error: 'api.show_error_image'
+
+FOS\UserBundle\Form\Model\ChangePassword:
+    properties:
+        new:
+            - NotBlank:
+                  message: "user.show_error_password_policy"
+                  payload:
+                      api_error: 'api.show_error_password_policy'
+            - Regex:
+                  # Password 6-50 characters, at least 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character other than [ and ]
+                  pattern: '/(?=^.{6,50}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*([^\w])).+/'
+                  match:   true
+                  message: "user.show_error_password_policy"
+                  payload:
+                      api_error: 'api.show_error_password_policy'

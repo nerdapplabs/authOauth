@@ -2,6 +2,9 @@ parameters:
     # This parameter defines the codes of the locales (languages) enabled in the application
     # app_locales: en|fr|de|es|cs|nl|ru|uk|ro|pt_BR|pl|it|ja|id|ca|sl
     app_locales: en|fr|hi
+    registration_requires_email_confirmation: false
+    images_profile_dir: '/images/profile/'
+    images_profile_path: '%kernel.root_dir%/../web%images_profile_dir%'
 
 # Assetic Configuration
 assetic:
@@ -41,9 +44,7 @@ fos_rest:
 
 fos_user:
     db_driver: orm
-    firewall_name: main                                 # Seems to be used when registering user/reseting password,
-                                                        # but since there is no "login", as so it seems to be useless in
-                                                        # our particular context, but still required by "FOSUserBundle"
+    firewall_name: main
     user_class: ApiBundle\Entity\User
 
 fos_oauth_server:

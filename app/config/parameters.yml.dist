@@ -17,10 +17,6 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
-    oauth2_client_id: 1_2p4qziaf8lkwwswc4ook0o8ccwow0c4co848sogk8w4gg8c4kk
-    oauth2_client_secret: 37wflagv6ickc4o448kg4ccosskok80kwoo4occ8wcsw8c884o
-    oauth2_redirect_url: 'http://127.0.0.1:8000/authorize'
     oauth2_auth_endpoint: 'http://127.0.0.1:8000/oauth/v2/auth'
     oauth2_token_endpoint: 'http://127.0.0.1:8000/oauth/v2/token'
     frontend_theme: bootstrap
-    

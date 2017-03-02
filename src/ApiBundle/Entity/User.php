@@ -45,6 +45,12 @@ class User extends BaseUser
     protected $dob;
 
     /**
+    * @var string $image
+    * @ORM\Column(name="image", nullable=true)
+    */
+    protected $image;
+
+    /**
      * Get id
      *
      * @return integer
@@ -104,5 +110,33 @@ class User extends BaseUser
       } else { // format failed
           return "Malformed date of birth";
       }
+    }
+
+    /**
+     * Set image
+     *
+     * @param string $image
+     *
+     * @return Thread
+     */
+    public function setImage($image = null)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        if (strpos($this->image, '/images/profile/') !== false) {
+          return explode('/images/profile/', $this->image)[1];
+        }
+
+        return $this->image;
     }
 }
