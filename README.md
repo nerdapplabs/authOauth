@@ -1,8 +1,8 @@
 # authOauth
 
-### actively maintained at https://github.com/aksinha-nerdapplabs/authOauth
 
-**A Sample Symfony 2 RESTful API Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients.**
+
+**A Symfony 2 RESTful API & OAuth2 Clients based, User auth Project with FOSUserBundle + FOSRestBundle + FOSOauthServerBundle for Mobile and Web Clients.**
 
 This is an example project, ready to use, based upon **Symfony 2.8** but can be easily adapted to higher Symfony versions. This project is using below Symfony Bundles:
 
